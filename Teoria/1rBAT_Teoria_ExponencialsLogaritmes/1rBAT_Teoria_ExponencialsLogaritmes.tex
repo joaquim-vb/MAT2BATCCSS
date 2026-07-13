@@ -1,0 +1,1257 @@
+\PassOptionsToPackage{table}{xcolor}
+\documentclass[aspectratio=169]{beamer}
+
+\usepackage[catalan]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[sfdefault,lf]{FiraSans}
+\usepackage{mathastext}
+\Mathastext
+\usepackage{amsmath,amssymb}
+
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usetikzlibrary{arrows.meta,positioning}
+\usepackage{tcolorbox}
+\tcbuselibrary{skins,breakable}
+
+% ---------- COLORS ----------
+\definecolor{margueVerdClar}{HTML}{83BD2A}
+\definecolor{margueVerdFosc}{HTML}{46A700}
+\definecolor{margueVerdCaixa}{HTML}{F2F9EA}
+
+% ---------- TEMA BASE ----------
+\setbeamertemplate{navigation symbols}{}
+\setbeamercolor{background canvas}{bg=white}
+\setbeamercolor{normal text}{fg=black}
+\setbeamercolor{structure}{fg=margueVerdFosc}
+\setbeamercolor{title}{fg=black}
+\setbeamercolor{frametitle}{fg=black,bg=white}
+\setbeamerfont{frametitle}{series=\bfseries,size=\Large}
+\setbeamertemplate{itemize item}{\textcolor{margueVerdFosc}{$\bullet$}}
+\setbeamertemplate{itemize subitem}{\textcolor{margueVerdFosc}{--}}
+
+% ---------- SENSE CAPÇALERA SUPERIOR ----------
+\setbeamertemplate{headline}{}
+
+% ---------- PEU DE PÀGINA (curs + tema + numeració) ----------
+\setbeamertemplate{footline}{%
+  \begin{beamercolorbox}[wd=\paperwidth,ht=0.55cm,dp=0.25cm,leftskip=0.4cm,rightskip=0.4cm]{}
+    \color{margueVerdClar}\rule{\paperwidth}{0.04cm}\\[0.08cm]
+    \color{margueVerdFosc}\small\bfseries 1r BAT -- Exponencials i logaritmes
+    \hfill
+    \color{gray}\small\insertframenumber/\inserttotalframenumber
+  \end{beamercolorbox}%
+}
+
+% ---------- CAIXES DE COLOR ----------
+% ---------- CAIXES DE COLOR ----------
+\tcbset{
+  caixadefbase/.style={
+    colback=margueVerdCaixa, colframe=margueVerdFosc,
+    boxrule=1pt, arc=2pt,
+    left=6pt, right=6pt, top=4pt, bottom=4pt,
+    fontupper=\normalsize
+  },
+  compact/.style={
+    left=3pt, right=3pt, top=2pt, bottom=2pt,
+    fontupper=\small
+  },
+  ultracompact/.style={
+    left=3pt, right=3pt, top=0pt, bottom=0pt,
+    boxsep=0pt, arc=2pt,
+    fontupper=\small
+  },
+  titular/.style={
+    compact,
+    hbox,
+    boxsep=0pt
+  },
+  centrat/.style={
+    compact,
+    halign=center
+  }
+}
+
+\newtcolorbox{caixadef}[1][]{caixadefbase, #1}
+
+% Caixa centrada que s'ajusta al contingut (com un títol)
+\newcommand{\caixatitol}[1]{%
+  \begin{center}%
+    \begin{caixadef}[titular]
+      #1
+    \end{caixadef}%
+  \end{center}%
+}
+
+% Resultat emmarcat en línia (mateixa estètica que caixadef)
+\newcommand{\resultat}[1]{%
+  \tikz[baseline=(R.base)]{
+    \node[draw=margueVerdFosc, fill=margueVerdCaixa, rounded corners=2pt,
+          inner xsep=4pt, inner ysep=1.5pt, line width=0.8pt] (R) {$#1$};
+  }%
+}
+
+% Solució destacada sense desalinear l'align
+\newcommand{\solucio}[1]{{\color{margueVerdFosc}\mathbf{#1}}}
+
+% Factor comú ressaltat (tipus 3)
+\newcommand{\fc}[1]{{\color{margueVerdFosc}#1}}
+
+% Caixa amb capçalera opcional (per defecte: «Demostració» en verd fosc)
+% Ús: \begin{caixadem}[width=...]  o  \begin{caixadem}[notitle, width=...]
+\tcbset{
+  caixadembase/.style={
+    enhanced,
+    colback=margueVerdCaixa, colframe=margueVerdFosc,
+    boxrule=1pt, arc=2pt,
+    left=6pt, right=6pt, top=4pt, bottom=4pt,
+    fontupper=\small,
+    colbacktitle=margueVerdFosc,
+    coltitle=white,
+    fonttitle=\bfseries\small,
+    titlerule=0pt,
+    toptitle=2pt,
+    bottomtitle=2pt,
+    title=Demostració,
+  }
+}
+\newtcolorbox{caixadem}[1][]{caixadembase, #1}
+
+\title{Exponencials i logaritmes}
+\subtitle{1r BAT}
+\author{}
+\institute{}
+\date{}
+
+\begin{document}
+
+% ---------- DIAPO 1: PORTADA ----------
+\begin{frame}[plain]
+  \begin{tikzpicture}[remember picture,overlay]
+    \node[anchor=north east] at ([xshift=-0.6cm,yshift=-0.6cm]current page.north east)
+      {\includegraphics[width=2.2cm]{LogoInstitut.png}};
+  \end{tikzpicture}
+  \vspace{1.5cm}
+  {\Huge\bfseries Exponencials i logaritmes}\\[0.6cm]
+  \rule{0.5\textwidth}{0.5pt}\\[0.4cm]
+  {\large 1r BAT}
+\end{frame}
+
+% ---------- DIAPO 2: ÍNDEX ----------
+\begin{frame}
+  \frametitle{Índex}
+  \tableofcontents
+\end{frame}
+
+% ---------- SECCIÓ 1 ----------
+\section{Recordatori de funcions}
+
+\begin{frame}
+  \frametitle{1. Recordatori de funcions}
+
+  \begin{columns}[T]
+    \begin{column}{0.58\textwidth}
+      \begin{itemize}
+        \item<1-> Funció: relació de dependència entre dues variables si per cada valor real de la variable independent, existeix un, i només un, valor real de la variable dependent.
+        \item<2-> Es poden expressar com a gràfic, taules de valors o expressions algebraiques.
+      \end{itemize}
+    \end{column}
+
+    \begin{column}{0.42\textwidth}
+      \vspace{-0.3cm}
+      \begin{tikzpicture}
+        \begin{axis}[
+          width=5.6cm, height=5.6cm,
+          xmin=-3, xmax=5, ymin=-1.5, ymax=11,
+          axis lines=middle,
+          xlabel={$x$}, ylabel={$f(x)$},
+          grid=major, grid style={gray!20},
+          ticklabel style={font=\tiny},
+          label style={font=\small}
+        ]
+          \only<3->{\addplot[margueVerdFosc, thick, domain=-1.5:2.2, samples=50] {3.8*x};}
+          \only<4->{\addplot[blue, thick, domain=-1:4.5, samples=100] ({(x*x)/1.6-1},{x});}
+          \only<4->{\node[red, scale=1.8] at (axis cs:4,3) {$\times$};}
+        \end{axis}
+      \end{tikzpicture}
+    \end{column}
+  \end{columns}
+
+  \vspace{0.3cm}
+  \begin{itemize}
+    \item<5-> Exemples:
+    \begin{itemize}
+      \item<6-> Funció que dona el perímetre d'una circumferència a partir del seu radi.
+      \item<7-> Perímetre de la circumferència: \(f(x) \to\) variable dependent
+      \item<8-> Radi de la circumferència: \(x \to\) variable independent
+      \item<9-> Expressió algebraica: \(f(x) = 2\pi \cdot x\)
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+% ---------- SECCIÓ 2 ----------
+\section{Funció exponencial}
+\subsection{Motivació}
+
+\begin{frame}[t]
+  \frametitle{2.1 Motivació funció exponencial}
+
+  \vspace{-0.22cm}
+  \setlength{\itemsep}{0.08em}
+  \setlength{\topsep}{0.12em}
+  \setlength{\parskip}{0pt}
+
+  \begin{itemize}
+    \item<1-> Imaginem una espècie d'insectes que es reprodueix molt ràpidament. Suposem que cada dia, cada insecte té dos descendents i immediatament mor.
+  \end{itemize}
+
+  \vspace{0.12cm}
+  \centering
+  {\scriptsize
+  \setlength{\tabcolsep}{4pt}
+  \renewcommand{\arraystretch}{1.02}
+  \begin{tabular}{|c|c|c|c|c|}
+    \hline
+    \rowcolor{margueVerdClar!70} \textcolor{white}{\bfseries Dia 0} & \textcolor{white}{\bfseries Dia 1} & \textcolor{white}{\bfseries Dia 2} & \textcolor{white}{\bfseries Dia 3} & \textcolor{white}{\bfseries Dia 4} \\
+    \hline
+    \rowcolor{margueVerdCaixa}
+    1 insecte &
+    \only<2->{2 insectes}\only<-1>{} &
+    \only<3->{4 insectes}\only<-2>{} &
+    \only<4->{8 insectes}\only<-3>{} &
+    \only<5->{16 insectes}\only<-4>{} \\
+    \hline
+  \end{tabular}
+  }
+
+  \vspace{0.14cm}
+  \raggedright
+  \begin{itemize}
+    \item<6-> Quina és la població d'insectes el dia 5? I el dia 8? I el dia 25?
+    \item<7-> Necessitem saber la població del dia anterior per poder obtenir la població d'un dia concret?
+  \end{itemize}
+
+  \vspace{-0.08cm}
+  \centering
+  \only<8->{
+    \begin{caixadef}[ultracompact]
+      \(\text{Nombre d'insectes} = 2^{\text{Nombre de dies}} \;\rightarrow\; f(x)=2^x\)
+    \end{caixadef}
+  }
+  \only<1-7>{\vspace{0.46cm}}
+
+  \vspace{-0.06cm}
+  \raggedright
+  \begin{itemize}
+    \setlength{\topsep}{0.08em}
+    \item<9-> Hi ha moltes altres situacions que també es poden modelar amb funcions exponencials:
+    \begin{itemize}
+      \item<10-> Propagació de virus, interessos financers, el gruix d'un paper doblegat...
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\subsection{Definició i representació}
+
+% ---------- DIAPO 2.2: Funció exponencial (definició, gràfic, taules, propietats) ----------
+\begin{frame}[t]
+  \frametitle{2.2. Funció exponencial}
+
+  \vspace{-0.15cm}
+  \begin{columns}[T,onlytextwidth]
+    % ---- TEXT (esquerra) ----
+    \begin{column}{0.51\textwidth}
+      \begin{minipage}[t][6.75cm]{\columnwidth}
+        \small
+        \setlength{\itemsep}{0.14em}
+        \setlength{\topsep}{0.1em}
+        \begin{itemize}
+          \item<1-> Definim la funció \(f(x)=a^x\) per a \(a\in\mathbb{R}^+\), \(a\neq 1\) i \(x\in\mathbb{R}\), i l'anomenem \textbf{funció exponencial de base \(a\)}.
+          \item<2-> \(D_f=\mathbb{R}\), ja que \(x\) pot prendre qualsevol valor real.
+          \item<3-> \(R_f=\mathbb{R}^+\), ja que un nombre positiu (\(a\)) elevat a un nombre real (\(x\)) sempre és positiu.
+          \item<11-> Si \(a>1\), llavors \(a^x>1\) si \(x\) és positiu, i \(0<a^x<1\) si \(x\) és negatiu.
+          \item<19-> Si \(0<a<1\), llavors \(0<a^x<1\) si \(x\) és positiu, i \(a^x>1\) si \(x\) és negatiu.
+          \item<20-> Com que \(a^x\neq 0\), la gràfica de \(f(x)=a^x\) \textbf{no talla} l'eix de les abscisses.
+        \end{itemize}
+      \end{minipage}
+    \end{column}
+
+    % ---- GRÀFIC + TAULES (dreta, posició fixa) ----
+    \begin{column}{0.49\textwidth}
+      \begin{minipage}[t][6.75cm]{\columnwidth}
+        \centering
+        \vspace{-0.1cm}
+        \begin{tikzpicture}
+          \begin{axis}[
+            width=5.35cm, height=4.85cm,
+            xmin=-2.5, xmax=3.5, ymin=-0.5, ymax=8.5,
+            enlargelimits=false,
+            axis lines=middle,
+            xlabel={\(x\)}, ylabel={\(y\)},
+            grid=major, grid style={gray!20},
+            ticklabel style={font=\tiny},
+            label style={font=\footnotesize},
+            clip=true
+          ]
+            \only<5->{\addplot[only marks, mark=*, mark size=1.8pt, blue] coordinates {(1,2)};}
+            \only<6->{\addplot[only marks, mark=*, mark size=1.8pt, blue] coordinates {(2,4)};}
+            \only<7->{\addplot[only marks, mark=*, mark size=1.8pt, blue] coordinates {(3,8)};}
+            \only<8->{\addplot[only marks, mark=*, mark size=1.8pt, blue] coordinates {(0,1)};}
+            \only<9->{\addplot[only marks, mark=*, mark size=1.8pt, blue] coordinates {(-1,0.5)};}
+            \only<10->{\addplot[only marks, mark=*, mark size=1.8pt, blue] coordinates {(-2,0.25)};}
+            \only<10->{\addplot[blue, thick, domain=-2.2:2.85, samples=80, restrict y to domain=-0.5:8.5] {2^x};}
+            \only<10->{\node[blue, font=\footnotesize] at (axis cs:2.1,5.8) {$f$};}
+            \only<13->{\addplot[only marks, mark=*, mark size=1.8pt, red] coordinates {(1,0.5)};}
+            \only<14->{\addplot[only marks, mark=*, mark size=1.8pt, red] coordinates {(2,0.25)};}
+            \only<15->{\addplot[only marks, mark=*, mark size=1.8pt, red] coordinates {(3,0.125)};}
+            \only<16->{\addplot[only marks, mark=*, mark size=1.8pt, red] coordinates {(0,1)};}
+            \only<17->{\addplot[only marks, mark=*, mark size=1.8pt, red] coordinates {(-1,2)};}
+            \only<18->{\addplot[only marks, mark=*, mark size=1.8pt, red] coordinates {(-2,4)};}
+            \only<18->{\addplot[red, thick, domain=-2.2:3.2, samples=80, restrict y to domain=-0.5:8.5] {(1/2)^x};}
+            \only<18->{\node[red, font=\footnotesize] at (axis cs:-1.7,4.8) {$g$};}
+          \end{axis}
+        \end{tikzpicture}
+
+        \vspace{0.04cm}
+        \only<4->{
+        {\scriptsize
+        \setlength{\tabcolsep}{2.8pt}
+        \renewcommand{\arraystretch}{1.35}
+        \begin{tabular}{|c|c|c|c|c|c|c|}
+          \hline
+          \rowcolor{margueVerdClar!70}
+          \textcolor{white}{\rule{0pt}{1.1em}\(x\)} &
+          \textcolor{white}{-2} & \textcolor{white}{-1} & \textcolor{white}{0} &
+          \textcolor{white}{1} & \textcolor{white}{2} & \textcolor{white}{3} \\
+          \hline
+          \rowcolor{margueVerdCaixa}
+          \rule{0pt}{1.35em}\(f(x)=2^x\) &
+          \only<10->{\(\frac{1}{4}\)}\only<-9>{} &
+          \only<9->{\(\frac{1}{2}\)}\only<-8>{} &
+          \only<8->{1}\only<-7>{} &
+          \only<5->{2}\only<-4>{} &
+          \only<6->{4}\only<-5>{} &
+          \only<7->{8}\only<-6>{} \\
+          \hline
+        \end{tabular}
+        }
+        }
+        \only<1-3>{\vspace{1.25cm}}
+
+        \vspace{0.18cm}
+        \only<12->{
+        {\scriptsize
+        \setlength{\tabcolsep}{2.8pt}
+        \renewcommand{\arraystretch}{1.35}
+        \begin{tabular}{|c|c|c|c|c|c|c|}
+          \hline
+          \rowcolor{margueVerdClar!70}
+          \textcolor{white}{\rule{0pt}{1.1em}\(x\)} &
+          \textcolor{white}{-2} & \textcolor{white}{-1} & \textcolor{white}{0} &
+          \textcolor{white}{1} & \textcolor{white}{2} & \textcolor{white}{3} \\
+          \hline
+          \rowcolor{margueVerdCaixa}
+          \rule{0pt}{1.35em}\(g(x)=\left(\frac{1}{2}\right)^x\) &
+          \only<18->{4}\only<-17>{} &
+          \only<17->{2}\only<-16>{} &
+          \only<16->{1}\only<-15>{} &
+          \only<13->{\(\frac{1}{2}\)} &
+          \only<14->{\(\frac{1}{4}\)}\only<-13>{} &
+          \only<15->{\(\frac{1}{8}\)}\only<-14>{} \\
+          \hline
+        \end{tabular}
+        }
+        }
+        \only<1-11>{\vspace{0.62cm}}
+      \end{minipage}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\subsection{Propietats}
+
+% ---------- DIAPO 2.3 (1/2): Propietats algebraiques ----------
+\begin{frame}[t]
+  \frametitle{2.3. Propietats exponencial}
+
+  \small
+  \setlength{\itemsep}{0pt}
+  \setlength{\topsep}{0.08em}
+  \setlength{\parsep}{0pt}
+
+  % Fila 1: domini i recorregut
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.63\textwidth}
+      \begin{minipage}[t][1.55em]{\columnwidth}
+        \begin{itemize}
+          \item<1-> \(D_f=\mathbb{R}\), \(R_f=\mathbb{R}^+\).
+        \end{itemize}
+      \end{minipage}
+    \end{column}
+    \begin{column}{0.35\textwidth}
+      \begin{minipage}[t][1.55em]{\columnwidth}{\strut}\end{minipage}
+    \end{column}
+  \end{columns}
+
+  \vspace{0.14cm}
+  % Fila 2: producte i quocient
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.63\textwidth}
+      \begin{minipage}[t][4.1em]{\columnwidth}
+        \begin{itemize}
+          \item<2-> \(a^x\cdot a^z=a^{x+z}\), \quad \(\dfrac{a^x}{a^z}=a^{x-z}\), \quad \(\forall x,z\in\mathbb{R}\)
+        \end{itemize}
+      \end{minipage}
+    \end{column}
+    \begin{column}{0.35\textwidth}
+      \begin{minipage}[c][4.1em]{\columnwidth}
+        \begin{itemize}
+          \item<3-> \(3^2\cdot 3^4=3^6\)
+        \end{itemize}
+      \end{minipage}
+    \end{column}
+  \end{columns}
+
+  \vspace{0.14cm}
+  % Fila 3: potència d'una potència
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.63\textwidth}
+      \begin{minipage}[t][1.75em]{\columnwidth}
+        \begin{itemize}
+          \item<4-> \((a^x)^z=a^{xz}\), \quad \(\forall x,z\in\mathbb{R}\)
+        \end{itemize}
+      \end{minipage}
+    \end{column}
+    \begin{column}{0.35\textwidth}
+      \begin{minipage}[c][1.75em]{\columnwidth}
+        \begin{itemize}
+          \item<5-> \((3^2)^4=3^8\)
+        \end{itemize}
+      \end{minipage}
+    \end{column}
+  \end{columns}
+
+  \vspace{0.14cm}
+  % Fila 4: potència d'un producte i d'un quocient
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.63\textwidth}
+      \begin{minipage}[t][4.65em]{\columnwidth}
+        \vspace{0.45em}
+        \begin{itemize}
+          \item<6-> \((ab)^x=a^x b^x\), \quad \(\left(\dfrac{a}{b}\right)^x=\dfrac{a^x}{b^x}\), \quad \(\forall x\in\mathbb{R},\;\forall a,b\in\mathbb{R}^+\)
+        \end{itemize}
+      \end{minipage}
+    \end{column}
+    \begin{column}{0.35\textwidth}
+      \begin{minipage}[c][4.65em]{\columnwidth}
+        \begin{itemize}
+          \item<7-> \(3^5\cdot 4^5=12^5\)
+        \end{itemize}
+      \end{minipage}
+    \end{column}
+  \end{columns}
+
+  \vspace{0.14cm}
+  % Fila 5: punt (0,1)
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.63\textwidth}
+      \begin{minipage}[t][3em]{\columnwidth}
+        \begin{itemize}
+          \item<8-> \(a^0=1 \;\leftrightarrow\; h=0 \;\rightarrow\;\) les gràfiques de totes les funcions exponencials passen pel punt \((0,1)\).
+        \end{itemize}
+      \end{minipage}
+    \end{column}
+    \begin{column}{0.35\textwidth}
+      \begin{minipage}[t][3em]{\columnwidth}{\strut}\end{minipage}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ---------- DIAPO 2.3 (II): Creixement, límits i simetria ----------
+\begin{frame}[t]
+  \frametitle{2.3. Propietats exponencial (II)}
+
+  \vspace{-0.25cm}
+  \small
+  \setlength{\itemsep}{0.06em}
+  \setlength{\topsep}{0.06em}
+
+  % Part superior: bullets (esquerra) + gràfic (dreta)
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.50\textwidth}
+      \begin{minipage}[t][4.85cm]{\columnwidth}
+        \begin{itemize}
+          \item<1-> Si \(a>1\), la funció exponencial de base \(a\) és \textbf{creixent}, ja que si \(x<z \;\rightarrow\; a^x<a^z\).
+          \item<4-> Si \(0<a<1\), la funció exponencial de base \(a\) és \textbf{decreixent}, ja que si \(x<z \;\rightarrow\; a^x>a^z\).
+          \item<7-> Les gràfiques de \(f(x)=a^x\) i \(g(x)=\left(\dfrac{1}{a}\right)^x\) són \textbf{simètriques} respecte l'eix d'ordenades.
+        \end{itemize}
+      \end{minipage}
+    \end{column}
+
+    \begin{column}{0.48\textwidth}
+      \begin{minipage}[t][4.85cm]{\columnwidth}
+        \centering
+        \begin{tikzpicture}
+          \begin{axis}[
+            width=6.05cm, height=4.85cm,
+            xmin=-5, xmax=5, ymin=-0.3, ymax=10.8,
+            enlargelimits=false,
+            axis lines=middle,
+            xlabel={\(x\)}, ylabel={\(y\)},
+            grid=major, grid style={gray!20},
+            ticklabel style={font=\tiny},
+            label style={font=\footnotesize},
+            clip=false
+          ]
+            \only<2->{
+              \addplot[margueVerdFosc, thick, domain=-4.8:4.8, samples=70, restrict y to domain=0:10.5] {2^x};
+              \node[font=\tiny, margueVerdFosc, anchor=west] at (axis cs:3.05,5.8) {$f_1(x)=2^x$};
+            }
+            \only<2->{
+              \addplot[red, thick, domain=-4.5:2.1, samples=70, restrict y to domain=0:10.5] {3^x};
+              \node[font=\tiny, red, anchor=south west] at (axis cs:0.85,10.15) {$f_2(x)=3^x$};
+            }
+            \only<5->{
+              \addplot[blue, thick, domain=-4.8:4.8, samples=70, restrict y to domain=0:10.5] {(1/2)^x};
+              \node[font=\tiny, blue, anchor=east] at (axis cs:-3.25,5.2) {$f_3(x)=\left(\frac{1}{2}\right)^x$};
+            }
+            \only<5->{
+              \addplot[orange, thick, domain=-4.5:4.8, samples=70, restrict y to domain=0:10.5] {(1/3)^x};
+              \node[font=\tiny, orange, anchor=south west] at (axis cs:-3.1,10.15) {$f_4(x)=\left(\frac{1}{3}\right)^x$};
+            }
+          \end{axis}
+        \end{tikzpicture}
+      \end{minipage}
+    \end{column}
+  \end{columns}
+
+  \vspace{0.08cm}
+  % Part inferior: límits en dues columnes
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.48\textwidth}
+      \only<3->{
+        Si \(a>1\):
+        \begin{itemize}
+          \item \(\displaystyle\lim_{x\to+\infty} f(x)=+\infty\)
+          \item \(\displaystyle\lim_{x\to-\infty} f(x)=0\)
+        \end{itemize}
+      }
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \only<6->{
+        Si \(0<a<1\):
+        \begin{itemize}
+          \item \(\displaystyle\lim_{x\to+\infty} f(x)=0\)
+          \item \(\displaystyle\lim_{x\to-\infty} f(x)=+\infty\)
+        \end{itemize}
+      }
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ---------- DIAPO 2.3 (III): Injectivitat i exhaustivitat ----------
+\begin{frame}[t]
+  \frametitle{2.3. Propietats exponencial (III)}
+
+  \vspace{-0.12cm}
+  \small
+  \setlength{\itemsep}{0.06em}
+  \setlength{\topsep}{0.06em}
+
+  \begin{columns}[T,onlytextwidth]
+    % ---- INJECTIVA (esquerra) ----
+    \begin{column}{0.48\textwidth}
+      \begin{itemize}
+        \item<1-> Si \(a^x=a^z \;\rightarrow\; x=z\) (funció injectiva).
+        \item<2-> Ex.: si \(2^x=2^3 \;\rightarrow\; x=3\).
+      \end{itemize}
+
+      \vspace{0.15cm}
+      \only<3->{
+        \begin{caixadem}[width=0.92\columnwidth]
+          \only<3->{$a^x=a^z$}\\[0.12cm]
+          \only<4->{$a^x\cdot a^{-x}=a^z\cdot a^{-x}$}\\[0.12cm]
+          \only<5->{$1=a^{z-x}$}\\[0.12cm]
+          \only<6->{$z-x=0 \;\Rightarrow\; x=z$}
+        \end{caixadem}
+      }
+    \end{column}
+
+    % ---- EXHAUSTIVA (dreta) ----
+    \begin{column}{0.48\textwidth}
+      \begin{itemize}
+        \item<7-> \(y\in\mathbb{R}^+\), \(\exists x\in\mathbb{R}\) tal que \(a^x=y\) (funció exhaustiva en \(\mathbb{R}^+\)).
+        \item<8-> Ex.: si \(f(x)=2^x\) i \(y=8 \;\rightarrow\; x=3\) perquè \(2^3=8\).
+        \item<9-> Qualsevol imatge \(y\) té una única antiimatge \(x\).
+        \item<10-> Ex.: per a \(y=16\) i \(f(x)=2^x\), només \(x=4\).
+      \end{itemize}
+
+      \vspace{0.08cm}
+      \only<7->{
+        \centering
+        \begin{tikzpicture}
+          \begin{axis}[
+            width=4.75cm, height=3.45cm,
+            xmin=-1, xmax=5, ymin=-0.5, ymax=10.5,
+            enlargelimits=false,
+            axis lines=middle,
+            xlabel={\(x\)}, ylabel={\(y\)},
+            ytick={0,2,4,6,8,10},
+            grid=major, grid style={gray!15},
+            ticklabel style={font=\tiny},
+            label style={font=\tiny},
+            clip=true
+          ]
+            \addplot[margueVerdFosc, thick, domain=-1:3.15, samples=55, restrict y to domain=0:10.5] {2^x};
+            \only<8->{
+              \addplot[margueVerdClar, dashed, thick, domain=-1:5] {8};
+              \node[font=\tiny, margueVerdFosc, anchor=west] at (axis cs:4.85,8) {$y=8$};
+              \addplot[only marks, mark=*, mark size=2pt, red] coordinates {(3,8)};
+              \node[font=\tiny, red, anchor=west] at (axis cs:3.5,6.5) {$(3,8)$};
+            }
+          \end{axis}
+        \end{tikzpicture}
+      }
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ============================================================
+% SECCIÓ 3: EQUACIONS EXPONENCIALS
+% ============================================================
+\section{Equacions exponencials}
+
+% ---------- DIAPO 3.0: Introducció ----------
+\begin{frame}[t]
+  \frametitle{3. Equacions exponencials}
+
+  \small
+  \begin{itemize}
+    \item<1-> Com que \(y\in\mathbb{R}^+\), \(\exists x\in\mathbb{R}\) tal que \(a^x=y\), cada imatge \(y\) té una \textbf{única antiimatge} \(x\).
+    \item<2-> Això ens permet \textbf{resoldre equacions exponencials}.
+    \item<3-> Veurem \textbf{5 tipus} diferents d'equacions exponencials.
+    \item<4-> Alguns exemples que resoldrem:
+    \begin{itemize}
+      \item<4-> \(5^x=625\)
+      \item<5-> \(8^{2x+3}=4^{\frac{x}{3}}\)
+      \item<6-> \(3^{x-1}+3^x+3^{x+1}=39\)
+      \item<7-> \(4^x+6\cdot 2^{x+1}+32=0\)
+      \item<8-> \(2^x=23\)
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+% ---------- DIAPO 3.1: Tipus 1 ----------
+\begin{frame}[t]
+  \frametitle{3. Equacions exponencials — Tipus 1}
+
+  \small
+  \caixatitol{\(a^x=k\)}
+
+  \vspace{0.15cm}
+  \textbf{Estratègia:} expressar \(k\) com a potència de base \(a\).
+
+  \vspace{0.2cm}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.48\textwidth}
+      \textbf{Exemple 1}
+      \begin{align*}
+        \only<2->{5^x &= 625} \\
+        \only<3->{5^x &= 5^4} \\
+        \only<4->{& \solucio{x = 4}}
+      \end{align*}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \only<5->{\textbf{Exemple 2}}
+      \begin{align*}
+        \only<5->{4^x &= 64} \\
+        \only<6->{4^x &= 4^3} \\
+        \only<7->{& \solucio{x = 3}}
+      \end{align*}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ---------- DIAPO 3.2: Tipus 2 ----------
+\begin{frame}[t]
+  \frametitle{3. Equacions exponencials — Tipus 2}
+
+  \small
+  \caixatitol{\(a^{f(x)}=b^{g(x)}\)}
+
+  \vspace{0.15cm}
+  \textbf{Estratègia:} expressar les dues potències amb la \textbf{mateixa base}.
+
+  \vspace{0.2cm}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.48\textwidth}
+      \textbf{Exemple 1}
+      \begin{align*}
+        \only<2->{3^{x+1} &= 9} \\
+        \only<3->{3^{x+1} &= 3^2} \\
+        \only<4->{x+1 &= 2} \\
+        \only<5->{& \solucio{x = 1}}
+      \end{align*}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \only<6->{\textbf{Exemple 2}}
+      \begin{align*}
+        \only<6->{8^{2x+3} &= 4^{\frac{x}{3}}} \\
+        \only<7->{2^{6x+9} &= 2^{\frac{2x}{3}}} \\
+        \only<8->{6x+9 &= \frac{2x}{3}} \\
+        \only<9->{& \solucio{x = -\frac{27}{16}}}
+      \end{align*}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ---------- DIAPO 3.3: Tipus 3 ----------
+\begin{frame}[t]
+  \frametitle{3. Equacions exponencials — Tipus 3}
+
+  \small
+  \caixatitol{\(a^{f(x)}+a^{g(x)}+\cdots+a^{z(x)}=k\)}
+
+  \vspace{0.15cm}
+  \textbf{Estratègia:} reescriure per poder extreure \textbf{factor comú}.
+
+  \vspace{0.2cm}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.48\textwidth}
+      \textbf{Exemple 1}
+      \begin{align*}
+        \only<2->{2^x+2^{x+1} &= 12} \\
+        \only<3->{2^x+2^x\cdot 2^1 &= 12} \\
+        \only<4->{%
+          \fc{2^x}+\fc{2^x}\cdot 2 &= 12
+        } \\
+        \only<5->{2^x(1+2) &= 12} \\
+        \only<6->{2^x &= 4} \\
+        \only<7->{& \solucio{x = 2}}
+      \end{align*}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[t]
+  \frametitle{3. Equacions exponencials — Tipus 3 (exemple 2)}
+
+  \small
+  \textbf{Exemple 2}
+  \begin{align*}
+    \only<1->{3^{x-1}+3^x+3^{x+1} &= 39} \\
+    \only<2->{3^x\cdot 3^{-1}+3^x+3^x\cdot 3 &= 39} \\
+    \only<3->{%
+      \fc{3^x}\cdot\tfrac{1}{3}+\fc{3^x}+\fc{3^x}\cdot 3 &= 39
+    } \\
+    \only<4->{3^x\!\left(\tfrac{1}{3}+1+3\right) &= 39} \\
+    \only<5->{3^x\cdot\tfrac{13}{3} &= 39} \\
+    \only<6->{3^x &= 39\cdot\tfrac{3}{13}} \\
+    \only<7->{3^x &= 9} \\
+    \only<8->{& \solucio{x = 2}}
+  \end{align*}
+\end{frame}
+
+% ---------- DIAPO 3.4: Tipus 4 (exemple 1) ----------
+\begin{frame}[t]
+  \frametitle{3. Equacions exponencials — Tipus 4}
+
+  \small
+  \caixatitol{\(k\cdot a^{f(x)}+l\cdot b^{g(x)}+\cdots+n\cdot d^{h(x)}=0\)}
+
+  \vspace{0.1cm}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.38\textwidth}
+      \textbf{Estratègia}
+      \begin{itemize}
+        \item<1-> Reescriure amb potències de la \textbf{mateixa base}.
+        \item<4-> Fer el canvi de variable \(a^x=t\).
+        \item<7-> Resoldre i \textbf{desfer} el canvi de variable.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.60\textwidth}
+      \textbf{Exemple:}
+      \footnotesize
+      \setlength{\jot}{3pt}
+      \begin{align*}
+        \only<2->{4^x+6\cdot 2^{x+1}+32 &= 0} \\
+        \only<3->{(2^x)^2+12\cdot 2^x+32 &= 0} \\
+        \only<5->{t &= 2^x} \\
+        \only<6->{t^2+12t+32 &= 0} \\
+        \only<8->{t_1 &= 8} \\
+        \only<8->{t_2 &= 4} \\
+        \only<9->{2^{x_1} &= 8} \\
+        \only<9->{2^{x_2} &= 4} \\
+        \only<10->{& \solucio{x_1 = 3}} \\
+        \only<11->{& \solucio{x_2 = 2}}
+      \end{align*}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[t]
+  \frametitle{3. Equacions exponencials — Tipus 4 (exemple 2)}
+
+  \small
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.38\textwidth}
+      \textbf{Estratègia}
+      \begin{itemize}
+        \item<1-> Reescriure amb potències de la \textbf{mateixa base}.
+        \item<4-> Fer el canvi de variable \(a^x=t\).
+        \item<7-> Resoldre i \textbf{desfer} el canvi de variable.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.60\textwidth}
+      \textbf{Exemple:}
+      \footnotesize
+      \setlength{\jot}{3pt}
+      \begin{align*}
+        \only<2->{4^x-5\cdot 2^x+4 &= 0} \\
+        \only<3->{(2^x)^2-5\cdot 2^x+4 &= 0} \\
+        \only<5->{t &= 2^x} \\
+        \only<6->{t^2-5t+4 &= 0} \\
+        \only<8->{t_1 &= 4} \\
+        \only<8->{t_2 &= 1} \\
+        \only<9->{2^{x_1} &= 4} \\
+        \only<9->{2^{x_2} &= 1} \\
+        \only<10->{& \solucio{x_1 = 2}} \\
+        \only<11->{& \solucio{x_2 = 0}}
+      \end{align*}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ---------- DIAPO 3.5: Tipus 5 ----------
+\begin{frame}[t]
+  \frametitle{3. Equacions exponencials — Tipus 5}
+
+  \small
+  \caixatitol{\(a^x=t\quad (t>0)\)}
+
+  \vspace{0.1cm}
+  \textbf{Estratègia} (solució aproximada amb calculadora):
+
+  \vspace{0.15cm}
+  \centering
+  \begin{tikzpicture}[
+    node distance=0.55cm and 0.35cm,
+    every node/.style={font=\footnotesize},
+    stepbox/.style={
+      draw=margueVerdFosc, fill=margueVerdCaixa, rounded corners=2pt,
+      inner xsep=5pt, inner ysep=3pt, align=center, minimum width=2.1cm
+    },
+    arr/.style={-{Stealth[length=2mm]}, thick, margueVerdFosc}
+  ]
+    \only<1->{\node[stepbox] (start) {Provar un valor de \(x\)};}
+    \only<2->{
+      \node[stepbox, below=of start] (cmp) {Calcular \(a^x\) i comparar amb \(t\)};
+      \draw[arr] (start) -- (cmp);
+    }
+    \only<3->{
+      \node[stepbox, below left=0.7cm and 0.1cm of cmp] (down) {Massa gran?\\Reduir \(x\)};
+      \node[stepbox, below right=0.7cm and 0.1cm of cmp] (up) {Massa petit?\\Augmentar \(x\)};
+      \draw[arr] (cmp) -- (down);
+      \draw[arr] (cmp) -- (up);
+    }
+    \only<4->{
+      \node[stepbox, below=1.35cm of cmp] (fine) {Precisió assolida:\\defecte i excés};
+      \draw[arr] (down) -- (fine);
+      \draw[arr] (up) -- (fine);
+    }
+    \only<5->{
+      \draw[arr]
+        (fine.south) -- ++(0,-0.75)
+        -- ++(-4.8,0)
+        -- ++(0,5.1)
+        -| (start.west);
+    }
+  \end{tikzpicture}
+\end{frame}
+
+\begin{frame}[t]
+  \frametitle{3. Equacions exponencials — Tipus 5 (exemple)}
+
+  \small
+  \textbf{Exemple:} resoldre \(2^x=23\)
+
+  \vspace{0.15cm}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.50\textwidth}
+      \begin{align*}
+        \only<1->{2^1 &= 2 < 23} \\
+        \only<2->{2^2 &= 4 < 23} \\
+        \only<3->{2^4 &= 16 < 23} \\
+        \only<4->{2^5 &= 32 > 23} \\
+        \only<6->{2^{4{,}51} &\approx 22{,}78} \\
+        \only<7->{2^{4{,}52} &\approx 22{,}94} \\
+        \only<8->{2^{4{,}53} &\approx 23{,}10}
+      \end{align*}
+      \only<9->{%
+        Defecte (2 decimals): \(\solucio{x = 4{,}52}\)\\
+        Excés (2 decimals): \(\solucio{x = 4{,}53}\)
+      }
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \centering
+      \only<5->{%
+        \begin{tikzpicture}[scale=0.95, every node/.style={font=\footnotesize}]
+          \draw[very thick, margueVerdFosc] (0,0) -- (7.5,0);
+          \draw[margueVerdFosc] (0,0.15) -- (0,-0.15);
+          \draw[margueVerdFosc] (7.5,0.15) -- (7.5,-0.15);
+          \node[below=3pt] at (0,0) {$2^4=16$};
+          \node[below=3pt] at (7.5,0) {$2^5=32$};
+          \fill[margueVerdFosc] (3.28,0) circle (2.2pt);
+          \node[margueVerdFosc, above=5pt] at (3.28,0) {$23$};
+          \draw[margueVerdClar, line width=3pt] (0,0) -- (3.28,0);
+          \draw[margueVerdFosc, line width=3pt] (3.28,0) -- (7.5,0);
+          \node[align=center, font=\scriptsize] at (3.75,-1.05)
+            {$16<23<32$\\\(\Rightarrow\;4<x<5\)};
+        \end{tikzpicture}
+      }
+      \only<9->{%
+        \vspace{0.25cm}
+        \begin{tikzpicture}[scale=0.95, every node/.style={font=\footnotesize}]
+          \draw[very thick, margueVerdFosc] (0,0) -- (7.5,0);
+          \foreach \x/\lbl in {0/4{,}51, 3.75/4{,}52, 7.5/4{,}53} {
+            \draw[margueVerdFosc] (\x,0.15) -- (\x,-0.15) node[below=3pt] {\lbl};
+          }
+          \fill[margueVerdFosc] (3.9,0) circle (2.2pt);
+          \node[margueVerdFosc, above=5pt] at (3.9,0) {$23$};
+        \end{tikzpicture}
+      }
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ============================================================
+% SECCIÓ 4: FUNCIÓ LOGARÍTMICA
+% ============================================================
+\section{Funció logarítmica}
+
+% ---------- DIAPO 4: Introducció + gràfic ----------
+\begin{frame}[t]
+  \frametitle{4. La funció logarítmica}
+
+  \small
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.57\textwidth}
+      \begin{itemize}
+        \item<1-> Com resolem expressions de la forma \(2^x=8\)?
+        \item<2-> \textbf{Logaritme:} funció \textbf{inversa} a l'exponencial que ens permet resoldre equacions de la forma \(a^x=b\).
+        \item<3-> \(a^x=b \;\rightarrow\; x=\log_a b\)
+      \end{itemize}
+      \vspace{0.12cm}
+      \only<4->{
+        \begin{caixadef}[compact, width=\textwidth]
+          A quin nombre he d'elevar \(a\) per obtenir \(b\)?
+        \end{caixadef}
+      }
+      \vspace{0.18cm}
+      \only<7->{\raggedright Si \(f(x)=a^x\), llavors \(f^{-1}(x)=\log_a x\).\par}
+      \only<8->{\raggedright Les gràfiques de \(f\) i \(f^{-1}\) són \textbf{simètriques} respecte \(y=x\).}
+    \end{column}
+    \begin{column}{0.41\textwidth}
+      \centering
+      \begin{tikzpicture}
+        \begin{axis}[
+          width=5.35cm, height=5.75cm,
+          xmin=-3, xmax=8.5, ymin=-2, ymax=8.5,
+          enlargelimits=false,
+          axis lines=middle,
+          xlabel={\(x\)}, ylabel={\(y\)},
+          grid=major, grid style={gray!20},
+          ticklabel style={font=\tiny},
+          label style={font=\footnotesize},
+          clip=true
+        ]
+          \only<2->{
+            \addplot[margueVerdFosc, thick, domain=-2.8:3.05, samples=80, restrict y to domain=-0.5:8.5]
+              {2^x};
+            \node[font=\tiny, margueVerdFosc, anchor=north] at (axis cs:2.4,4.2) {$f(x)=2^x$};
+          }
+          \only<6->{
+            \addplot[blue, thick, domain=0.08:8.5, samples=80, restrict y to domain=-2:8.5]
+              {ln(x)/ln(2)};
+            \node[font=\tiny, blue, anchor=south] at (axis cs:5.4,4.6) {$f^{-1}(x)=\log_2 x$};
+          }
+          \only<7->{
+            \addplot[dashed, gray!60, domain=-2.8:8, samples=2] {x};
+          }
+        \end{axis}
+      \end{tikzpicture}
+
+      \vspace{0.06cm}
+      \only<5->{\textbf{Exemple:}}
+      \footnotesize
+      \begin{align*}
+        \only<5->{2^x &= 128} \\
+        \only<6->{x &= \log_2 128} \\
+        \only<7->{x &= 7 \quad\text{(ja que }2^7=128\text{)}}
+      \end{align*}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\subsection{Propietats}
+
+% ---------- DIAPO 4.1 (I): Propietats fonamentals ----------
+\begin{frame}[t]
+  \frametitle{4.1. Propietats dels logaritmes (I)}
+
+  \small
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.50\textwidth}
+      \only<1->{\textbf{\(f(x)=\log_a x\)}\par\vspace{0.1cm}}
+      \begin{itemize}
+        \item<1-> \(D_f=\mathbb{R}^+\)
+        \item<1-> \(R_f=\mathbb{R}\)
+        \item<2-> \(a\in(0,1)\cup(1,+\infty)\), \(a\neq 1\) (si \(a=1\), \(1^x=1\) sempre \(\Rightarrow\) infinites solucions).
+        \item<3-> \(\log_a x\) és \textbf{contínua} en tot el seu domini.
+        \item<4-> \(\log_a x\) i \(\log_{1/a} x\) són \textbf{simètriques} respecte l'eix d'abscisses.
+        \item<5-> \(\log_a a=1\) i \(\log_a 1=0\), \(\forall a\in\mathbb{R}^+\setminus\{1\}\).
+        \item<6-> Totes les funcions logarítmiques passen pel punt \((1,0)\).
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \centering
+      \only<4->{
+        \begin{tikzpicture}
+          \begin{axis}[
+            width=5.55cm, height=6.2cm,
+            xmin=-1, xmax=8, ymin=-5.5, ymax=5.5,
+            enlargelimits=false,
+            axis lines=middle,
+            xlabel={\(x\)}, ylabel={\(y\)},
+            grid=major, grid style={gray!20},
+            ticklabel style={font=\tiny},
+            label style={font=\footnotesize},
+            clip=true
+          ]
+            \addplot[blue, thick, domain=0.08:8, samples=80] {ln(x)/ln(2)};
+            \addplot[violet, thick, domain=0.08:8, samples=80] {-ln(x)/ln(2)};
+            \addplot[only marks, mark=*, mark size=1.8pt, margueVerdFosc] coordinates {(1,0)};
+            \node[font=\tiny, blue, anchor=south] at (axis cs:4.8,3.4) {$f_2(x)=\log_2 x$};
+            \node[font=\tiny, violet, anchor=north] at (axis cs:4.8,-3.4) {$f_3(x)=\log_{1/2} x$};
+          \end{axis}
+        \end{tikzpicture}
+      }
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ---------- DIAPO 4.1 (II): Propietats algebraiques ----------
+\begin{frame}[t]
+  \frametitle{4.1. Propietats dels logaritmes (II)}
+
+  \small
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.48\textwidth}
+      \only<1->{
+        \begin{caixadef}[centrat]
+          \(a^{\log_a x}=x\)
+        \end{caixadef}
+      }
+      \only<2->{
+        \begin{itemize}
+          \item \(2^{\log_2 8}=8\)
+        \end{itemize}
+      }
+
+      \vspace{0.15cm}
+      \only<3->{
+        \begin{caixadef}[centrat]
+          \(\log_a(x\cdot z)=\log_a x+\log_a z\)
+        \end{caixadef}
+      }
+      \only<4->{
+        \begin{itemize}
+          \item \(\log_a(3b)=\log_a 3+\log_a b\)
+          \item \(\log_a 6=\log_a(2\cdot 3)=\log_a 2+\log_a 3\)
+        \end{itemize}
+      }
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \only<5->{
+        \begin{caixadef}[centrat]
+          \(\log_a\!\left(\dfrac{x}{z}\right)=\log_a x-\log_a z\)
+        \end{caixadef}
+      }
+      \only<6->{
+        \begin{itemize}
+          \item \(\log_a\!\left(\dfrac{b}{3}\right)=\log_a b-\log_a 3\)
+          \item \(\log_a 2=\log_a\!\left(\dfrac{6}{3}\right)=\log_a 6-\log_a 3\)
+        \end{itemize}
+      }
+
+      \vspace{0.15cm}
+      \only<7->{
+        \begin{caixadef}[centrat]
+          \(\log_a(x^p)=p\cdot\log_a x\)
+        \end{caixadef}
+      }
+      \only<8->{
+        \begin{itemize}
+          \item \(\log_a(x^2)=2\log_a x\)
+          \item \(2\log_a x=\log_a(x^2)\)
+        \end{itemize}
+      }
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ---------- DIAPO 4.1 (III): Creixement i límits ----------
+\begin{frame}[t]
+  \frametitle{4.1. Propietats dels logaritmes (III)}
+
+  \vspace{-0.55cm}
+  \small
+  \setlength{\itemsep}{0.06em}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.50\textwidth}
+      \begin{minipage}[t][3.2cm]{\columnwidth}
+        \begin{itemize}
+          \item<1-> Si \(a>1\), \(\log_a x\) és \textbf{creixent}: \(x<z \Rightarrow \log_a x<\log_a z\).
+          \item<4-> Si \(0<a<1\), \(\log_a x\) és \textbf{decreixent}: \(x<z \Rightarrow \log_a x>\log_a z\).
+        \end{itemize}
+      \end{minipage}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \centering
+      \vspace{-0.15cm}
+      \begin{tikzpicture}
+        \begin{axis}[
+          width=5.55cm, height=6.65cm,
+          xmin=-0.2, xmax=4.2, ymin=-4.5, ymax=4.5,
+          enlargelimits=false,
+          axis lines=middle,
+          xlabel={\(x\)}, ylabel={\(y\)},
+          grid=major, grid style={gray!20},
+          ticklabel style={font=\tiny},
+          label style={font=\footnotesize},
+          clip=true
+        ]
+          \only<5->{
+            \addplot[margueVerdFosc, thick, domain=0.05:4, samples=80] {-ln(x)/ln(2)};
+            \node[font=\tiny, margueVerdFosc, anchor=west] at (axis cs:3,-2.5) {$f_1=\log_{1/2}x$};
+          }
+          \only<5->{
+            \addplot[blue, thick, dashed, domain=0.05:4, samples=80] {-ln(x)/ln(8)};
+            \node[font=\tiny, blue, anchor=west] at (axis cs:3.35,-1.85) {$f_2=\log_{1/8}x$};
+          }
+          \only<2->{
+            \addplot[orange, thick, domain=0.05:4, samples=80] {ln(x)/ln(2)};
+            \node[font=\tiny, orange, anchor=west] at (axis cs:3,2.5) {$f_3=\log_2 x$};
+          }
+          \only<2->{
+            \addplot[red, thick, dashed, domain=0.05:4, samples=80] {ln(x)/ln(8)};
+            \node[font=\tiny, red, anchor=west] at (axis cs:3.35,1.85) {$f_4=\log_8 x$};
+          }
+        \end{axis}
+      \end{tikzpicture}
+    \end{column}
+  \end{columns}
+  \vspace{0.06cm}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.48\textwidth}
+      \only<3->{
+        Si \(a>1\):
+        \begin{itemize}
+          \item \(\displaystyle\lim_{x\to 0^+}\log_a x=-\infty\)
+          \item \(\displaystyle\lim_{x\to+\infty}\log_a x=+\infty\)
+        \end{itemize}
+      }
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \only<6->{
+        Si \(0<a<1\):
+        \begin{itemize}
+          \item \(\displaystyle\lim_{x\to 0^+}\log_a x=+\infty\)
+          \item \(\displaystyle\lim_{x\to+\infty}\log_a x=-\infty\)
+        \end{itemize}
+      }
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ---------- DIAPO 4.2: Bases més utilitzades ----------
+\begin{frame}[t]
+  \frametitle{4.2. Bases més utilitzades}
+
+  \small
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.52\textwidth}
+      \begin{itemize}
+        \item<1-> Dues funcions exponencials molt utilitzades: \(e^x\) i \(10^x\).
+        \item<2-> Dues bases de logaritmes molt utilitzades: \(e\) i \(10\).
+        \item<3-> Tenen tecles específiques a la calculadora:
+        \begin{itemize}
+          \item<4-> \(\log_e x=\ln x\)
+          \item<5-> \(\log_{10} x=\log x\)
+        \end{itemize}
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.46\textwidth}
+      \centering
+      \only<6->{
+        \begin{tikzpicture}
+          \begin{axis}[
+            width=5.4cm, height=5.4cm,
+            xmin=-0.5, xmax=11, ymin=-2, ymax=2.5,
+            enlargelimits=false,
+            axis lines=middle,
+            xlabel={\(x\)}, ylabel={\(y\)},
+            grid=major, grid style={gray!20},
+            ticklabel style={font=\tiny},
+            label style={font=\footnotesize},
+            clip=true
+          ]
+            \addplot[red, thick, dashed, domain=0.08:11, samples=80] {ln(x)};
+            \addplot[gray, thick, domain=0.08:11, samples=80] {ln(x)/ln(10)};
+            \node[font=\tiny, red, anchor=west] at (axis cs:6,1.6) {$f(x)=\ln x$};
+            \node[font=\tiny, gray, anchor=west] at (axis cs:8,0.7) {$g(x)=\log x$};
+          \end{axis}
+        \end{tikzpicture}
+      }
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ---------- DIAPO 4.3: Canvi de base ----------
+\begin{frame}[t]
+  \frametitle{4.3. Canvi de base}
+
+  \small
+  \begin{itemize}
+    \item<1-> Considerem \(b^x=m\) (equivalent a \(x=\log_b m\)).
+    \item<2-> Si apliquem logaritmes en base \(a\) a cada costat:
+    \only<2->{\[
+      \log_a b^x=\log_a m \;\rightarrow\; x\log_a b=\log_a m \;\rightarrow\; x=\frac{\log_a m}{\log_a b}
+    \]}
+    \item<3-> \textbf{Fórmula del canvi de base:}
+    \only<3->{\[
+      \log_b m=\frac{\log_a m}{\log_a b}
+    \]}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[t]
+  \frametitle{4.3. Canvi de base (exemples)}
+
+  \small
+  \begin{itemize}
+    \item<1-> Moltes calculadores no tenen la tecla de logaritme en base arbitrària (\(\log_a\)). El canvi de base ens permet calcular \(\log_b m\) amb \(\ln\) o \(\log\):
+    \only<1->{\[
+      \log_3 5=\frac{\log 5}{\log 3}\approx\frac{0{,}6990}{0{,}4771}\approx 1{,}465
+      \quad (3^{1{,}465}\approx 5)
+    \]}
+    \item<2-> També ens permet resoldre equacions:
+    \only<2->{\[
+      2^x=23 \;\rightarrow\; x=\log_2 23=\frac{\log 23}{\log 2}\approx 4{,}52
+    \]}
+  \end{itemize}
+\end{frame}
+
+\end{document}

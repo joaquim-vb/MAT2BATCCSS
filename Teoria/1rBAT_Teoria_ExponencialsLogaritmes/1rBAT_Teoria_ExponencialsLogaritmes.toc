@@ -1,0 +1,9 @@
+\babel@toc {catalan}{}\relax 
+\beamer@sectionintoc {1}{Recordatori de funcions}{3}{0}{1}
+\beamer@sectionintoc {2}{Funció exponencial}{12}{0}{2}
+\beamer@subsectionintoc {2}{1}{Motivació}{12}{0}{2}
+\beamer@subsectionintoc {2}{2}{Definició i representació}{22}{0}{2}
+\beamer@subsectionintoc {2}{3}{Propietats}{42}{0}{2}
+\beamer@sectionintoc {3}{Equacions exponencials}{67}{0}{3}
+\beamer@sectionintoc {4}{Funció logarítmica}{142}{0}{4}
+\beamer@subsectionintoc {4}{1}{Propietats}{150}{0}{4}
