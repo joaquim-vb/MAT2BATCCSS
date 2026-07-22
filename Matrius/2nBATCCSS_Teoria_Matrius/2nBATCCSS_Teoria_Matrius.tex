@@ -1,0 +1,2666 @@
+﻿% Teoria Beamer — 2n BAT — Matrius
+% ---------------------------------
+% Regles i patrons: .cursor/rules/teoria-beamer.mdc
+% Documentació: brief.md (quan s'ompli el contingut)
+
+\PassOptionsToPackage{table}{xcolor}
+\documentclass[aspectratio=169]{beamer}
+\usefonttheme{professionalfonts}
+
+\usepackage[catalan]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[sfdefault,lf]{FiraSans}
+\usepackage[notext]{stix2}
+\usepackage{amsmath}
+
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usetikzlibrary{arrows.meta,positioning,calc}
+\usepackage{tcolorbox}
+\tcbuselibrary{skins,breakable}
+
+% ---------- CANVIAR PER CADA PRESENTACIÓ ----------
+\newcommand{\TeoriaTema}{Matrius}
+
+% ---------- COLORS ----------
+\definecolor{margueVerdClar}{HTML}{83BD2A}
+\definecolor{margueVerdFosc}{HTML}{46A700}
+\definecolor{margueVerdCaixa}{HTML}{F2F9EA}
+% Colors Sarrus (diagonals + / antidiagonals −)
+\definecolor{sarPosA}{HTML}{46A700}
+\definecolor{sarPosB}{HTML}{0E7490}
+\definecolor{sarPosC}{HTML}{CA8A04}
+\definecolor{sarNegA}{HTML}{171717}
+\definecolor{sarNegB}{HTML}{6D28D9}
+\definecolor{sarNegC}{HTML}{9F1239}
+
+% ---------- TEMA BASE ----------
+\setbeamertemplate{navigation symbols}{}
+\setbeamercolor{background canvas}{bg=white}
+\setbeamercolor{normal text}{fg=black}
+\setbeamercolor{structure}{fg=margueVerdFosc}
+\setbeamercolor{title}{fg=black}
+\setbeamercolor{frametitle}{fg=black,bg=white}
+\setbeamerfont{frametitle}{series=\bfseries,size=\Large}
+\setbeamertemplate{itemize item}{\textcolor{margueVerdFosc}{$\bullet$}}
+\setbeamertemplate{itemize subitem}{\textcolor{margueVerdFosc}{--}}
+
+\setbeamertemplate{headline}{}
+
+\setbeamertemplate{footline}{%
+  \begin{beamercolorbox}[wd=\paperwidth,ht=0.55cm,dp=0.25cm,leftskip=0.4cm,rightskip=0.4cm]{}
+    \color{margueVerdClar}\rule{\paperwidth}{0.04cm}\\[0.08cm]
+    \color{margueVerdFosc}\small\bfseries 2n BAT -- \TeoriaTema
+    \hfill
+    \color{gray}\small\insertframenumber/\inserttotalframenumber
+  \end{beamercolorbox}%
+}
+
+% ---------- CAIXES ----------
+\tcbset{
+  caixadefbase/.style={
+    colback=margueVerdCaixa, colframe=margueVerdFosc,
+    boxrule=1pt, arc=2pt,
+    left=6pt, right=6pt, top=4pt, bottom=4pt,
+    fontupper=\normalsize
+  },
+  compact/.style={
+    left=3pt, right=3pt, top=2pt, bottom=2pt,
+    fontupper=\small
+  },
+  ultracompact/.style={
+    left=3pt, right=3pt, top=0pt, bottom=0pt,
+    boxsep=0pt, arc=2pt,
+    fontupper=\small
+  },
+  titular/.style={
+    compact, hbox, boxsep=0pt
+  },
+  centrat/.style={
+    compact, halign=center
+  }
+}
+
+\newtcolorbox{caixadef}[1][]{caixadefbase, #1}
+
+\newcommand{\caixatitol}[1]{%
+  \begin{center}%
+    \begin{caixadef}[titular]#1\end{caixadef}%
+  \end{center}%
+}
+
+% Caixa compacta centrada dins la columna actual (ample = contingut)
+\newcommand{\caixacentrada}[1]{%
+  \begin{center}%
+    \begin{caixadef}[titular]#1\end{caixadef}%
+  \end{center}%
+}
+
+% Teoria de classificació (reutilitzable en diapositives 1.3a i 1.3b)
+\newcommand{\teoriaClassificacioMatrius}{%
+  \begin{itemize}
+    \item \textbf{Matriu fila}: una sola fila \;($1 \times n$).
+    \item \textbf{Matriu columna}: una sola columna \;($m \times 1$).
+    \item \textbf{Matriu quadrada}: $n$ files i $n$ columnes; el \textbf{ordre} és $n$.
+    \item \textbf{Matriu rectangular}: $m \neq n$.
+    \item \textbf{Matriu nul·la} ($\mathbf{0}$): tots els elements són zeros.
+  \end{itemize}
+  \vspace{0.08cm}
+  \caixacentrada{Iguals $\Leftrightarrow$ mateixa dimensió i $a_{ij}=b_{ij}$}%
+}
+
+% Visualitzacions de matrius quadrades (elements verds = rellevants)
+\newcommand{\matriuDiagPrincipalEx}{%
+  \[
+    \begin{pmatrix}
+      \fc{a_{11}} & a_{12} & a_{13} \\
+      a_{21} & \fc{a_{22}} & a_{23} \\
+      a_{31} & a_{32} & \fc{a_{33}}
+    \end{pmatrix}
+  \]%
+}
+\newcommand{\matriuTriangSupEx}{%
+  \[
+    \begin{pmatrix}
+      \fc{a_{11}} & \fc{a_{12}} & \fc{a_{13}} \\
+      0 & \fc{a_{22}} & \fc{a_{23}} \\
+      0 & 0 & \fc{a_{33}}
+    \end{pmatrix}
+  \]%
+}
+\newcommand{\matriuTriangInfEx}{%
+  \[
+    \begin{pmatrix}
+      \fc{a_{11}} & 0 & 0 \\
+      \fc{a_{21}} & \fc{a_{22}} & 0 \\
+      \fc{a_{31}} & \fc{a_{32}} & \fc{a_{33}}
+    \end{pmatrix}
+  \]%
+}
+\newcommand{\matriuDiagEx}{%
+  \[
+    \begin{pmatrix}
+      \fc{a_{11}} & 0 & 0 \\
+      0 & \fc{a_{22}} & 0 \\
+      0 & 0 & \fc{a_{33}}
+    \end{pmatrix}
+  \]%
+}
+\newcommand{\matriuIdentEx}{%
+  \[
+    \begin{pmatrix}
+      \fc{1} & 0 & 0 \\
+      0 & \fc{1} & 0 \\
+      0 & 0 & \fc{1}
+    \end{pmatrix}
+  \]%
+}
+\newcommand{\matriuSimetricaFormal}{%
+  {\small
+  \[
+    \begin{pmatrix}
+      a_{11} & a_{12} & a_{13} \\
+      \fc{a_{12}} & a_{22} & a_{23} \\
+      \fc{a_{13}} & \fc{a_{23}} & a_{33}
+    \end{pmatrix}
+  \]}%
+}
+\newcommand{\matriuAntisimetricaFormal}{%
+  {\small
+  \[
+    \begin{pmatrix}
+      0 & a_{12} & a_{13} \\
+      \fc{-a_{12}} & 0 & a_{23} \\
+      \fc{-a_{13}} & \fc{-a_{23}} & 0
+    \end{pmatrix}
+  \]}%
+}
+
+\newcommand{\solucio}[1]{{\color{margueVerdFosc}\ensuremath{\mathbf{#1}}}}
+\newcommand{\fc}[1]{{\color{margueVerdFosc}#1}}
+\newcommand{\textverd}[1]{{\color{margueVerdFosc}#1}}
+\newcommand{\dpos}[1]{{\color{margueVerdFosc}#1}}
+\newcommand{\dneg}[1]{#1}
+% Cel·la Sarrus: #1=overlay color, #2=color, #3=contingut
+\newcommand{\sarcell}[3]{\alt<#1->{\textcolor{#2}{$\mathbf{#3}$}}{$#3$}}
+
+% Operacions entre matrius (Gauss): font compacta, alineació per fila
+\newcommand{\gaussop}[1]{{\footnotesize\ensuremath{#1}}}
+\newcommand{\gaussopFila}[2]{%
+  \vspace*{0.54cm}%
+  \ifnum#1>1 \vspace*{0.56cm}\fi
+  \ifnum#1>2 \vspace*{0.56cm}\fi
+  \begin{center}%
+    \parbox{0.98\linewidth}{\centering\gaussop{#2}}%
+  \end{center}%
+}
+\newcommand{\gaussObjGeneral}{%
+  Objectiu general: aconseguir zeros \textbf{sota la diagonal} a través de la combinació lineal d'altres files.%
+}
+\newcommand{\gjObjGeneral}{%
+  Objectiu general: convertir $A$ en $I_n$; la part dreta serà $A^{-1}$.%
+}
+\newcommand{\gjDots}{\raisebox{-2.2ex}{\parbox[c]{1em}{\centering\LARGE$\cdots$}}}
+% Matriu identitat $2\times2$ revelada cel·la a cel·la (#1..#4 = overlays)
+\newcommand{\matriuIprogressiva}[4]{%
+  \begin{pmatrix}
+    \alt<#1-> {1} {\phantom{1}} & \alt<#2-> {0} {\phantom{0}} \\
+    \alt<#3-> {0} {\phantom{0}} & \alt<#4-> {1} {\phantom{1}}
+  \end{pmatrix}%
+}
+
+\tcbset{
+  caixadembase/.style={
+    enhanced,
+    colback=margueVerdCaixa, colframe=margueVerdFosc,
+    boxrule=1pt, arc=2pt,
+    left=6pt, right=6pt, top=4pt, bottom=4pt,
+    fontupper=\small,
+    colbacktitle=margueVerdFosc, coltitle=white,
+    fonttitle=\bfseries\small,
+    titlerule=0pt, toptitle=2pt, bottomtitle=2pt,
+    title=Demostració,
+  }
+}
+\newtcolorbox{caixadem}[1][]{caixadembase, #1}
+
+\title{\TeoriaTema}
+\subtitle{2n BAT}
+\author{}
+\institute{}
+\date{}
+
+\begin{document}
+
+% ---------- DIAPO 1: PORTADA ----------
+\begin{frame}[plain]
+  \begin{tikzpicture}[remember picture,overlay]
+    \node[anchor=north east] at ([xshift=-0.6cm,yshift=-0.6cm]current page.north east)
+      {\includegraphics[width=2.2cm]{LogoInstitut.png}};
+  \end{tikzpicture}
+  \vspace{1.5cm}
+  {\Huge\bfseries \TeoriaTema}\\[0.6cm]
+  \rule{0.5\textwidth}{0.5pt}\\[0.4cm]
+  {\large 2n BAT}
+\end{frame}
+
+% ---------- DIAPO 2: ÍNDEX ----------
+\begin{frame}[t]
+  \frametitle{Índex}
+  \vspace{-0.2cm}
+  % Numeració tipus 1 / 1.1 (com als títols de diapositiva)
+  \setbeamertemplate{section in toc}{%
+    \leavevmode\leftskip=0em\relax
+    {\bfseries\inserttocsectionnumber.~\inserttocsection}\par
+  }%
+  \setbeamertemplate{subsection in toc}{%
+    \leavevmode\leftskip=1.2em\relax
+    \inserttocsectionnumber.\inserttocsubsectionnumber~\inserttocsubsection\par
+  }%
+  \setbeamerfont{section in toc}{size=\small}
+  \setbeamerfont{subsection in toc}{size=\footnotesize}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.48\textwidth}
+      \tableofcontents[sections={1-3}]
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \tableofcontents[sections={4-7}]
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ============================================================
+% AFEGIR CONTINGUT A PARTIR D'AQUÍ
+% ============================================================
+
+% ---------- SECCIÓ 1 ----------
+\section{Concepte i classificació}
+\subsection{Definició de matriu}
+
+% ---------- DIAPO 1.1: Definició ----------
+\begin{frame}[t]
+  \frametitle{1.1 Definició de matriu}
+
+  \vspace{-0.28cm}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.54\textwidth}
+      \begin{itemize}
+        \item<1-> Una \textbf{matriu} de $m$ files i $n$ columnes és una taula de $m \times n$ nombres reals ordenats en $m$ files i $n$ columnes.
+        \item<2-> Els nombres $a_{ij}$ són els \textbf{elements} de la matriu: el subíndex $i$ indica la \textbf{fila} i el subíndex $j$, la \textbf{columna}.
+        \item<3-> La \textbf{dimensió} (o mida) d'una matriu de $m$ files i $n$ columnes és $m \times n$.
+      \end{itemize}
+
+      \vspace{0.14cm}
+      \only<4->{\caixacentrada{$A = (a_{ij})_{m \times n}$}}
+    \end{column}
+
+    \begin{column}{0.44\textwidth}
+      \begin{minipage}[t][6.4cm]{\columnwidth}
+        \only<5->{
+          \centering
+          \small\textbf{Exemple}\\[0.2cm]
+          \[
+            A = \begin{pmatrix}
+              4 & 0 & 2 & 5 \\
+              2 & 3 & \alt<9>{\textcolor{margueVerdFosc}{\mathbf{1}}}{1} & 1 \\
+              0 & \alt<11>{\textcolor{margueVerdFosc}{\mathbf{3}}}{3} & 5 & 4
+            \end{pmatrix}
+          \]
+        }
+
+        \vspace{0.18cm}
+        \raggedright
+        \small
+        \begin{itemize}
+          \item<6-> Dimensió de $A$?
+          \item<7-> \solucio{3 \times 4} \;(3 files i 4 columnes).
+          \item<8-> $a_{23}$: 2a fila, 3a columna.
+          \item<9-> \solucio{a_{23} = 1}
+          \item<10-> $a_{32}$: 3a fila, 2a columna.
+          \item<11-> \solucio{a_{32} = 3}
+        \end{itemize}
+      \end{minipage}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ---------- DIAPO 1.2: Taula → matriu ----------
+\begin{frame}[t]
+  \frametitle{1.2 Interpretar una matriu}
+
+  \vspace{-0.35cm}
+  \begin{itemize}
+    \item<1-> La taula següent mostra els esports que practica un grup d'amics:
+  \end{itemize}
+
+  \vspace{0.06cm}
+  \centering
+  {\small
+  \setlength{\tabcolsep}{5pt}
+  \renewcommand{\arraystretch}{1.1}
+  \begin{tabular}{|l|c|c|c|}
+    \hline
+    & \textbf{Natació} & \textbf{Tennis} & \textbf{Bàsquet} \\
+    \hline
+    \textbf{Noies} & $3$ & $4$ & $2$ \\
+    \hline
+    \textbf{Nois} & $2$ & $1$ & $5$ \\
+    \hline
+  \end{tabular}
+  }
+
+  \vspace{0.12cm}
+  \centering
+  \only<2->{\caixacentrada{$A = \begin{pmatrix} 3 & 4 & 2 \\ 2 & 1 & 5 \end{pmatrix}_{2 \times 3}$}}
+
+  \vspace{0.08cm}
+  \centering
+  {\footnotesize
+  \setlength{\itemsep}{0pt}
+  \setlength{\parsep}{0pt}
+  \begin{itemize}
+    \item<3-> $a_{12} = 4$
+    \item<4-> \textcolor{margueVerdFosc}{Hi ha \textbf{4 noies} que practiquen tennis.}
+    \item<5-> $a_{21} = 2$ 
+    \item<6-> \textcolor{margueVerdFosc}{Hi ha \textbf{2 nois} que practiquen natació.}
+    \item<7-> $a_{11} + a_{12} + a_{13}$
+    \item<8-> \textcolor{margueVerdFosc}{Nombre total de \textbf{noies} del grup.}
+    \item<9-> $a_{13} + a_{23}$ 
+    \item<10-> \textcolor{margueVerdFosc}{Nombre d'amics que practiquen \textbf{bàsquet}.}
+  \end{itemize}
+  }
+\end{frame}
+
+\subsection{Classificació de matrius}
+
+% ---------- DIAPO 1.3a: Classificació + exemple 1 ----------
+\begin{frame}[t]
+  \frametitle{1.3 Classificació de matrius}
+
+  \vspace{-0.22cm}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.46\textwidth}
+      \begin{itemize}
+        \item<1-> \textbf{Matriu fila}: una sola fila \;($1 \times n$).
+        \item<2-> \textbf{Matriu columna}: una sola columna \;($m \times 1$).
+        \item<3-> \textbf{Matriu quadrada}: $n$ files i $n$ columnes; el \textbf{ordre} és $n$.
+        \item<4-> \textbf{Matriu rectangular}: $m \neq n$.
+        \item<5-> \textbf{Matriu nul·la} ($\mathbf{0}$): tots els elements són zeros.
+      \end{itemize}
+      \only<6->{\caixacentrada{Iguals $\Leftrightarrow$ mateixa dimensió i $a_{ij}=b_{ij}$}}
+    \end{column}
+
+    \begin{column}{0.52\textwidth}
+      \only<7->{\textbf{Exemple 1.}}
+      \only<7->{
+        \[
+          A = \begin{pmatrix} 3 & 3 \\ 3 & 3 \\ 3 & 3 \end{pmatrix},\;
+          B = \begin{pmatrix} 3 & 3 & 3 \\ 3 & 3 & 3 \end{pmatrix},\;
+          C = \begin{pmatrix} 3 & 3 \\ x & 3 \\ 3 & 3 \end{pmatrix}
+        \]
+      }
+
+      \begin{itemize}
+        \item<8-> $A$ i $B$, $B$ i $C$ o $A$ i $C$ són iguals?
+        \item<9-> $A$ i $B$: \textbf{no} (dim. \solucio{3 \times 2} i \solucio{2 \times 3}).
+        \item<10-> $A$ i $C$: mateixa dimensió; iguals si \solucio{x = 3}.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ---------- DIAPO 1.3b: Classificació + exemple 2 ----------
+\begin{frame}[t]
+  \frametitle{1.3 Classificació de matrius}
+
+  \vspace{-0.22cm}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.46\textwidth}
+      \teoriaClassificacioMatrius
+    \end{column}
+
+    \begin{column}{0.52\textwidth}
+      \textbf{Exemple 2.}
+      \[
+        A = \begin{pmatrix} -2 & 7 & 0 \end{pmatrix},\;
+        B = \begin{pmatrix} 4 \\ 2 \end{pmatrix},\;
+        C = \begin{pmatrix} 0 & 0 \\ 0 & 0 \\ 0 & 0 \end{pmatrix}
+      \]
+
+      \begin{itemize}
+        \item<1-> Alguna de $A$, $B$ o $C$ és matriu fila, matriu columna i/o matriu nul·la?
+        \item<2-> $A$ $\rightarrow$ \textcolor{margueVerdFosc}{\textbf{matriu fila}} \;($1 \times 3$).
+        \item<3-> $B$ $\rightarrow$ \textcolor{margueVerdFosc}{\textbf{matriu columna}} \;($2 \times 1$).
+        \item<4-> $C$ $\rightarrow$ \textcolor{margueVerdFosc}{\textbf{matriu nul·la}} \;($3 \times 2$).
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\subsection{Tipus de matrius quadrades}
+
+% ---------- DIAPO 1.4a: Diagonal principal + triangulars ----------
+\begin{frame}[t]
+  \frametitle{1.4 Tipus de matrius quadrades}
+
+  \vspace{-0.3cm}
+  \only<1->{
+    \begin{caixadef}[compact]
+      La \textbf{diagonal principal} està formada pels elements $a_{ii}$.
+    \end{caixadef}
+  }
+  \only<1->{\centering\matriuDiagPrincipalEx}
+
+  \vspace{0.1cm}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.48\textwidth}
+      \only<2->{
+        \textbf{Triangular superior:} zeros \textbf{per sota} de la diagonal principal.
+      }
+      \only<2->{\matriuTriangSupEx}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \only<3->{
+        \textbf{Triangular inferior:} zeros \textbf{per sobre} de la diagonal principal.
+      }
+      \only<3->{\matriuTriangInfEx}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ---------- DIAPO 1.4b: Diagonal + identitat ----------
+\begin{frame}[t]
+  \frametitle{1.4 Tipus de matrius quadrades}
+
+  \vspace{-0.3cm}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.48\textwidth}
+      \only<1->{
+        \textbf{Diagonal:} zeros \textbf{fora} de la diagonal principal.
+      }
+      \only<1->{\matriuDiagEx}
+
+      \vspace{0.12cm}
+      \only<2->{
+        \textbf{Identitat} ($I$): diagonal amb tots els elements igual a $1$.
+      }
+      \only<2->{\matriuIdentEx}
+    \end{column}
+
+    \begin{column}{0.48\textwidth}
+      \only<3->{
+        \begin{caixadef}[compact]
+          \textbf{Fixa't-hi:} hi ha una matriu identitat de cada ordre.
+        \end{caixadef}
+        \vspace{0.1cm}
+        \[
+          I_2 = \begin{pmatrix} \fc{1} & 0 \\ 0 & \fc{1} \end{pmatrix}
+          \qquad
+          I_3 = \begin{pmatrix} \fc{1} & 0 & 0 \\ 0 & \fc{1} & 0 \\ 0 & 0 & \fc{1} \end{pmatrix}
+        \]
+      }
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ---------- DIAPO 1.4c: Exemple de classificació ----------
+\begin{frame}[t]
+  \frametitle{1.4 Tipus de matrius quadrades}
+
+  \vspace{-0.28cm}
+  \centering
+  {\small
+  \textbf{Exemple.} Classifica cadascuna:
+  \only<1->{%
+    \[
+      A = \begin{pmatrix} 2 & 0 & 0 \\ 0 & 7 & 0 \\ 0 & 0 & -1 \end{pmatrix},\quad
+      B = \begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix},\quad
+      D = \begin{pmatrix} 7 & 0 \\ -1 & 10 \end{pmatrix}
+    \]
+    \vspace{-0.12cm}
+    \[
+      C = \begin{pmatrix}
+        3 & 0 & 0 & 0 \\
+        2 & 4 & 0 & 0 \\
+        7 & 5 & 6 & 0 \\
+        0 & 0 & 0 & 9
+      \end{pmatrix}
+    \]
+  }
+  \vspace{0.06cm}
+  \begin{itemize}
+    \item<2-> $A$ $\rightarrow$ \textcolor{margueVerdFosc}{\textbf{matriu diagonal}}
+    \item<3-> $B$ $\rightarrow$ \textcolor{margueVerdFosc}{\textbf{matriu identitat}} \;(ordre $2$)
+    \item<4-> $C$ $\rightarrow$ \textcolor{margueVerdFosc}{\textbf{triangular inferior}} \;(ordre $4$)
+    \item<5-> $D$ $\rightarrow$ \textcolor{margueVerdFosc}{\textbf{triangular superior}} \;(ordre $2$)
+  \end{itemize}
+  }
+\end{frame}
+
+% ---------- SECCIÓ 2 ----------
+\section{Matriu transposada}
+\subsection{Definició i exemple}
+
+% ---------- DIAPO 2.1: Transposada ----------
+\begin{frame}[t]
+  \frametitle{2.1 Matriu transposada}
+
+  \vspace{-0.28cm}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.50\textwidth}
+      \begin{itemize}
+        \item<1-> La \textbf{matriu transposada} $A^t$ s'obté de \textbf{canviar files per columnes} (o columnes per files).
+        \item<2-> Si $A = (a_{ij})$, llavors $A^t = (a_{ji})$.
+      \end{itemize}
+    \end{column}
+
+    \begin{column}{0.48\textwidth}
+      \only<3->{\textbf{Exemple.}}
+      \only<3->{
+        \[
+          A = \begin{pmatrix} 3 & 0 \\ 3 & 1 \\ 3 & 2 \end{pmatrix}_{3 \times 2}
+        \]
+      }
+      \only<4->{$A^t$?}
+      \only<4->{%
+        \[
+          A^t = \begin{pmatrix}
+            \only<4->{3} & \only<5->{3} & \only<6->{3} \\
+            \only<7->{0} & \only<8->{1} & \only<9->{2}
+          \end{pmatrix}
+        \]
+      }
+      \begin{itemize}
+        \item<10-> Dimensió de $A^t$?
+        \item<11-> \solucio{2 \times 3}
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\subsection{Simetria i antisimetria}
+
+% ---------- DIAPO 2.2: Simètrica i antisimètrica ----------
+\begin{frame}[t]
+  \frametitle{2.2 Matrius simètriques i antisimètriques}
+
+  \vspace{-0.32cm}
+  \begin{itemize}
+    \item<1-> $A$ és \textbf{simètrica} si $A = A^t$ $\Leftrightarrow$ $a_{ij} = a_{ji}$.
+    \item<2-> $A$ és \textbf{antisimètrica} si $-A = A^t$ $\Leftrightarrow$ $a_{ij} = -a_{ji}$ \;(i, en particular, $a_{ii} = 0$).
+  \end{itemize}
+
+  \vspace{0.06cm}
+  \only<3->{
+    \begin{caixadef}[compact]
+      \textbf{Fixa't-hi:} només si $A$ és quadrada, $A^t$ té la mateixa dimensió; i només les matrius quadrades poden ser simètriques o antisimètriques.
+    \end{caixadef}
+  }
+
+  \vspace{0.06cm}
+  \only<4->{
+    \begin{columns}[T,onlytextwidth]
+      \begin{column}{0.48\textwidth}
+        \centering
+        {\small\textbf{Simètrica}\par\vspace{0.06cm}}
+        \[
+          \begin{pmatrix}
+            a_{11} & \only<5->{a_{12}} & \only<6->{a_{13}} \\
+            \fc{a_{12}} & a_{22} & \only<7->{a_{23}} \\
+            \fc{a_{13}} & \fc{a_{23}} & a_{33}
+          \end{pmatrix}
+        \]
+      \end{column}
+      \begin{column}{0.48\textwidth}
+        \centering
+        {\small\textbf{Antisimètrica}\par\vspace{0.06cm}}
+        \only<8->{%
+          \[
+            \begin{pmatrix}
+              \only<12->{\fc{0}} & a_{12} & a_{13} \\
+              \only<9->{\fc{-a_{12}}} & \only<12->{\fc{0}} & a_{23} \\
+              \only<10->{\fc{-a_{13}}} & \only<11->{\fc{-a_{23}}} & \only<12->{\fc{0}}
+            \end{pmatrix}
+          \]
+        }
+      \end{column}
+    \end{columns}
+  }
+\end{frame}
+
+% ---------- DIAPO 2.3: Exemple simetria / antisimetria ----------
+\begin{frame}[t]
+  \frametitle{2.2 Matrius simètriques i antisimètriques}
+
+  \vspace{-0.38cm}
+  \centering
+  {\small
+  \textbf{Exemple.}
+  \only<1->{%
+    \[
+      A = \begin{pmatrix} 3 & 5 & 3 \\ 5 & 2 & 1 \\ 3 & 1 & 6 \end{pmatrix},\quad
+      B = \begin{pmatrix} 0 & 7 \\ -7 & 0 \end{pmatrix},\quad
+      C = \begin{pmatrix} 1 & 2 \\ 3 & 4 \end{pmatrix}
+    \]
+  }
+  \only<1->{Són simètriques o antisimètriques?}
+
+  \vspace{0.08cm}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.54\textwidth}
+      \raggedright
+      \only<2->{%
+        $A^t = \begin{pmatrix}
+          \only<2->{3} & \only<3->{5} & \only<4->{3} \\
+          \only<5->{5} & \only<6->{2} & \only<7->{1} \\
+          \only<8->{3} & \only<9->{1} & \only<10->{6}
+        \end{pmatrix}$
+      }
+      \only<11->{$A^t = A$.}
+
+      \only<12->{%
+        $B^t = \begin{pmatrix}
+          \only<12->{0} & \only<13->{-7} \\
+          \only<14->{7} & \only<15->{0}
+        \end{pmatrix}$
+      }
+      \only<16->{$B^t = -B$.}
+
+      \only<17->{%
+        $C^t = \begin{pmatrix}
+          \only<17->{1} & \only<18->{3} \\
+          \only<19->{2} & \only<20->{4}
+        \end{pmatrix}$
+      }
+      \only<21->{$C^t \neq C$ i $C^t \neq -C$.}
+    \end{column}
+
+    \begin{column}{0.42\textwidth}
+      \raggedright
+      \begin{itemize}
+        \item<11-> $A$: \textcolor{margueVerdFosc}{\textbf{simètrica}}.
+        \item<16-> $B$: \textcolor{margueVerdFosc}{\textbf{antisimètrica}}.
+        \item<21-> $C$: \textbf{ni simètrica ni antisimètrica}.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+
+  \vspace{0.08cm}
+  \only<22->{
+    \begin{caixadef}[compact, fontupper=\footnotesize]
+      En una matriu \textbf{antisimètrica}, els elements de la diagonal principal són \textbf{zeros} i els elements simètrics respecte d'ella són \textbf{oposats}.
+    \end{caixadef}
+  }
+  }
+\end{frame}
+
+% ---------- SECCIÓ 3 ----------
+\section{Operacions amb matrius}
+\subsection{Suma de matrius}
+
+% ---------- DIAPO 3.1: Suma — definició i propietats ----------
+\begin{frame}[t]
+  \frametitle{3.1 Suma de matrius}
+
+  \vspace{-0.28cm}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.50\textwidth}
+      \begin{itemize}
+        \item<1-> La \textbf{suma} $A + B$ és una matriu de la \textbf{mateixa dimensió} amb elements $c_{ij} = a_{ij} + b_{ij}$.
+      \end{itemize}
+      \only<2->{\caixacentrada{$A + B = C \;\Leftrightarrow\; c_{ij} = a_{ij} + b_{ij}$}}
+      \only<3->{
+        \vspace{0.08cm}
+        \begin{caixadef}[compact, fontupper=\footnotesize]
+          \textbf{No t'oblidis:} per sumar-les, $A$ i $B$ han de tenir la mateixa dimensió.
+        \end{caixadef}
+      }
+    \end{column}
+
+    \begin{column}{0.48\textwidth}
+      \only<4->{\textbf{Propietats}}
+      \begin{itemize}
+        \item<5-> \textbf{Commutativa:} $A + B = B + A$.
+        \item<6-> \textbf{Associativa:} $A + (B + C) = (A + B) + C$.
+        \item<7-> \textbf{Element neutre:} $A + \mathbf{0} = A$.
+        \item<8-> \textbf{Element oposat:} $A + (-A) = \mathbf{0}$.
+      \end{itemize}
+      \only<9->{
+        \vspace{0.06cm}
+        \begin{caixadef}[compact, fontupper=\footnotesize]
+          \textbf{Fixa't-hi:} $A - B = A + (-B)$.
+        \end{caixadef}
+      }
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ---------- DIAPO 3.2: Suma — exemple ----------
+\begin{frame}[t]
+  \frametitle{3.1 Suma de matrius}
+
+  \vspace{-0.28cm}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.52\textwidth}
+      \only<1->{\textbf{Exemple.} Suma, si és possible:}
+      \only<1->{
+        \[
+          A = \begin{pmatrix} 3 & -7 & 3 \\ 5 & 2 & 6 \end{pmatrix},\quad
+          B = \begin{pmatrix} 4 & 2 & 5 \\ 6 & 0 & 3 \end{pmatrix}
+        \]
+      }
+      \begin{itemize}
+        \item<2-> Es poden sumar $A$ i $B$?
+        \item<3-> Sí: ambdues són \solucio{2 \times 3}.
+        \item<4-> $A + B$?
+      \end{itemize}
+      \only<4->{%
+        \[
+          A + B = \begin{pmatrix}
+            \only<4->{3+4} & \only<5->{-7+2} & \only<6->{3+5} \\
+            \only<7->{5+6} & \only<7->{2+0} & \only<7->{6+3}
+          \end{pmatrix}
+        \]
+      }
+      \only<8->{%
+        \[
+          A + B = \solucio{\begin{pmatrix} 7 & -5 & 8 \\ 11 & 2 & 9 \end{pmatrix}}
+        \]
+      }
+    \end{column}
+
+    \begin{column}{0.44\textwidth}
+      \only<9->{
+        \[
+          C = \begin{pmatrix}
+            3 & 2 & 7 & 2 \\
+            5 & 6 & 4 & 2 \\
+            1 & 2 & 3 & 2
+          \end{pmatrix}
+        \]
+      }
+      \begin{itemize}
+        \item<10-> Es pot sumar $C$ amb $A$ o amb $B$?
+        \item<11-> \textbf{No}: $C$ és \solucio{3 \times 4}; $A$ i $B$ són \solucio{2 \times 3}.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ---------- DIAPO 3.3: Matriu oposada ----------
+\begin{frame}[t]
+  \frametitle{3.1 Suma de matrius}
+
+  \vspace{-0.28cm}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.50\textwidth}
+      \begin{itemize}
+        \item<1-> La \textbf{matriu oposada} $-A$ té els \textbf{oposats} dels elements de $A$.
+      \end{itemize}
+      \only<2->{
+        \textbf{Exemple.} Determina $-A$ i comprova que $A + (-A) = \mathbf{0}$.
+        \[
+          A = \begin{pmatrix} 1 & 0 & 3 \\ -2 & 4 & 4 \end{pmatrix}
+        \]
+      }
+    \end{column}
+
+    \begin{column}{0.48\textwidth}
+      \begin{itemize}
+        \item<3-> $-A$?
+        \item<4-> \solucio{-A = \begin{pmatrix} -1 & 0 & -3 \\ 2 & -4 & -4 \end{pmatrix}}
+        \item<5-> $A + (-A)$?
+        \item<6-> \solucio{A + (-A) = \begin{pmatrix} 0 & 0 & 0 \\ 0 & 0 & 0 \end{pmatrix} = \mathbf{0}}
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\subsection{Producte per un escalar}
+
+% ---------- DIAPO 3.2: Producte escalar ----------
+\begin{frame}[t]
+  \frametitle{3.2 Producte d'una matriu per un nombre}
+
+  \vspace{-0.28cm}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.50\textwidth}
+      \begin{itemize}
+        \item<1-> El producte $k \cdot A$ ($k$ escalar) és una matriu de la \textbf{mateixa dimensió} amb $c_{ij} = k \cdot a_{ij}$.
+      \end{itemize}
+      \only<2->{
+        \vspace{0.06cm}
+        \begin{caixadef}[compact, fontupper=\small]
+          $kA = C \;\Leftrightarrow\; c_{ij} = k\, a_{ij}$
+        \end{caixadef}
+      }
+    \end{column}
+
+    \begin{column}{0.48\textwidth}
+      \only<3->{\textbf{Exemple.} $(-2) \cdot A$ amb}
+      \only<3->{
+        \[
+          A = \begin{pmatrix} 3 & 0 \\ 3 & 1 \\ 3 & 2 \end{pmatrix}
+        \]
+      }
+      \only<4->{%
+        \[
+          (-2) \cdot A = \begin{pmatrix}
+            \only<4->{3 \cdot (-2)} & \only<5->{0 \cdot (-2)} \\
+            \only<6->{3 \cdot (-2)} & \only<7->{1 \cdot (-2)} \\
+            \only<8->{3 \cdot (-2)} & \only<9->{2 \cdot (-2)}
+          \end{pmatrix}
+        \]
+      }
+      \only<10->{%
+        \[
+          (-2) \cdot A = \begin{pmatrix}
+            -6 & 0 \\ -6 & -2 \\ -6 & -4
+          \end{pmatrix}
+        \]
+      }
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\subsection{Producte fila per columna}
+
+% ---------- DIAPO 3.3: Producte fila × columna ----------
+\begin{frame}[t]
+  \frametitle{3.3 Producte d'una matriu fila per una columna}
+
+  \vspace{-0.28cm}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.46\textwidth}
+      \begin{itemize}
+        \item<1-> El producte d'una \textbf{matriu fila} ($1 \times n$) per una \textbf{matriu columna} ($n \times 1$) és un \textbf{nombre}.
+        \item<2-> Es multipliquen elements terme a terme i es \textbf{sumen}.
+      \end{itemize}
+      \only<3->{
+        \begin{caixadef}[compact, fontupper=\footnotesize]
+          \textbf{No t'oblidis:} columnes de la fila $=$ files de la columna.
+        \end{caixadef}
+      }
+    \end{column}
+
+    \begin{column}{0.52\textwidth}
+      \only<4->{\textbf{Exemple.}}
+      \only<4->{
+        \[
+          A = \begin{pmatrix}
+            \alt<5>{\fc{6}}{6} &
+            \alt<6>{\fc{2}}{2} &
+            \alt<7>{\fc{1}}{1}
+          \end{pmatrix},\quad
+          B = \begin{pmatrix}
+            \alt<5>{\fc{2}}{2} \\
+            \alt<6>{\fc{3}}{3} \\
+            \alt<7>{\fc{-1}}{-1}
+          \end{pmatrix}
+        \]
+      }
+      \begin{itemize}
+        \item<4-> $A \cdot B$?
+        \item<5-> $\fc{6} \cdot \fc{2}$
+        \item<6-> $+ \fc{2} \cdot \fc{3}$
+        \item<7-> $+ \fc{1} \cdot (-1)$
+        \item<8-> $= 12 + 6 - 1 = \solucio{17}$
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\subsection{Producte de dues matrius}
+
+% ---------- DIAPO 3.4a: Producte — dimensions ----------
+\begin{frame}[t]
+  \frametitle{3.4 Producte de dues matrius}
+
+  \vspace{-0.3cm}
+  \begin{itemize}
+    \item<1-> Només es poden multiplicar si les \textbf{columnes de $A$} $=$ \textbf{files de $B$}.
+    \item<2-> Si $A$ és $\fc{m} \times n$ i $B$ és $n \times \fc{p}$, llavors $A \cdot B$ és $\fc{m} \times \fc{p}$.
+  \end{itemize}
+
+  \vspace{0.1cm}
+  \only<3->{\textbf{Exemple.}}
+  \only<3->{
+    \[
+      A = \begin{pmatrix} 5 & 0 & 3 \\ 1 & 4 & 2 \end{pmatrix}_{\fc{2} \times 3},\quad
+      B = \begin{pmatrix} 4 & 0 \\ 1 & 2 \\ 5 & 3 \end{pmatrix}_{3 \times \fc{2}},\quad
+      C = \begin{pmatrix} 1 & 2 \\ 0 & 1 \end{pmatrix}_{2 \times 2}
+    \]
+  }
+  \begin{itemize}
+    \item<4-> $A \cdot B$?
+    \item<5-> Sí: $3 = 3$ $\Rightarrow$ \solucio{2 \times 2}.
+    \item<6-> $A \cdot C$?
+    \item<7-> \textbf{No}: $A$ té $3$ columnes i $C$ té $2$ files.
+  \end{itemize}
+\end{frame}
+
+% ---------- DIAPO 3.4b: Producte — càlcul ----------
+\begin{frame}[t]
+  \frametitle{3.4 Producte de dues matrius}
+
+  \vspace{-0.35cm}
+  {\small
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.48\textwidth}
+      \only<1->{$c_{ij}$ = fila $i$ de $A$ $\cdot$ columna $j$ de $B$:}
+      \only<1->{
+        \[
+          c_{ij} = a_{i1}b_{1j} + a_{i2}b_{2j} + \cdots + a_{in}b_{nj}
+        \]
+      }
+      \vspace{0.08cm}
+      \only<2->{
+        \[
+          A = \begin{pmatrix}
+            \alt<3-4,5>{\fc{5}}{5} & \alt<3-4,5>{\fc{0}}{0} & \alt<3-4,5>{\fc{3}}{3} \\
+            \alt<6-7,8-9>{\fc{1}}{1} & \alt<6-7,8-9>{\fc{4}}{4} & \alt<6-7,8-9>{\fc{2}}{2}
+          \end{pmatrix}
+        \]
+        \[
+          B = \begin{pmatrix}
+            \alt<3-4,6-7>{\fc{4}}{4} & \alt<5,8>{\fc{0}}{0} \\
+            \alt<3-4,6-7>{\fc{1}}{1} & \alt<5,8>{\fc{2}}{2} \\
+            \alt<3-4,6-7>{\fc{5}}{5} & \alt<5,8>{\fc{3}}{3}
+          \end{pmatrix}
+        \]
+      }
+    \end{column}
+
+    \begin{column}{0.50\textwidth}
+      \only<2->{$A \cdot B =$}
+      \only<2->{%
+        \[
+          \begin{pmatrix}
+            \only<4->{\solucio{35}} & \only<5->{\solucio{9}} \\
+            \only<7->{\solucio{18}} & \only<9->{\solucio{14}}
+          \end{pmatrix}
+        \]
+      }
+      \begin{itemize}
+        \item<3-> $c_{11}$: $5\cdot4 + 0\cdot1 + 3\cdot5 = 35$
+        \item<5-> $c_{12}$: $5 \cdot 0 + 0 \cdot 2 + 3 \cdot 3 = 9$
+        \item<6-> $c_{21}$: $1 \cdot 4 + 4 \cdot 1 + 2 \cdot 5 = 18$
+        \item<8-> $c_{22}$: $1 \cdot 0 + 4 \cdot 2 + 2 \cdot 3 = 14$
+      \end{itemize}
+    \end{column}
+  \end{columns}
+  }
+\end{frame}
+
+% ---------- DIAPO 3.4c: Producte — propietats ----------
+\begin{frame}[t]
+  \frametitle{3.4 Producte de dues matrius}
+
+  \vspace{-0.28cm}
+  \begin{itemize}
+    \item<1-> \textbf{Associativa:} $(A \cdot B) \cdot C = A \cdot (B \cdot C)$.
+    \item<2-> \textbf{Element neutre:} $I_m \cdot A = A \cdot I_n = A$.
+    \item<3-> \textbf{Distributiva per l'esquerra:} $A \cdot (B + C) = A \cdot B + A \cdot C$.
+    \item<4-> \textbf{Distributiva per la dreta:} $(B + C) \cdot A = B \cdot A + C \cdot A$.
+  \end{itemize}
+  \only<5->{
+    \begin{caixadef}[compact]
+      En general, \textbf{no és commutativa}: $A \cdot B \neq B \cdot A$.
+    \end{caixadef}
+  }
+\end{frame}
+
+% ---------- DIAPO 3.4d: Exemple 13 — no commutativa ----------
+\begin{frame}[t]
+  \frametitle{3.4 Producte de dues matrius}
+
+  \vspace{-0.28cm}
+  \only<1->{\textbf{Exemple 13.}}
+  \only<1->{
+    \[
+      A = \begin{pmatrix} 3 & 0 & 3 \\ 1 & 3 & 2 \end{pmatrix}_{2 \times 3},\quad
+      B = \begin{pmatrix} 2 \\ 3 \\ 2 \end{pmatrix}_{3 \times 1}
+    \]
+  }
+  \begin{itemize}
+    \item<2-> $A \cdot B$?
+    \item<3-> Fila $1$: $3 \cdot 2 + 0 \cdot 3 + 3 \cdot 2 = 12$
+    \item<4-> Fila $2$: $1 \cdot 2 + 3 \cdot 3 + 2 \cdot 2 = 15$
+    \item<5-> \solucio{A \cdot B = \begin{pmatrix} 12 \\ 15 \end{pmatrix}}
+    \item<6-> Es pot calcular $B \cdot A$?
+    \item<7-> \textbf{No}: $B$ és $3 \times 1$ i $A$ és $2 \times 3$ $\Rightarrow$ no és commutativa.
+  \end{itemize}
+\end{frame}
+
+% ---------- SECCIÓ 4 ----------
+\section{Determinants}
+\subsection{Idea i notació}
+
+% ---------- DIAPO 4.1: Determinant — idea ----------
+\begin{frame}[t]
+  \frametitle{4.1 Què és un determinant?}
+
+  \vspace{-0.28cm}
+  \begin{itemize}
+    \item<1-> El \textbf{determinant} d'una matriu quadrada $A$ és un \textbf{nombre} associat a $A$.
+    \item<2-> Es denota $\lvert A \rvert$ (o també $\det(A)$).
+    \item<3-> Només les matrius \textbf{quadrades} tenen determinant.
+  \end{itemize}
+
+  \only<4->{
+    \vspace{0.1cm}
+    \caixacentrada{Matriu $A=\begin{pmatrix}\ldots\end{pmatrix}$
+      \quad$\longrightarrow$\quad
+      Determinant $\lvert A \rvert=\begin{vmatrix}\ldots\end{vmatrix}$
+      \quad$\longrightarrow$\quad
+      un nombre}
+  }
+
+  \only<5->{
+    \vspace{0.12cm}
+    Més endavant veurem que aquest nombre ajuda a estudiar el \textbf{rang} i la \textbf{matriu inversa}.
+  }
+\end{frame}
+
+\subsection{Determinants d'ordre 2}
+
+% ---------- DIAPO 4.2: Determinant 2×2 — fórmula + exemple ----------
+\begin{frame}[t]
+  \frametitle{4.2 Determinant d'ordre $2$}
+
+  \vspace{-0.32cm}
+  \onslide<1->{
+    Si $A = \begin{pmatrix} a_{11} & a_{12} \\ a_{21} & a_{22} \end{pmatrix}$, aleshores
+  }
+
+  \vspace{0.06cm}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.52\textwidth}
+      \begin{flushleft}
+      \onslide<2->{
+        $\lvert A \rvert =
+        \begin{vmatrix}
+          \dpos{a_{11}} & \dneg{a_{12}} \\
+          \dneg{a_{21}} & \dpos{a_{22}}
+        \end{vmatrix}$
+      }
+      \onslide<3->{
+        $\displaystyle
+        = \dpos{a_{11}\,a_{22}}
+        \onslide<4->{{}-{}\dneg{a_{12}\,a_{21}}}$
+      }
+      \end{flushleft}
+    \end{column}
+    \begin{column}{0.46\textwidth}
+      \onslide<3->{
+        {\small
+        \begin{itemize}
+          \item<3-> \dpos{Diagonal principal}: producte amb signe~$+$.
+          \item<4-> Diagonal secundària: producte amb signe~$-$.
+        \end{itemize}}
+      }
+      \only<5->{
+        \vspace{0.08cm}
+        \caixacentrada{$\lvert A \rvert = a_{11}a_{22} - a_{12}a_{21}$}
+      }
+    \end{column}
+  \end{columns}
+
+  \onslide<6->{
+    \vspace{0.14cm}
+    \textbf{Exemple guiat.}\;
+    $A = \begin{pmatrix} 2 & 5 \\ 4 & 3 \end{pmatrix}$.
+  }
+
+  \vspace{0.06cm}
+  \begin{flushleft}
+  \onslide<7->{
+    $\lvert A \rvert =
+    \begin{vmatrix}
+      \dpos{2} & \dneg{5} \\
+      \dneg{4} & \dpos{3}
+    \end{vmatrix}$
+  }
+  \onslide<8->{${}= \dpos{2\cdot 3} - \dneg{5\cdot 4}$}
+  \onslide<9->{${}= \dpos{6} - \dneg{20}$}
+  \onslide<10->{${}= \solucio{-14}$}
+  \end{flushleft}
+\end{frame}
+
+\subsection{Determinants d'ordre 3 (regla de Sarrus)}
+
+% ---------- DIAPO 4.3: Sarrus — esquema progressiu (+ i −) ----------
+\begin{frame}[t]
+  \frametitle{4.3 Determinant d'ordre $3$ (Sarrus)}
+
+  \vspace{-0.36cm}
+  {\small Repetim les dues primeres columnes a la dreta i formem productes en diagonal.}
+
+  \vspace{0.04cm}
+  \begin{columns}[T,onlytextwidth]
+    % ----- ESQUERRA: signe + -----
+    \begin{column}{0.49\textwidth}
+      \centering
+      \textbf{\textcolor{sarPosA}{Signe $+$}}\\[0.08cm]
+      \begin{tikzpicture}[x=0.92cm, y=-0.68cm, every node/.style={anchor=center, inner sep=1pt}]
+        % Fila 0
+        \node (Lp00) at (0,0) {\sarcell{2}{sarPosA}{a_{11}}};
+        \node (Lp01) at (1,0) {\sarcell{4}{sarPosB}{a_{12}}};
+        \node (Lp02) at (2,0) {\sarcell{6}{sarPosC}{a_{13}}};
+        \onslide<3->{\node (Lp03) at (3.3,0) {\sarcell{4}{sarPosB}{a_{11}}};}
+        \onslide<5->{\node (Lp04) at (4.3,0) {\sarcell{6}{sarPosC}{a_{12}}};}
+        % Fila 1
+        \node (Lp10) at (0,1) {$a_{21}$};
+        \node (Lp11) at (1,1) {\sarcell{2}{sarPosA}{a_{22}}};
+        \node (Lp12) at (2,1) {\sarcell{4}{sarPosB}{a_{23}}};
+        \onslide<3->{\node (Lp13) at (3.3,1) {\sarcell{6}{sarPosC}{a_{21}}};}
+        \onslide<5->{\node (Lp14) at (4.3,1) {$a_{22}$};}
+        % Fila 2
+        \node (Lp20) at (0,2) {\sarcell{4}{sarPosB}{a_{31}}};
+        \node (Lp21) at (1,2) {\sarcell{6}{sarPosC}{a_{32}}};
+        \node (Lp22) at (2,2) {\sarcell{2}{sarPosA}{a_{33}}};
+        \onslide<3->{\node (Lp23) at (3.3,2) {\sarcell{4}{sarPosB}{a_{31}}};}
+        \onslide<5->{\node (Lp24) at (4.3,2) {\sarcell{6}{sarPosC}{a_{32}}};}
+        % Separador
+        \onslide<3->{\draw[margueVerdClar, thick] (2.6,-0.35) -- (2.6,2.35);}
+        % Diagonals
+        \onslide<2->{\draw[sarPosA, thick] (Lp00.center) -- (Lp11.center) -- (Lp22.center);}
+        \onslide<4->{\draw[sarPosB, thick] (Lp01.center) -- (Lp12.center) -- (Lp23.center);}
+        \onslide<6->{\draw[sarPosC, thick] (Lp02.center) -- (Lp13.center) -- (Lp24.center);}
+      \end{tikzpicture}
+    \end{column}
+
+    % ----- DRETA: signe − -----
+    \begin{column}{0.49\textwidth}
+      \centering
+      \onslide<8->{\textbf{Signe $-$}\\[0.08cm]}
+      \onslide<8->{
+      \begin{tikzpicture}[x=0.92cm, y=-0.68cm, every node/.style={anchor=center, inner sep=1pt}]
+        % Fila 0
+        \node (Lm00) at (0,0) {$a_{11}$};
+        \node (Lm01) at (1,0) {$a_{12}$};
+        \node (Lm02) at (2,0) {\sarcell{9}{sarNegA}{a_{13}}};
+        \onslide<10->{\node (Lm03) at (3.3,0) {\sarcell{11}{sarNegB}{a_{11}}};}
+        \onslide<12->{\node (Lm04) at (4.3,0) {\sarcell{13}{sarNegC}{a_{12}}};}
+        % Fila 1
+        \node (Lm10) at (0,1) {$a_{21}$};
+        \node (Lm11) at (1,1) {\sarcell{9}{sarNegA}{a_{22}}};
+        \node (Lm12) at (2,1) {\sarcell{11}{sarNegB}{a_{23}}};
+        \onslide<10->{\node (Lm13) at (3.3,1) {\sarcell{13}{sarNegC}{a_{21}}};}
+        \onslide<12->{\node (Lm14) at (4.3,1) {$a_{22}$};}
+        % Fila 2
+        \node (Lm20) at (0,2) {\sarcell{9}{sarNegA}{a_{31}}};
+        \node (Lm21) at (1,2) {\sarcell{11}{sarNegB}{a_{32}}};
+        \node (Lm22) at (2,2) {\sarcell{13}{sarNegC}{a_{33}}};
+        \onslide<10->{\node (Lm23) at (3.3,2) {$a_{31}$};}
+        \onslide<12->{\node (Lm24) at (4.3,2) {$a_{32}$};}
+        % Separador
+        \onslide<10->{\draw[gray, thick] (2.6,-0.35) -- (2.6,2.35);}
+        % Antidiagonals
+        \onslide<9->{\draw[sarNegA, thick] (Lm02.center) -- (Lm11.center) -- (Lm20.center);}
+        \onslide<11->{\draw[sarNegB, thick] (Lm03.center) -- (Lm12.center) -- (Lm21.center);}
+        \onslide<13->{\draw[sarNegC, thick] (Lm04.center) -- (Lm13.center) -- (Lm22.center);}
+      \end{tikzpicture}
+      }
+    \end{column}
+  \end{columns}
+
+  \onslide<2->{
+    \vspace{0.12cm}
+    \caixacentrada{%
+      $\lvert A \rvert =
+      \onslide<2->{\textcolor{sarPosA}{a_{11}a_{22}a_{33}}}%
+      \onslide<4->{{}+\textcolor{sarPosB}{a_{12}a_{23}a_{31}}}%
+      \onslide<6->{{}+\textcolor{sarPosC}{a_{13}a_{21}a_{32}}}%
+      \onslide<9->{{}-\textcolor{sarNegA}{a_{13}a_{22}a_{31}}}%
+      \onslide<11->{{}-\textcolor{sarNegB}{a_{11}a_{23}a_{32}}}%
+      \onslide<13->{{}-\textcolor{sarNegC}{a_{12}a_{21}a_{33}}}$%
+    }
+  }
+\end{frame}
+
+% ---------- DIAPO 4.3b: Determinant 3×3 — exemple (mateix esquema) ----------
+\begin{frame}[t]
+  \frametitle{4.3 Determinant d'ordre $3$ (Sarrus)}
+
+  \vspace{-0.36cm}
+  \textbf{Exemple guiat.}\;
+  $A = \begin{pmatrix} 2 & 0 & 1 \\ -1 & 3 & -2 \\ -3 & 4 & -4 \end{pmatrix}$.
+
+  \vspace{0.04cm}
+  \begin{columns}[T,onlytextwidth]
+    % ----- ESQUERRA: signe + -----
+    \begin{column}{0.49\textwidth}
+      \centering
+      \textbf{\textcolor{sarPosA}{Signe $+$}}\\[0.08cm]
+      \begin{tikzpicture}[x=0.92cm, y=-0.68cm, every node/.style={anchor=center, inner sep=1pt}]
+        % Fila 0: 2  0  1 | 2  0
+        \node (Xp00) at (0,0) {\sarcell{2}{sarPosA}{2}};
+        \node (Xp01) at (1,0) {\sarcell{4}{sarPosB}{0}};
+        \node (Xp02) at (2,0) {\sarcell{6}{sarPosC}{1}};
+        \onslide<3->{\node (Xp03) at (3.3,0) {\sarcell{4}{sarPosB}{2}};}
+        \onslide<5->{\node (Xp04) at (4.3,0) {\sarcell{6}{sarPosC}{0}};}
+        % Fila 1: -1  3  -2 | -1  3
+        \node (Xp10) at (0,1) {$-1$};
+        \node (Xp11) at (1,1) {\sarcell{2}{sarPosA}{3}};
+        \node (Xp12) at (2,1) {\sarcell{4}{sarPosB}{-2}};
+        \onslide<3->{\node (Xp13) at (3.3,1) {\sarcell{6}{sarPosC}{-1}};}
+        \onslide<5->{\node (Xp14) at (4.3,1) {$3$};}
+        % Fila 2: -3  4  -4 | -3  4
+        \node (Xp20) at (0,2) {\sarcell{4}{sarPosB}{-3}};
+        \node (Xp21) at (1,2) {\sarcell{6}{sarPosC}{4}};
+        \node (Xp22) at (2,2) {\sarcell{2}{sarPosA}{-4}};
+        \onslide<3->{\node (Xp23) at (3.3,2) {\sarcell{4}{sarPosB}{-3}};}
+        \onslide<5->{\node (Xp24) at (4.3,2) {\sarcell{6}{sarPosC}{4}};}
+        \onslide<3->{\draw[margueVerdClar, thick] (2.6,-0.35) -- (2.6,2.35);}
+        \onslide<2->{\draw[sarPosA, thick] (Xp00.center) -- (Xp11.center) -- (Xp22.center);}
+        \onslide<4->{\draw[sarPosB, thick] (Xp01.center) -- (Xp12.center) -- (Xp23.center);}
+        \onslide<6->{\draw[sarPosC, thick] (Xp02.center) -- (Xp13.center) -- (Xp24.center);}
+      \end{tikzpicture}
+    \end{column}
+
+    % ----- DRETA: signe − -----
+    \begin{column}{0.49\textwidth}
+      \centering
+      \onslide<8->{\textbf{Signe $-$}\\[0.08cm]}
+      \onslide<8->{
+      \begin{tikzpicture}[x=0.92cm, y=-0.68cm, every node/.style={anchor=center, inner sep=1pt}]
+        \node (Xm00) at (0,0) {$2$};
+        \node (Xm01) at (1,0) {$0$};
+        \node (Xm02) at (2,0) {\sarcell{9}{sarNegA}{1}};
+        \onslide<10->{\node (Xm03) at (3.3,0) {\sarcell{11}{sarNegB}{2}};}
+        \onslide<12->{\node (Xm04) at (4.3,0) {\sarcell{13}{sarNegC}{0}};}
+        \node (Xm10) at (0,1) {$-1$};
+        \node (Xm11) at (1,1) {\sarcell{9}{sarNegA}{3}};
+        \node (Xm12) at (2,1) {\sarcell{11}{sarNegB}{-2}};
+        \onslide<10->{\node (Xm13) at (3.3,1) {\sarcell{13}{sarNegC}{-1}};}
+        \onslide<12->{\node (Xm14) at (4.3,1) {$3$};}
+        \node (Xm20) at (0,2) {\sarcell{9}{sarNegA}{-3}};
+        \node (Xm21) at (1,2) {\sarcell{11}{sarNegB}{4}};
+        \node (Xm22) at (2,2) {\sarcell{13}{sarNegC}{-4}};
+        \onslide<10->{\node (Xm23) at (3.3,2) {$-3$};}
+        \onslide<12->{\node (Xm24) at (4.3,2) {$4$};}
+        \onslide<10->{\draw[gray, thick] (2.6,-0.35) -- (2.6,2.35);}
+        \onslide<9->{\draw[sarNegA, thick] (Xm02.center) -- (Xm11.center) -- (Xm20.center);}
+        \onslide<11->{\draw[sarNegB, thick] (Xm03.center) -- (Xm12.center) -- (Xm21.center);}
+        \onslide<13->{\draw[sarNegC, thick] (Xm04.center) -- (Xm13.center) -- (Xm22.center);}
+      \end{tikzpicture}
+      }
+    \end{column}
+  \end{columns}
+
+  \vspace{0.1cm}
+  \begin{flushleft}
+  {\small
+  \onslide<2->{
+    $\lvert A \rvert =
+    \onslide<2->{\textcolor{sarPosA}{2\cdot 3\cdot(-4)}}%
+    \onslide<4->{{}+\textcolor{sarPosB}{0\cdot(-2)\cdot(-3)}}%
+    \onslide<6->{{}+\textcolor{sarPosC}{1\cdot(-1)\cdot 4}}%
+    \onslide<9->{{}-\textcolor{sarNegA}{1\cdot 3\cdot(-3)}}%
+    \onslide<11->{{}-\textcolor{sarNegB}{2\cdot(-2)\cdot 4}}%
+    \onslide<13->{{}-\textcolor{sarNegC}{0\cdot(-1)\cdot(-4)}}$
+  }
+
+  \vspace{0.06cm}
+  \onslide<14->{
+    $=
+    \onslide<14->{\textcolor{sarPosA}{-24}}%
+    \onslide<15->{{}+\textcolor{sarPosB}{0}}%
+    \onslide<16->{{}+\textcolor{sarPosC}{(-4)}}%
+    \onslide<17->{{}-\textcolor{sarNegA}{(-9)}}%
+    \onslide<18->{{}-\textcolor{sarNegB}{(-16)}}%
+    \onslide<19->{{}-\textcolor{sarNegC}{0}}%
+    \onslide<20->{=\solucio{-3}}$
+  }
+  }
+  \end{flushleft}
+\end{frame}
+
+% ---------- SECCIÓ 5 ----------
+\section{Rang d'una matriu}
+\subsection{Dependència lineal i rang}
+
+% ---------- DIAPO 5.1: Dependència lineal ----------
+\begin{frame}[t]
+  \frametitle{5.1 Dependència lineal de files}
+
+  \vspace{-0.32cm}
+  \begin{itemize}
+    \item<1-> Una fila $F_i$ \textbf{depèn linealment} de $F_{j_1}, \ldots, F_{j_m}$ si
+      $F_i = k_1 F_{j_1} + k_2 F_{j_2} + \cdots + k_m F_{j_m}$.
+    \item<2-> Una fila és \textbf{linealment independent} si no depèn linealment de cap combinació d'altres files.
+  \end{itemize}
+
+  \vspace{0.06cm}
+  \only<3->{
+    {\small
+    \begin{columns}[T,onlytextwidth]
+      \begin{column}{0.48\textwidth}
+        \textbf{Exemple 1.}
+        \[
+          A = \begin{pmatrix} 1 & 2 \\ \alt<4>{\fc{2}}{2} & \alt<4>{\fc{4}}{4} \end{pmatrix}
+        \]
+        \only<4->{$F_2 = 2 F_1$ $\Rightarrow$ $F_2$ \textbf{depèn} de $F_1$.}
+      \end{column}
+      \begin{column}{0.50\textwidth}
+        \textbf{Exemple 2.}
+        \[
+          B = \begin{pmatrix}
+            1 & 0 & 1 \\
+            0 & 1 & 2 \\
+            \alt<5>{\fc{1}}{1} & \alt<5>{\fc{1}}{1} & \alt<5>{\fc{3}}{3}
+          \end{pmatrix}
+        \]
+        \only<5->{$F_3 = F_1 + F_2$ $\Rightarrow$ $F_3$ \textbf{depèn} de $F_1$ i $F_2$.}
+      \end{column}
+    \end{columns}
+    }
+  }
+  \only<6->{
+    \vspace{0.06cm}
+    \begin{caixadef}[compact, fontupper=\footnotesize]
+      \textbf{No t'oblidis:} les mateixes definicions s'apliquen a les \textbf{columnes}.
+    \end{caixadef}
+  }
+\end{frame}
+
+% ---------- DIAPO 5.2: Definició de rang ----------
+\begin{frame}[t]
+  \frametitle{5.2 Rang d'una matriu}
+
+  \vspace{-0.32cm}
+  \begin{itemize}
+    \item<1-> El \textbf{rang} d'una matriu $A$, $\operatorname{Rang}(A)$, és el nombre de files (o columnes) \textbf{no nul·les} i \textbf{linealment independents}.
+    \item<2-> El rang per files sempre és igual al rang per columnes.
+  \end{itemize}
+  \only<3->{
+    \begin{caixadef}[compact, fontupper=\footnotesize]
+      \textbf{Fixa't-hi:} $\operatorname{Rang}(A) = \operatorname{Rang}(A^t)$.
+    \end{caixadef}
+  }
+
+  \vspace{0.08cm}
+  \only<4->{
+    {\footnotesize
+    \textbf{Exemples.}
+    \[
+      A = \begin{pmatrix} 2 & 1 & 3 & 4 \\ 1 & 3 & 7 & 1 \end{pmatrix}
+      \quad
+      B = \begin{pmatrix} 1 & 2 & 3 \\ 1 & 2 & 3 \\ 3 & 6 & 9 \end{pmatrix}
+      \quad
+      C = \begin{pmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 1 \end{pmatrix}
+    \]
+    }
+  }
+  \begin{itemize}
+    \item<5-> $A$: les dues files són independents $\Rightarrow$ \solucio{\operatorname{Rang}(A) = 2}.
+    \item<6-> $B$: $F_2 = F_1$ i $F_3 = 3F_1$ $\Rightarrow$ \solucio{\operatorname{Rang}(B) = 1}.
+    \item<7-> $C$: les tres files són independents $\Rightarrow$ \solucio{\operatorname{Rang}(C) = 3}.
+  \end{itemize}
+\end{frame}
+
+% ---------- DIAPO 5.2b: Rang i determinant ----------
+\begin{frame}[t]
+  \frametitle{5.2 Rang i determinant}
+
+  \vspace{-0.28cm}
+  \begin{itemize}
+    \item<1-> Si $A$ és \textbf{quadrada} d'ordre $n$, el rang màxim possible és $n$.
+    \item<2-> El determinant indica si aquest rang màxim s'assoleix o no:
+  \end{itemize}
+
+  \only<3->{
+    \vspace{0.06cm}
+    \caixacentrada{%
+      $\lvert A \rvert \neq 0 \;\Leftrightarrow\; \operatorname{Rang}(A) = n$
+      \qquad
+      $\lvert A \rvert = 0 \;\Leftrightarrow\; \operatorname{Rang}(A) < n$%
+    }
+  }
+
+  \vspace{0.1cm}
+  \only<4->{\textbf{Exemple.}}
+  \only<4->{
+    {\footnotesize
+    \[
+      A = \begin{pmatrix} 1 & 2 \\ 2 & 4 \end{pmatrix}
+      \onslide<5->{
+        \qquad
+        \lvert A \rvert = 1\cdot 4 - 2\cdot 2
+        \onslide<6->{= \solucio{0}}
+      }
+    \]
+    }
+  }
+  \begin{itemize}
+    \item<7-> $F_2 = 2F_1$ $\Rightarrow$ les files són dependents
+      $\Rightarrow$ \solucio{\operatorname{Rang}(A) = 1 < 2}.
+    \item<8-> Com $\lvert A \rvert = 0$, el rang \textbf{no} és màxim.
+  \end{itemize}
+
+  \only<9->{
+    \vspace{0.08cm}
+    \begin{caixadef}[compact, fontupper=\footnotesize]
+      \textbf{Més endavant:} aquest criteri serà útil quan discutim els \textbf{sistemes d'equacions}.
+    \end{caixadef}
+  }
+\end{frame}
+
+\subsection{Mètode de Gauss}
+
+% ---------- DIAPO 5.3a: Mètode de Gauss — idea ----------
+\begin{frame}[t]
+  \frametitle{5.3 Mètode de Gauss per al rang}
+
+  \vspace{-0.28cm}
+  \begin{itemize}
+    \item<1-> El mètode de Gauss és un procediment \textbf{sistemàtic} que permet calcular el rang d'una matriu de manera \textbf{determinista}.
+    \item<2-> Es transforma $A$ en una matriu \textbf{triangular superior} (zeros per sota de la diagonal).
+    \item<3-> $\operatorname{Rang}(A)$ = nombre de \textbf{files no nul·les} de la matriu triangular obtinguda.
+  \end{itemize}
+
+  \vspace{0.06cm}
+  \only<4->{\textbf{Transformacions elementals permeses:}}
+  \only<4->{
+    \begin{itemize}
+      \item Intercanviar $F_i \leftrightarrow F_j$.
+      \item $F_i \leftarrow k F_i$ \;($k \neq 0$).
+      \item $F_i \leftarrow a F_i + b F_j$ \;($a, b \neq 0$).
+    \end{itemize}
+  }
+  \only<5->{
+    \begin{caixadef}[compact, fontupper=\footnotesize]
+      \textbf{Fixa't-hi:} si $A$ té més files que columnes, es pot calcular $\operatorname{Rang}(A^t)$ per abreujar.
+    \end{caixadef}
+  }
+\end{frame}
+
+% ---------- DIAPO 5.3b: Gauss — exemple 1 (2×2) ----------
+\begin{frame}[t]
+  \frametitle{5.3 Mètode de Gauss per al rang}
+
+  \vspace{-0.34cm}
+  \only<1->{\textbf{Exemple guiat 1.}}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.30\textwidth}
+      \centering\textbf{$A$}
+      \[
+        \begin{pmatrix} 1 & 2 \\ \alt<1-2>{\fc{2}}{2} & 4 \end{pmatrix}
+      \]
+    \end{column}
+    \begin{column}{0.28\textwidth}
+      \only<2->{\gaussopFila{2}{F_2 \leftarrow F_2 - 2F_1}}
+    \end{column}
+    \begin{column}{0.30\textwidth}
+      \centering\only<4->{\textbf{$A'$}}
+      \only<4->{
+        \[
+          \begin{pmatrix} 1 & 2 \\ \fc{0} & \fc{0} \end{pmatrix}
+        \]
+      }
+    \end{column}
+  \end{columns}
+  \begin{itemize}
+    \item<2-> Columna $1$: $a_{21} = 2$, $a_{11} = 1$.
+    \item<3-> $(2,\,4) - 2(1,\,2) = (0,\,0)$.
+    \item<5-> Una fila no nul·la $\Rightarrow$ \solucio{\operatorname{Rang}(A) = 1}.
+  \end{itemize}
+\end{frame}
+
+% ---------- DIAPO 5.3c: Gauss — exemple 2 (3×3, rang 2) ----------
+\begin{frame}[t]
+  \frametitle{5.3 Mètode de Gauss per al rang}
+
+  \vspace{-0.36cm}
+  \textbf{Exemple guiat 2.}\;
+  \gaussObjGeneral
+
+  \vspace{0.06cm}
+  \begingroup\setlength{\arraycolsep}{3.5pt}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.32\textwidth}
+      \only<1->{
+        $A = \begin{pmatrix}
+          1 & 2 & 3 \\
+          \alt<4-9>{\fc{1}}{1} & 0 & 1 \\
+          \alt<4-9>{\fc{2}}{2} & 2 & 4
+        \end{pmatrix}$
+      }
+    \end{column}
+    \begin{column}{0.32\textwidth}
+      \only<3->{
+        $A' = \begin{pmatrix}
+          1 & 2 & 3 \\
+          \alt<6->{\fc{0}}{\phantom{0}} & \alt<6->{\fc{-2}}{\phantom{-2}} & \alt<6->{\fc{-2}}{\phantom{-2}} \\
+          \alt<9->{\fc{0}}{\phantom{0}} & \alt<9->{\fc{-2}}{\phantom{-2}} & \alt<9->{\fc{-2}}{\phantom{-2}}
+        \end{pmatrix}$
+      }
+    \end{column}
+    \begin{column}{0.32\textwidth}
+      \only<10->{
+        $A'' = \begin{pmatrix}
+          1 & 2 & 3 \\
+          0 & -2 & -2 \\
+          \alt<13->{\fc{0}}{\phantom{0}} & \alt<13->{\fc{0}}{\phantom{0}} & \alt<13->{\fc{0}}{\phantom{0}}
+        \end{pmatrix}$
+      }
+    \end{column}
+  \end{columns}
+  \endgroup
+
+  \vspace{0.08cm}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.48\textwidth}
+      \begin{itemize}
+        \item<4-> \textbf{1r objectiu:} $a_{21} = 0$.
+        \item<5-> $F_2 \leftarrow F_2 - F_1$.
+        \item<6-> $(1,\,0,\,1) - (1,\,2,\,3) = (0,\,-2,\,-2)$.
+        \item<7-> \textbf{2n objectiu:} $a_{31} = 0$.
+        \item<8-> $F_3 \leftarrow F_3 - 2F_1$.
+        \item<9-> $(2,\,2,\,4) - 2(1,\,2,\,3) = (0,\,-2,\,-2)$.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{itemize}
+        \item<11-> \textbf{3r objectiu:} $a_{32} = 0$.
+        \item<12-> $F_3 \leftarrow F_3 - F_2$.
+        \item<13-> $(0,\,-2,\,-2) - (0,\,-2,\,-2) = (0,\,0,\,0)$.
+        \item<14-> \textbf{Objectiu completat:} zeros sota la diagonal.
+        \item<15-> Dues files no nul·les $\Rightarrow$ \solucio{\operatorname{Rang}(A) = 2}.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ---------- DIAPO 5.3d: Gauss — exemple 3 (3×3, rang 1) ----------
+\begin{frame}[t]
+  \frametitle{5.3 Mètode de Gauss per al rang}
+
+  \vspace{-0.36cm}
+  \textbf{Exemple guiat 3.}\;
+  \gaussObjGeneral
+
+  \vspace{0.06cm}
+  \begingroup\setlength{\arraycolsep}{3.5pt}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.32\textwidth}
+      \only<1->{
+        $A = \begin{pmatrix}
+          1 & 2 & 3 \\
+          \alt<4-9>{\fc{2}}{2} & \alt<4-9>{\fc{4}}{4} & \alt<4-9>{\fc{6}}{6} \\
+          \alt<4-9>{\fc{3}}{3} & \alt<4-9>{\fc{6}}{6} & \alt<4-9>{\fc{9}}{9}
+        \end{pmatrix}$
+      }
+    \end{column}
+    \begin{column}{0.32\textwidth}
+      \only<3->{
+        $A' = \begin{pmatrix}
+          1 & 2 & 3 \\
+          \alt<6->{\fc{0}}{\phantom{0}} & \alt<6->{\fc{0}}{\phantom{0}} & \alt<6->{\fc{0}}{\phantom{0}} \\
+          \alt<9->{\fc{0}}{\phantom{0}} & \alt<9->{\fc{0}}{\phantom{0}} & \alt<9->{\fc{0}}{\phantom{0}}
+        \end{pmatrix}$
+      }
+    \end{column}
+    \begin{column}{0.32\textwidth}
+      \only<9->{
+        $A'' = \begin{pmatrix}
+          1 & 2 & 3 \\
+          0 & 0 & 0 \\
+          0 & 0 & 0
+        \end{pmatrix}$
+      }
+    \end{column}
+  \end{columns}
+  \endgroup
+
+  \vspace{0.08cm}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.48\textwidth}
+      \begin{itemize}
+        \item<4-> \textbf{1r objectiu:} $a_{21} = 0$.
+        \item<5-> $F_2 \leftarrow F_2 - 2F_1$.
+        \item<6-> $(1,\,2,\,3) - 2(1,\,2,\,3) = (0,\,0,\,0)$.
+        \item<7-> \textbf{2n objectiu:} $a_{31} = 0$.
+        \item<8-> $F_3 \leftarrow F_3 - 3F_1$.
+        \item<9-> $(3,\,6,\,9) - 3(1,\,2,\,3) = (0,\,0,\,0)$.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{itemize}
+        \item<10-> \textbf{Objectiu completat:} zeros sota la diagonal.
+        \item<11-> Una fila no nul·la $\Rightarrow$ \solucio{\operatorname{Rang}(A) = 1}.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ---------- DIAPO 5.3e: Gauss — exemple 4 (3×3, intercanvi, rang 3) ----------
+\begin{frame}[t]
+  \frametitle{5.3 Mètode de Gauss per al rang}
+
+  \vspace{-0.36cm}
+  \textbf{Exemple guiat 4.}\;
+  \gaussObjGeneral
+
+  \vspace{0.06cm}
+  \begingroup\setlength{\arraycolsep}{3.5pt}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.32\textwidth}
+      $A = \begin{pmatrix}
+        \alt<2->{\fc{0}}{0} & 1 & 2 \\
+        1 & 0 & 3 \\
+        0 & 2 & 1
+      \end{pmatrix}$
+    \end{column}
+    \begin{column}{0.32\textwidth}
+      \only<2->{
+        $A' = \begin{pmatrix}
+          1 & 0 & 3 \\
+          0 & 1 & 2 \\
+          \alt<3->{\fc{0}}{\phantom{0}} & \alt<3->{\alt<4->{\fc{2}}{2}}{\phantom{2}} & \alt<3->{1}{\phantom{1}}
+        \end{pmatrix}$
+      }
+    \end{column}
+    \begin{column}{0.32\textwidth}
+      \only<6->{
+        $A'' = \begin{pmatrix}
+          1 & 0 & 3 \\
+          0 & 1 & 2 \\
+          \fc{0} & \fc{0} & \fc{-3}
+        \end{pmatrix}$
+      }
+    \end{column}
+  \end{columns}
+  \endgroup
+
+  \vspace{0.08cm}
+  \begin{itemize}
+    \item<2-> \textbf{1r objectiu:} $a_{11} \neq 0$ (si $a_{11} = 0$, $F_1 \leftrightarrow F_2$).
+    \item<4-> \textbf{2n objectiu:} $a_{32} = 0$.
+    \item<5-> $F_3 \leftarrow F_3 - 2F_2$.
+    \item<6-> $(0,\,2,\,1) - 2(0,\,1,\,2) = (0,\,0,\,-3)$.
+    \item<7-> Tres files no nul·les $\Rightarrow$ \solucio{\operatorname{Rang}(A) = 3}.
+  \end{itemize}
+\end{frame}
+
+% ---------- SECCIÓ 6 ----------
+\section{Matriu inversa}
+\subsection{Definició i exemple}
+
+% ---------- DIAPO 6.1: Definició inversa ----------
+\begin{frame}[t]
+  \frametitle{6.1 Matriu inversa}
+
+  \vspace{-0.28cm}
+  \begin{itemize}
+    \item<1-> La \textbf{matriu inversa} $A^{-1}$ d'una matriu quadrada $A$ d'ordre $n$ compleix:
+      \[
+        A \cdot A^{-1} = I_n \qquad A^{-1} \cdot A = I_n
+      \]
+  \end{itemize}
+
+  \only<2->{
+    \vspace{-0.22cm}
+    \textbf{Exemple} ($2 \times 2$). Comprova que $A^{-1}$ és la matriu inversa de $A$:
+    \[
+      A = \begin{pmatrix} 1 & 2 \\ 0 & 1 \end{pmatrix},
+      \qquad
+      A^{-1} = \begin{pmatrix} 1 & -2 \\ 0 & 1 \end{pmatrix}
+    \]
+  }
+
+  \vspace{0.04cm}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.30\textwidth}
+      \only<17->{
+        \vspace{0.4cm}
+        \begin{caixadef}[compact, fontupper=\scriptsize]
+          $A^{-1}$ és la matriu inversa de $A$, ja que $A \cdot A^{-1} = I_2$ i \\ $A^{-1} \cdot A = I_2$.
+        \end{caixadef}
+      }
+    \end{column}
+    \begin{column}{0.68\textwidth}
+      {\small
+      \[
+        \onslide<3->{A \cdot A^{-1}}
+        \onslide<4->{\,=\,
+          \begin{pmatrix} 1 & 2 \\ 0 & 1 \end{pmatrix}
+          \begin{pmatrix} 1 & -2 \\ 0 & 1 \end{pmatrix}}
+        \onslide<5->{\,=\, \matriuIprogressiva{5}{6}{7}{8}}
+        \onslide<9->{= I_2}
+      \]
+      \[
+        \onslide<10->{A^{-1} \cdot A}
+        \onslide<11->{\,=\,
+          \begin{pmatrix} 1 & -2 \\ 0 & 1 \end{pmatrix}
+          \begin{pmatrix} 1 & 2 \\ 0 & 1 \end{pmatrix}}
+        \onslide<12->{\,=\, \matriuIprogressiva{12}{13}{14}{15}}
+        \onslide<16->{= I_2}
+      \]
+      }
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ---------- DIAPO 6.1b: Invertible / singular ----------
+\begin{frame}[t]
+  \frametitle{6.1 Matriu inversa}
+
+  \vspace{-0.28cm}
+  \begin{itemize}
+    \item<1-> No sempre existeix una matriu inversa.
+    \item<2-> Si existeix $A^{-1}$, $A$ és \textbf{invertible} (regular); si no, és \textbf{singular}.
+    \item<3-> $A$ és invertible si i només si $\operatorname{Rang}(A) = n$ (l'ordre de $A$).
+  \end{itemize}
+
+  \vspace{0.08cm}
+  \only<4->{$B = \begin{pmatrix} 2 & 1 \\ 0 & 3 \end{pmatrix}$}
+  \only<5->{Forma triangular.}
+  \only<6->{$\Rightarrow\ \operatorname{Rang}(B) = 2$.}
+  \only<7->{$\Rightarrow$ {\color{margueVerdFosc}$B$ és invertible.}}
+
+  \vspace{0.12cm}
+  \only<8->{$C = \begin{pmatrix} 1 & 2 \\ 0 & 0 \end{pmatrix}$}
+  \only<9->{Una fila no nul·la.}
+  \only<10->{$\Rightarrow\ \operatorname{Rang}(C) = 1$.}
+  \only<11->{$\Rightarrow$ {\color{margueVerdFosc}$C$ és singular.}}
+
+  \only<12->{
+    \vspace{0.12cm}
+    \textbf{Propietats}
+    \begin{itemize}
+      \item<12-> $(A^{-1})^{-1} = A$.
+      \item<13-> $(A \cdot B)^{-1} = B^{-1} \cdot A^{-1}$.
+      \item<14-> $(A^t)^{-1} = (A^{-1})^t$.
+    \end{itemize}
+  }
+\end{frame}
+
+% ---------- DIAPO 6.1c: Exemple per definició — rang ----------
+\begin{frame}[t]
+  \frametitle{6.1 Matriu inversa}
+
+  \vspace{-0.32cm}
+  \textbf{Exemple.} Troba la matriu inversa de $A$ a partir de la definició. (Després veurem el mètode de Gauss-Jordan.)
+
+  \vspace{0.1cm}
+  \only<2->{Primer calculem el rang amb Gauss per veure si $A$ és invertible:}
+
+  \vspace{0.12cm}
+  \begingroup\setlength{\arraycolsep}{3pt}
+  \begin{columns}[c,onlytextwidth]
+    \begin{column}{0.24\textwidth}
+      \only<3->{
+        \[
+          A = \begin{pmatrix} 3 & 4 \\ \fc{1} & \fc{1} \end{pmatrix}
+        \]
+      }
+    \end{column}
+    \begin{column}{0.34\textwidth}
+      \only<4->{
+        \centering
+        $F_2 \leftarrow F_2 - \tfrac{1}{3}F_1$
+      }
+    \end{column}
+    \begin{column}{0.24\textwidth}
+      \only<5->{
+        \[
+          A' = \begin{pmatrix} 3 & 4 \\ \fc{0} & \fc{-\tfrac{1}{3}} \end{pmatrix}
+        \]
+      }
+    \end{column}
+  \end{columns}
+  \endgroup
+
+  \only<6->{
+    \vspace{0.14cm}
+    Dues files no nul·les $\Rightarrow$ $\operatorname{Rang}(A) = 2 = n$ $\Rightarrow$ {\color{margueVerdFosc}$A$ és invertible.}
+  }
+\end{frame}
+
+% ---------- DIAPO 6.1d: Exemple per definició — sistema ----------
+\begin{frame}[t]
+  \frametitle{6.1 Matriu inversa}
+
+  \vspace{-0.32cm}
+  \textbf{Exemple} (continuació). $A = \begin{pmatrix} 3 & 4 \\ 1 & 1 \end{pmatrix}$
+
+  \vspace{0.06cm}
+  \only<1->{Ara que ja sabem que $A$ és invertible, la calculem aplicant la definició.}
+
+  \vspace{0.06cm}
+  \only<2->{$A \cdot A^{-1} = I_2$}
+  \only<3->{
+    \[
+      \begin{pmatrix} 3 & 4 \\ 1 & 1 \end{pmatrix}
+      \begin{pmatrix} a_{11} & a_{12} \\ a_{21} & a_{22} \end{pmatrix}
+      =
+      \begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix}
+    \]
+  }
+
+  \vspace{0.1cm}
+  \only<4->{
+    \begin{flushleft}
+    \begingroup\setlength{\arraycolsep}{2pt}
+    \begin{tabular}{@{}c@{\hspace{0.45em}}c@{\hspace{0.45em}}c@{\hspace{0.45em}}c@{\hspace{0.45em}}c@{\hspace{0.45em}}c@{\hspace{0.45em}}c@{\hspace{0.45em}}c@{\hspace{0.45em}}c@{}}
+      $\displaystyle\left\{\begin{aligned}
+        3a_{11} + 4a_{21} &= 1 \\
+        3a_{12} + 4a_{22} &= 0 \\
+        a_{11} + a_{21} &= 0 \\
+        a_{12} + a_{22} &= 1
+      \end{aligned}\right.$
+      &
+      \only<5->{$\longrightarrow$}
+      &
+      \only<5->{$\displaystyle\left\{\begin{aligned}
+        \fc{a_{21}} &= \fc{-a_{11}} \\
+        \fc{a_{22}} &= \fc{1 - a_{12}}
+      \end{aligned}\right.$}
+      &
+      \only<6->{$\longrightarrow$}
+      &
+      \only<6->{$\displaystyle\left\{\begin{aligned}
+        3a_{11} + 4(\fc{-a_{11}}) &= 1 \\
+        3a_{12} + 4(\fc{1 - a_{12}}) &= 0
+      \end{aligned}\right.$}
+      &
+      \only<7->{$\longrightarrow$}
+      &
+      \only<7->{$\displaystyle\left\{\begin{aligned}
+        \fc{-a_{11}} &= 1 \\
+        \fc{-a_{12}} + 4 &= 0
+      \end{aligned}\right.$}
+    \end{tabular}
+    \endgroup
+    \end{flushleft}
+  }
+
+  \only<8->{
+    \vspace{0.14cm}
+    \begin{flushleft}
+    \begin{minipage}[c]{0.52\textwidth}
+      \onslide<8->{$a_{11} = -1$}
+      \onslide<9->{,\ $a_{12} = 4$}
+      \onslide<10->{,\ $a_{21} = 1$}
+      \onslide<11->{,\ $a_{22} = -3$}
+    \end{minipage}%
+    \begin{minipage}[c]{0.42\textwidth}
+      \onslide<12->{
+        \textverd{$A^{-1} =$}
+        $\begin{pmatrix}
+          \onslide<12->{\fc{-1}} & \onslide<13->{\fc{4}} \\
+          \onslide<14->{\fc{1}} & \onslide<15->{\fc{-3}}
+        \end{pmatrix}$
+      }
+    \end{minipage}
+    \end{flushleft}
+  }
+\end{frame}
+
+% ---------- DIAPO 6.1e: Exemple per definició — comprovació ----------
+\begin{frame}[t]
+  \frametitle{6.1 Matriu inversa}
+
+  \vspace{-0.28cm}
+  \textbf{Exemple} (continuació). Comprovem $A^{-1} \cdot A = I_2$.
+
+  \vspace{0.08cm}
+  \[
+    \onslide<1->{A^{-1} \cdot A}
+    \onslide<2->{\,=\,
+      \begin{pmatrix} -1 & 4 \\ 1 & -3 \end{pmatrix}
+      \begin{pmatrix} 3 & 4 \\ 1 & 1 \end{pmatrix}}
+    \onslide<3->{\,=\,
+      \begin{pmatrix}
+        \onslide<3->{-3+4} & \onslide<4->{-4+4} \\
+        \onslide<5->{3-3} & \onslide<6->{4-3}
+      \end{pmatrix}}
+    \onslide<7->{\,=\,
+      \begin{pmatrix}
+        \onslide<7->{1} & \onslide<8->{0} \\
+        \onslide<9->{0} & \onslide<10->{1}
+      \end{pmatrix}}
+    \onslide<11->{= I_2}
+  \]
+  \only<12->{
+    \vspace{0.06cm}
+    \caixacentrada{Com $A \cdot A^{-1} = I_2$ i $A^{-1} \cdot A = I_2$, hem trobat la inversa de $A$.}
+  }
+\end{frame}
+
+\subsection{Mètode de Gauss-Jordan}
+
+% ---------- DIAPO 6.2: Gauss-Jordan — idea ----------
+\begin{frame}[t]
+  \frametitle{6.2 Mètode de Gauss-Jordan}
+
+  \vspace{-0.28cm}
+  \begin{itemize}
+    \item<1-> El mètode de \textbf{Gauss-Jordan} serveix per calcular \textbf{matrius inverses}.
+    \item<2-> Amb les \textbf{mateixes transformacions elementals} del mètode de Gauss per al rang, es vol convertir $A$ en $I_n$.
+    \item<3-> Es parteix de $\bigl(A \;\big|\; I_n\bigr)$ i, aplicant transformacions elementals, s'arriba a $\bigl(I_n \;\big|\; A^{-1}\bigr)$.
+  \end{itemize}
+  \only<4->{
+    \vspace{0.1cm}
+    \caixacentrada{%
+      $\bigl(A \;\big|\; I_n\bigr) \longrightarrow \bigl(I_n \;\big|\; A^{-1}\bigr)$%
+    }
+  }
+  \only<5->{
+    \vspace{0.1cm}
+    \textbf{Estratègia}
+    \begin{enumerate}
+      \item<5-> Aplicar \textbf{Gauss} a $A$ fins a fer-la \textbf{triangular superior} i comprovar que és invertible.
+      \item<6-> Aconseguir \textbf{$0$s a sobre la diagonal} de $A$ mitjançant combinacions lineals de files.
+      \item<7-> Aconseguir \textbf{$1$s a la diagonal}, dividint cada fila pel valor de la diagonal.
+    \end{enumerate}
+  }
+\end{frame}
+
+% ---------- DIAPO 6.2a: Gauss-Jordan — estratègia visual (3×3 genèrica) ----------
+\begin{frame}[t]
+  \frametitle{6.2 Mètode de Gauss-Jordan}
+
+  \vspace{-0.32cm}
+  \textbf{Visualització} (ordre $3$). Part dreta: $I_3$ $\rightarrow$ $I_3'$ $\rightarrow$ $A^{-1}$.
+
+  \vspace{0.04cm}
+  {\small
+  \begingroup\setlength{\arraycolsep}{4pt}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.49\textwidth}
+      \onslide<1->{
+        \[
+          \bigl(A \;\big|\; I_3\bigr) = \left(\begin{array}{ccc|ccc}
+            a_{11} & a_{12} & a_{13} & 1 & 0 & 0 \\
+            a_{21} & a_{22} & a_{23} & 0 & 1 & 0 \\
+            a_{31} & a_{32} & a_{33} & 0 & 0 & 1
+          \end{array}\right)
+        \]
+      }
+      \onslide<2->{
+        \vspace{0.08cm}
+        \textbf{1.} Gauss: zeros \textbf{sota} la diagonal.
+        \[
+          \left(\begin{array}{ccc|c}
+            a_{11} & a_{12} & a_{13} & \gjDots \\
+            \fc{0} & a_{22} & a_{23} & \\
+            \fc{0} & \fc{0} & a_{33} & 
+          \end{array}\right)
+        \]
+      }
+    \end{column}
+    \begin{column}{0.49\textwidth}
+      \onslide<3->{
+        \textbf{2.} Zeros \textbf{sobre} la diagonal \;($I_3 \rightarrow I_3'$).
+        \[
+          \left(\begin{array}{ccc|c}
+            a_{11} & \fc{0} & \fc{0} & \gjDots \\
+            \fc{0} & a_{22} & \fc{0} & \\
+            \fc{0} & \fc{0} & a_{33} & 
+          \end{array}\right)
+        \]
+      }
+      \onslide<4->{
+        \vspace{0.08cm}
+        \textbf{3.} $1$s a la diagonal.
+        \[
+          \left(\begin{array}{ccc|c}
+            \fc{1} & \fc{0} & \fc{0} & \gjDots \\
+            \fc{0} & \fc{1} & \fc{0} & \\
+            \fc{0} & \fc{0} & \fc{1} & 
+          \end{array}\right)
+          \;\Rightarrow\; \bigl(I_3 \;\big|\; A^{-1}\bigr)
+        \]
+      }
+    \end{column}
+  \end{columns}
+  \endgroup
+  }
+\end{frame}
+
+% ---------- DIAPO 6.2b: Gauss-Jordan — exemple 2×2 (inici) ----------
+\begin{frame}[t]
+  \frametitle{6.2 Mètode de Gauss-Jordan}
+
+  \vspace{-0.36cm}
+  \only<1->{\textbf{Exemple guiat 1.} Calcula la matriu inversa de $A$.}
+  \only<1->{
+    \[
+      A = \begin{pmatrix} 1 & 2 \\ 3 & 4 \end{pmatrix}
+    \]
+  }
+
+  \only<2->{
+    \vspace{0.06cm}
+    Per calcular la matriu inversa de $A$, aplicarem el mètode de \textbf{Gauss-Jordan}, que ens permetrà comprovar si és invertible i trobar $A^{-1}$ progressivament.
+  }
+
+  \only<3->{
+    \vspace{0.06cm}
+    \textbf{Primer pas}: afegim la matriu identitat al costat de $A$ i construïm $\bigl(A \;\big|\; I_2\bigr)$.
+  }
+
+  \onslide<4->{
+    \vspace{0.04cm}
+    \only<5->{\textbf{2n pas}: zeros \textbf{sota} la diagonal (Gauss).}%
+    \only<4->{\phantom{\textbf{2n pas}: zeros \textbf{sota} la diagonal (Gauss).}}%
+  }
+
+  \vspace{0.06cm}
+  \begin{flushleft}
+  \begingroup\setlength{\arraycolsep}{3pt}
+  \onslide<4->{$\bigl(A \;\big|\; I_2\bigr) = \left(\begin{array}{cc|cc}
+    1 & 2 & 1 & 0 \\
+    3 & 4 & 0 & 1
+  \end{array}\right)$}
+  \onslide<6->{$\quad F_2 \leftarrow F_2 - 3F_1$}
+  \onslide<7->{$\quad \left(\begin{array}{cc|cc}
+    1 & 2 & 1 & 0 \\
+    \fc{0} & \fc{-2} & \fc{-3} & \fc{1}
+  \end{array}\right)$}
+  \endgroup
+  \end{flushleft}
+
+  \onslide<8->{
+    \vspace{0.12cm}
+    Cap fila nul·la a l'esquerra $\Rightarrow$ \textverd{$A$ és invertible}.
+  }
+\end{frame}
+
+% ---------- DIAPO 6.2c: Gauss-Jordan — exemple 2×2 (Jordan) ----------
+\begin{frame}[t]
+  \frametitle{6.2 Mètode de Gauss-Jordan}
+
+  \vspace{-0.36cm}
+  \textbf{Exemple guiat 1} (continuació).
+
+  \onslide<1->{
+    \vspace{0.04cm}
+    \only<2->{\textbf{3r pas}: zeros \textbf{sobre} la diagonal.}%
+    \only<1->{\phantom{\textbf{3r pas}: zeros \textbf{sobre} la diagonal.}}%
+  }
+
+  \vspace{0.06cm}
+  \begin{flushleft}
+  \begingroup\setlength{\arraycolsep}{3pt}
+  \onslide<1->{$\left(\begin{array}{cc|cc}
+    1 & 2 & 1 & 0 \\
+    0 & -2 & -3 & 1
+  \end{array}\right)$}
+  \onslide<3->{$\quad F_1 \leftarrow F_1 + F_2$}
+  \onslide<4->{$\quad \left(\begin{array}{cc|cc}
+    1 & \fc{0} & \fc{-2} & \fc{1} \\
+    0 & -2 & -3 & 1
+  \end{array}\right)$}
+  \endgroup
+  \end{flushleft}
+
+  \onslide<3->{
+    \vspace{0.08cm}
+    \only<5->{\textbf{4t pas}: $1$s a la diagonal.}%
+    \only<3-4>{\phantom{\textbf{4t pas}: $1$s a la diagonal.}}%
+  }
+
+  \vspace{0.06cm}
+  \begin{flushleft}
+  \begingroup\setlength{\arraycolsep}{3pt}
+  \onslide<5->{$\left(\begin{array}{cc|cc}
+    1 & 0 & -2 & 1 \\
+    0 & -2 & -3 & 1
+  \end{array}\right)$}
+  \onslide<6->{$\quad F_2 \leftarrow -\tfrac{1}{2}F_2$}
+  \onslide<7->{$\quad \left(\begin{array}{cc|cc}
+    1 & 0 & -2 & 1 \\
+    0 & \fc{1} & \fc{\tfrac{3}{2}} & \fc{-\tfrac{1}{2}}
+  \end{array}\right)$}
+  \endgroup
+  \end{flushleft}
+
+  \onslide<8->{
+    \vspace{0.1cm}
+    Esquerra $= I_2$ $\Rightarrow$ \solucio{A^{-1} = \begin{pmatrix} -2 & 1 \\ \tfrac{3}{2} & -\tfrac{1}{2} \end{pmatrix}}.
+  }
+\end{frame}
+
+% ---------- DIAPO 6.2d: Gauss-Jordan — exemple 3×3 (inici + Gauss) ----------
+\begin{frame}[t]
+  \frametitle{6.2 Mètode de Gauss-Jordan}
+
+  \vspace{-0.36cm}
+  \only<1->{\textbf{Exemple guiat 2.} Calcula la matriu inversa de $A$.}
+
+  \only<1-2>{
+    \[
+      A = \begin{pmatrix}
+        2 & -1 & -1 \\
+        4 & 2 & -6 \\
+        -3 & -1 & 5
+      \end{pmatrix}
+    \]
+  }
+
+  \only<2->{
+    \vspace{0.06cm}
+    \textbf{Primer pas}: afegim $I_3$ al costat de $A$ i construïm $\bigl(A \;\big|\; I_3\bigr)$.
+  }
+
+  \vspace{0.06cm}
+  \begin{flushleft}
+  \begingroup\setlength{\arraycolsep}{3pt}
+  \onslide<3->{$A = \begin{pmatrix}
+    2 & -1 & -1 \\
+    4 & 2 & -6 \\
+    -3 & -1 & 5
+  \end{pmatrix}$}
+  \onslide<4->{$\quad\longrightarrow\quad
+    \bigl(A \;\big|\; I_3\bigr) = \left(\begin{array}{ccc|ccc}
+      2 & -1 & -1 & 1 & 0 & 0 \\
+      4 & 2 & -6 & 0 & 1 & 0 \\
+      -3 & -1 & 5 & 0 & 0 & 1
+    \end{array}\right)$}
+  \endgroup
+  \end{flushleft}
+
+  \onslide<4->{
+    \vspace{0.08cm}
+    \only<5->{\textbf{2n pas}: zeros \textbf{sota} la diagonal (Gauss).}%
+    \only<4->{\phantom{\textbf{2n pas}: zeros \textbf{sota} la diagonal (Gauss).}}%
+  }
+
+  \vspace{0.06cm}
+  \begin{flushleft}
+  \begingroup\setlength{\arraycolsep}{3pt}
+  \onslide<5->{$\left(\begin{array}{ccc|ccc}
+    2 & -1 & -1 & 1 & 0 & 0 \\
+    4 & 2 & -6 & 0 & 1 & 0 \\
+    -3 & -1 & 5 & 0 & 0 & 1
+  \end{array}\right)$}
+  \onslide<6->{$\quad F_2 \leftarrow F_2 - 2F_1$}
+  \onslide<7->{$\quad \left(\begin{array}{ccc|ccc}
+    2 & -1 & -1 & 1 & 0 & 0 \\
+    \fc{0} & \fc{4} & \fc{-4} & \fc{-2} & \fc{1} & \fc{0} \\
+    -3 & -1 & 5 & 0 & 0 & 1
+  \end{array}\right)$}
+  \endgroup
+  \end{flushleft}
+\end{frame}
+
+% ---------- DIAPO 6.2e: Gauss-Jordan — exemple 3×3 (Gauss, continuació) ----------
+\begin{frame}[t]
+  \frametitle{6.2 Mètode de Gauss-Jordan}
+
+  \vspace{-0.36cm}
+  \textbf{Exemple guiat 2} (continuació). \textbf{2n pas} (Gauss).
+
+  \vspace{0.06cm}
+  \begin{flushleft}
+  \begingroup\setlength{\arraycolsep}{3pt}
+  \onslide<1->{$\left(\begin{array}{ccc|ccc}
+    2 & -1 & -1 & 1 & 0 & 0 \\
+    0 & 4 & -4 & -2 & 1 & 0 \\
+    -3 & -1 & 5 & 0 & 0 & 1
+  \end{array}\right)$}
+  \onslide<2->{$\quad F_3 \leftarrow 3F_1 + 2F_3$}
+  \onslide<3->{$\quad \left(\begin{array}{ccc|ccc}
+    2 & -1 & -1 & 1 & 0 & 0 \\
+    0 & 4 & -4 & -2 & 1 & 0 \\
+    \fc{0} & \fc{-5} & \fc{7} & \fc{3} & \fc{0} & \fc{2}
+  \end{array}\right)$}
+  \endgroup
+  \end{flushleft}
+
+  \vspace{0.08cm}
+  \begin{flushleft}
+  \begingroup\setlength{\arraycolsep}{3pt}
+  \onslide<4->{$\left(\begin{array}{ccc|ccc}
+    2 & -1 & -1 & 1 & 0 & 0 \\
+    0 & 4 & -4 & -2 & 1 & 0 \\
+    0 & -5 & 7 & 3 & 0 & 2
+  \end{array}\right)$}
+  \onslide<5->{$\quad F_3 \leftarrow 4F_3 + 5F_2$}
+  \onslide<6->{$\quad \left(\begin{array}{ccc|ccc}
+    2 & -1 & -1 & 1 & 0 & 0 \\
+    0 & 4 & -4 & -2 & 1 & 0 \\
+    \fc{0} & \fc{0} & \fc{8} & \fc{2} & \fc{5} & \fc{8}
+  \end{array}\right)$}
+  \endgroup
+  \end{flushleft}
+
+  \onslide<7->{
+    \vspace{0.08cm}
+    Zeros \textbf{sota} la diagonal $\Rightarrow$ \textverd{Gauss completat}; $A$ és invertible.
+  }
+\end{frame}
+
+% ---------- DIAPO 6.2f: Gauss-Jordan — exemple 3×3 (Jordan, 2 primers passos) ----------
+\begin{frame}[t]
+  \frametitle{6.2 Mètode de Gauss-Jordan}
+
+  \vspace{-0.36cm}
+  \textbf{Exemple guiat 2} (continuació).
+
+  \onslide<1->{
+    \vspace{0.04cm}
+    \only<2->{\textbf{3r pas}: zeros \textbf{sobre} la diagonal.}%
+    \only<1->{\phantom{\textbf{3r pas}: zeros \textbf{sobre} la diagonal.}}%
+  }
+
+  \vspace{0.06cm}
+  \begin{flushleft}
+  \begingroup\setlength{\arraycolsep}{3pt}
+  \onslide<1->{$\left(\begin{array}{ccc|ccc}
+    2 & -1 & -1 & 1 & 0 & 0 \\
+    0 & 4 & -4 & -2 & 1 & 0 \\
+    0 & 0 & 8 & 2 & 5 & 8
+  \end{array}\right)$}
+  \onslide<3->{$\quad F_1 \leftarrow 4F_1 + F_2$}
+  \onslide<4->{$\quad \left(\begin{array}{ccc|ccc}
+    \fc{8} & \fc{0} & \fc{-8} & \fc{2} & \fc{1} & \fc{0} \\
+    0 & 4 & -4 & -2 & 1 & 0 \\
+    0 & 0 & 8 & 2 & 5 & 8
+  \end{array}\right)$}
+  \endgroup
+  \end{flushleft}
+
+  \vspace{0.08cm}
+  \begin{flushleft}
+  \begingroup\setlength{\arraycolsep}{3pt}
+  \onslide<5->{$\left(\begin{array}{ccc|ccc}
+    8 & 0 & -8 & 2 & 1 & 0 \\
+    0 & 4 & -4 & -2 & 1 & 0 \\
+    0 & 0 & 8 & 2 & 5 & 8
+  \end{array}\right)$}
+  \onslide<6->{$\quad F_1 \leftarrow F_1 + F_3$}
+  \onslide<7->{$\quad \left(\begin{array}{ccc|ccc}
+    \fc{8} & \fc{0} & \fc{0} & \fc{4} & \fc{6} & \fc{8} \\
+    0 & 4 & -4 & -2 & 1 & 0 \\
+    0 & 0 & 8 & 2 & 5 & 8
+  \end{array}\right)$}
+  \endgroup
+  \end{flushleft}
+\end{frame}
+
+% ---------- DIAPO 6.2g: Gauss-Jordan — exemple 3×3 (últim zero + 4t pas) ----------
+\begin{frame}[t]
+  \frametitle{6.2 Mètode de Gauss-Jordan}
+
+  \vspace{-0.36cm}
+  \textbf{Exemple guiat 2} (continuació).
+
+  \vspace{0.06cm}
+  \begin{flushleft}
+  \begingroup\setlength{\arraycolsep}{3pt}
+  \onslide<1->{$\left(\begin{array}{ccc|ccc}
+    8 & 0 & 0 & 4 & 6 & 8 \\
+    0 & 4 & -4 & -2 & 1 & 0 \\
+    0 & 0 & 8 & 2 & 5 & 8
+  \end{array}\right)$}
+  \onslide<2->{$\quad F_2 \leftarrow 2F_2 + F_3$}
+  \onslide<3->{$\quad \left(\begin{array}{ccc|ccc}
+    8 & 0 & 0 & 4 & 6 & 8 \\
+    0 & \fc{8} & \fc{0} & \fc{-2} & \fc{7} & \fc{8} \\
+    0 & 0 & 8 & 2 & 5 & 8
+  \end{array}\right)$}
+  \endgroup
+  \end{flushleft}
+
+  \onslide<3->{
+    \vspace{0.08cm}
+    Zeros \textbf{sobre} la diagonal completats.
+  }
+
+  \onslide<4->{
+    \vspace{0.12cm}
+    \textbf{4t pas}: $1$s a la diagonal.
+  }
+
+  \vspace{0.06cm}
+  \begingroup
+  \setlength{\arraycolsep}{2pt}
+  \setlength{\columnsep}{0.15cm}
+  \renewcommand{\arraystretch}{1.45}
+  \setlength{\extrarowheight}{2pt}
+  \begin{columns}[c,onlytextwidth]
+    \begin{column}{0.30\textwidth}
+      \onslide<5->{
+        $\left(\begin{array}{ccc|ccc}
+          8 & 0 & 0 & 4 & 6 & 8 \\
+          0 & 8 & 0 & -2 & 7 & 8 \\
+          0 & 0 & 8 & 2 & 5 & 8
+        \end{array}\right)$
+      }
+    \end{column}
+    \begin{column}{0.13\textwidth}
+      \onslide<6->{
+        \hspace*{-1.1em}
+        \begin{tabular}{@{}c@{}}
+          $F_1 \leftarrow \tfrac{1}{8}F_1$ \\[5pt]
+          $F_2 \leftarrow \tfrac{1}{8}F_2$ \\[5pt]
+          $F_3 \leftarrow \tfrac{1}{8}F_3$
+        \end{tabular}
+      }
+    \end{column}
+    \begin{column}{0.28\textwidth}
+      \onslide<7->{
+        $\left(\begin{array}{ccc|ccc}
+          \fc{1} & \fc{0} & \fc{0} & \fc{\tfrac{1}{2}} & \fc{\tfrac{3}{4}} & \fc{1} \\
+          0 & \fc{1} & \fc{0} & \fc{-\tfrac{1}{4}} & \fc{\tfrac{7}{8}} & \fc{1} \\
+          0 & 0 & \fc{1} & \fc{\tfrac{1}{4}} & \fc{\tfrac{5}{8}} & \fc{1}
+        \end{array}\right)$
+      }
+    \end{column}
+    \begin{column}{0.27\textwidth}
+      \onslide<8->{
+        Esquerra $= I_3$
+        \vspace{0.06cm}
+
+        \solucio{A^{-1} = \begin{pmatrix}
+          \tfrac{1}{2} & \tfrac{3}{4} & 1 \\
+          -\tfrac{1}{4} & \tfrac{7}{8} & 1 \\
+          \tfrac{1}{4} & \tfrac{5}{8} & 1
+        \end{pmatrix}}
+      }
+    \end{column}
+  \end{columns}
+  \endgroup
+\end{frame}
+
+% ---------- SECCIÓ 7 ----------
+\section{Equacions matricials}
+\subsection{Resolució d'equacions matricials}
+
+% ---------- DIAPO 7.1: Equacions matricials — idea ----------
+\begin{frame}[t]
+  \frametitle{7.1 Equacions matricials}
+
+  \vspace{-0.28cm}
+  \begin{itemize}
+    \item<1-> Una \textbf{equació matricial} és una equació en què els termes són matrius; cal aïllar la matriu incògnita $X$.
+    \item<2-> $A$ ha de ser \textbf{invertible} per poder multiplicar per $A^{-1}$ (Gauss-Jordan).
+  \end{itemize}
+
+  \vspace{0.08cm}
+  \only<3->{\textbf{Tipus principals}}
+  \begin{itemize}
+    \item<3-> \textbf{1.}\; $AX = B$ \quad $\Rightarrow$ \textbf{multipliquem per $A^{-1}$ a l'esquerra}: $X = A^{-1}B$.
+    \item<4-> \textbf{2.}\; $XA = B$ \quad $\Rightarrow$ \textbf{multipliquem per $A^{-1}$ a la dreta}: $X = BA^{-1}$.
+    \item<5-> \textbf{3.}\; $AX + B = C$ \quad $\Rightarrow$ primer aïllem $AX = C - B$; després $X = A^{-1}(C - B)$.
+  \end{itemize}
+
+  \only<6->{
+    \vspace{0.1cm}
+    \caixacentrada{El producte \textbf{no} és commutatiu: en general $A^{-1}B \neq BA^{-1}$.}
+  }
+\end{frame}
+
+% ---------- DIAPO 7.2: Equacions matricials — exemple AX = B ----------
+\begin{frame}[t]
+  \frametitle{7.2 Exemple: $AX = B$}
+
+  \vspace{-0.32cm}
+  \textbf{Exemple guiat 1.}\; Resol $AX = B$ amb
+  $A = \begin{pmatrix} 1 & 2 \\ 0 & 1 \end{pmatrix}$,
+  $B = \begin{pmatrix} 7 & 3 \\ 2 & 1 \end{pmatrix}$.
+
+  \vspace{0.08cm}
+  \begin{flushleft}
+  \onslide<2->{$A^{-1} \cdot AX = A^{-1}B$}
+  \onslide<3->{$\Rightarrow \quad X = A^{-1}B$}
+  \end{flushleft}
+
+  \vspace{0.06cm}
+  \onslide<4->{Cal trobar $A^{-1}$ (per exemple, amb \textbf{Gauss-Jordan}).}
+
+  \vspace{0.06cm}
+  \onslide<5->{$A^{-1} = \begin{pmatrix} 1 & -2 \\ 0 & 1 \end{pmatrix}$}
+
+  \vspace{0.08cm}
+  \begin{flushleft}
+  \begingroup\setlength{\arraycolsep}{3pt}
+  \onslide<6->{$X = A^{-1} \cdot B$}
+  \onslide<7->{$X = \begin{pmatrix} 1 & -2 \\ 0 & 1 \end{pmatrix}
+    \begin{pmatrix} 7 & 3 \\ 2 & 1 \end{pmatrix}$}
+  \onslide<8->{$\quad = \quad \begin{pmatrix}
+    \onslide<8->{7-4} & \onslide<9->{3-2} \\
+    \onslide<10->{2} & \onslide<11->{1}
+  \end{pmatrix}$}
+  \onslide<12->{$\quad = \quad \solucio{X = \begin{pmatrix} 3 & 1 \\ 2 & 1 \end{pmatrix}}$}
+  \endgroup
+  \end{flushleft}
+\end{frame}
+
+% ---------- DIAPO 7.3: Equacions matricials — exemple XA = B ----------
+\begin{frame}[t]
+  \frametitle{7.3 Exemple: $XA = B$}
+
+  \vspace{-0.32cm}
+  \textbf{Exemple guiat 2.}\; Resol $XA = B$ amb
+  $A = \begin{pmatrix} 2 & 1 \\ 1 & 1 \end{pmatrix}$,
+  $B = \begin{pmatrix} 5 & 3 \\ 4 & 2 \end{pmatrix}$.
+
+  \vspace{0.08cm}
+  \begin{flushleft}
+  \onslide<2->{$XA \cdot A^{-1} = BA^{-1}$}
+  \onslide<3->{$\Rightarrow \quad X = BA^{-1}$}
+  \end{flushleft}
+
+  \vspace{0.06cm}
+  \onslide<4->{$A^{-1} = \begin{pmatrix} 1 & -1 \\ -1 & 2 \end{pmatrix}$}
+
+  \vspace{0.08cm}
+  \begin{flushleft}
+  \begingroup\setlength{\arraycolsep}{3pt}
+  \onslide<5->{$X = \begin{pmatrix} 5 & 3 \\ 4 & 2 \end{pmatrix}
+    \begin{pmatrix} 1 & -1 \\ -1 & 2 \end{pmatrix}$}
+  \onslide<6->{$\quad = \quad \begin{pmatrix}
+    \onslide<6->{5-3} & \onslide<7->{-5+6} \\
+    \onslide<8->{4-2} & \onslide<9->{-4+4}
+  \end{pmatrix}$}
+  \onslide<10->{$\quad = \quad \solucio{X = \begin{pmatrix} 2 & 1 \\ 2 & 0 \end{pmatrix}}$}
+  \endgroup
+  \end{flushleft}
+\end{frame}
+
+% ---------- DIAPO 7.4: Equacions matricials — exemple AX + B = C ----------
+\begin{frame}[t]
+  \frametitle{7.4 Exemple: $AX + B = C$}
+
+  \vspace{-0.32cm}
+  \textbf{Exemple guiat 3.}\; Resol $AX + B = C$ amb
+  $A = \begin{pmatrix} 1 & 0 \\ 1 & 1 \end{pmatrix}$,
+  $B = \begin{pmatrix} 2 & 1 \\ 0 & 1 \end{pmatrix}$,
+  $C = \begin{pmatrix} 6 & 4 \\ 5 & 6 \end{pmatrix}$.
+
+  \vspace{0.08cm}
+  \onslide<2->{$AX = C - B = \begin{pmatrix} 4 & 3 \\ 5 & 5 \end{pmatrix}$}
+
+  \vspace{0.06cm}
+  \begin{flushleft}
+  \onslide<3->{$A^{-1} \cdot AX = A^{-1}(C - B)$}
+  \onslide<4->{$\Rightarrow \quad X = A^{-1}(C - B)$}
+  \end{flushleft}
+
+  \vspace{0.06cm}
+  \onslide<5->{$A^{-1} = \begin{pmatrix} 1 & 0 \\ -1 & 1 \end{pmatrix}$}
+
+  \vspace{0.08cm}
+  \begin{flushleft}
+  \begingroup\setlength{\arraycolsep}{3pt}
+  \onslide<6->{$X = \begin{pmatrix} 1 & 0 \\ -1 & 1 \end{pmatrix}
+    \begin{pmatrix} 4 & 3 \\ 5 & 5 \end{pmatrix}$}
+  \onslide<7->{$\quad = \quad \begin{pmatrix}
+    \onslide<7->{4} & \onslide<8->{3} \\
+    \onslide<9->{-4+5} & \onslide<10->{-3+5}
+  \end{pmatrix}$}
+  \onslide<11->{$\quad = \quad \solucio{X = \begin{pmatrix} 4 & 3 \\ 1 & 2 \end{pmatrix}}$}
+  \endgroup
+  \end{flushleft}
+\end{frame}
+
+\subsection{Sistemes d'equacions matricials}
+
+% ---------- DIAPO 7.5: Sistemes — idea ----------
+\begin{frame}[t]
+  \frametitle{7.5 Sistemes d'equacions matricials}
+
+  \vspace{-0.28cm}
+  \begin{itemize}
+    \item<1-> També podem tenir un \textbf{sistema} amb diverses incògnites matricials ($X$, $Y$, \ldots).
+    \item<2-> Totes les matrius han de tenir la \textbf{mateixa dimensió}.
+    \item<3-> Es resol com un sistema lineal clàssic: \textbf{sumar, restar o multiplicar per un escalar} equacions senceres per eliminar una incògnita.
+    \item<4-> Els coeficients ($3$, $4$, \ldots) són \textbf{escalars}: \textbf{no cal} $A^{-1}$; no hi ha cap matriu multiplicant les incògnites.
+  \end{itemize}
+
+  \only<5->{
+    \vspace{0.08cm}
+    \textbf{Exemple de sistema}
+    \[
+      \left\{\begin{aligned}
+        3X + Y &= A \\
+        4X + 2Y &= B
+      \end{aligned}\right.
+      \qquad
+      A = \begin{pmatrix} 3 & 1 & 0 \\ 2 & 1 & 5 \end{pmatrix},
+      \quad
+      B = \begin{pmatrix} 3 & 4 & 2 \\ 2 & 1 & 8 \end{pmatrix}
+    \]
+  }
+\end{frame}
+
+% ---------- DIAPO 7.6: Sistemes — exemple guiat 1 (eliminació) ----------
+\begin{frame}[t]
+  \frametitle{7.5 Sistemes d'equacions matricials}
+
+  \vspace{-0.32cm}
+  \textbf{Exemple guiat 1.}\; Troba $X$ i $Y$ amb
+  $A = \begin{pmatrix} 3 & 1 & 0 \\ 2 & 1 & 5 \end{pmatrix}$,
+  $B = \begin{pmatrix} 3 & 4 & 2 \\ 2 & 1 & 8 \end{pmatrix}$.
+
+  \vspace{0.08cm}
+  \begin{flushleft}
+  {\small
+  \begin{tabular}{@{}c@{\hspace{0.3em}}c@{\hspace{0.3em}}c@{\hspace{0.3em}}c@{\hspace{0.3em}}c@{\hspace{0.3em}}c@{\hspace{0.3em}}c@{}}
+    \onslide<2->{
+      $\displaystyle\left\{\begin{aligned}
+        3X + Y &= A \\
+        4X + 2Y &= B
+      \end{aligned}\right.$
+    } &
+    \onslide<3->{$\longrightarrow$} &
+    \onslide<3->{
+      $\displaystyle\left\{\begin{aligned}
+        \fc{6X + 2Y} &= \fc{2A} \\
+        4X + 2Y &= B
+      \end{aligned}\right.$
+    } &
+    \onslide<4->{$\longrightarrow$} &
+    \onslide<4->{
+      $\displaystyle\left\{\begin{aligned}
+        \fc{2X} &= \fc{2A - B}
+      \end{aligned}\right.$
+    } &
+    \onslide<5->{$\longrightarrow$} &
+    \onslide<5->{
+      $\displaystyle\left\{\begin{aligned}
+        \fc{X} &= \fc{A - \tfrac{1}{2}B}
+      \end{aligned}\right.$
+    }
+  \end{tabular}}
+  \end{flushleft}
+
+  \onslide<3->{
+    \vspace{0.08cm}
+    {\small $2 \cdot (3X + Y = A)$}
+  }
+  \onslide<4->{
+    \vspace{0.04cm}
+
+    {\small Restem la 2a equació: $(6X + 2Y) - (4X + 2Y) = 2A - B$}
+  }
+  \onslide<5->{
+    \vspace{0.04cm}
+
+    {\small Dividim entre $2$.}
+  }
+
+  \onslide<6->{
+    \vspace{0.1cm}
+    \begin{flushleft}
+    \begingroup
+    \setlength{\arraycolsep}{2pt}
+    \renewcommand{\arraystretch}{1.35}
+    {\small
+    \begin{tabular}{@{}c@{\hspace{0.25em}}c@{\hspace{0.25em}}c@{}}
+      \onslide<6->{$X = A - \tfrac{1}{2}B$} &
+      \onslide<7->{$\longrightarrow$} &
+      \onslide<7->{$X = \begin{pmatrix} 3 & 1 & 0 \\ 2 & 1 & 5 \end{pmatrix}
+        - \tfrac{1}{2}\begin{pmatrix} 3 & 4 & 2 \\ 2 & 1 & 8 \end{pmatrix}$}
+    \end{tabular}
+
+    \vspace{0.06cm}
+    \onslide<8->{
+      $= \begin{pmatrix}
+        \onslide<8->{3 - \tfrac{3}{2}} & \onslide<9->{1 - 2} & \onslide<10->{0 - 1} \\
+        \onslide<11->{2 - 1} & \onslide<12->{1 - \tfrac{1}{2}} & \onslide<13->{5 - 4}
+      \end{pmatrix}$
+    }
+    \onslide<14->{
+      \ $\longrightarrow\ \solucio{X = \begin{pmatrix}
+        \tfrac{3}{2} & -1 & -1 \\
+        1 & \tfrac{1}{2} & 1
+      \end{pmatrix}}$
+    }
+    }
+    \endgroup
+    \end{flushleft}
+  }
+\end{frame}
+
+% ---------- DIAPO 7.7: Sistemes — exemple guiat 1 (Y + numèric) ----------
+\begin{frame}[t]
+  \frametitle{7.5 Sistemes d'equacions matricials}
+
+  \vspace{-0.32cm}
+  \textbf{Exemple guiat 1} (continuació).\; Aïllem $Y$ a partir de $3X + Y = A$:
+
+  \vspace{0.06cm}
+  \begin{flushleft}
+  \onslide<2->{$Y = A - 3X = A - 3\!\left(A - \tfrac{1}{2}B\right) = -2A + \tfrac{3}{2}B$}
+  \end{flushleft}
+
+  \onslide<3->{
+    \vspace{0.1cm}
+    \begin{flushleft}
+    \begingroup
+    \setlength{\arraycolsep}{2pt}
+    \renewcommand{\arraystretch}{1.35}
+    {\small
+    \onslide<3->{$Y = -2A + \tfrac{3}{2}B$}
+    \onslide<4->{$\ \longrightarrow\ Y = -2\begin{pmatrix} 3 & 1 & 0 \\ 2 & 1 & 5 \end{pmatrix}
+      + \tfrac{3}{2}\begin{pmatrix} 3 & 4 & 2 \\ 2 & 1 & 8 \end{pmatrix}$}
+
+    \vspace{0.08cm}
+    \onslide<5->{
+      $= \begin{pmatrix}
+        \onslide<5->{-6 + \tfrac{9}{2}} & \onslide<6->{-2 + 6} & \onslide<7->{0 + 3} \\
+        \onslide<8->{-4 + 3} & \onslide<9->{-2 + \tfrac{3}{2}} & \onslide<10->{-10 + 12}
+      \end{pmatrix}$
+    }
+    \onslide<11->{
+      \ $\longrightarrow\ \solucio{Y = \begin{pmatrix}
+        -\tfrac{3}{2} & 4 & 3 \\
+        -1 & -\tfrac{1}{2} & 2
+      \end{pmatrix}}$
+    }
+    }
+    \endgroup
+    \end{flushleft}
+  }
+\end{frame}
+
+\end{document}
