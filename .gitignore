@@ -1,2 +1,22 @@
+﻿# Configuració local de Cursor
 /.cursor
-/desktop.ini
+
+# Fitxers de Windows
+desktop.ini
+
+# Auxiliars de compilació LaTeX (els PDFs finals sí que es versionen)
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.nav
+*.out
+*.run.xml
+*.snm
+*.synctex.gz
+*.toc
+*.vrb
+*.xdv
