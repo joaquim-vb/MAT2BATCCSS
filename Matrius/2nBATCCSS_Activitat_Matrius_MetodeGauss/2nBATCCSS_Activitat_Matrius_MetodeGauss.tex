@@ -1,0 +1,654 @@
+% Activitat imprimible — 2n BAT Matemàtiques CCSS — Matrius (Gauss / rang)
+% ------------------------------------------------------------------------
+% Basat en: Plantilles/PlantillaActivitatImprimir
+% Compilar → 2nBATCCSS_Activitat_Matrius_MetodeGauss.pdf
+
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[catalan]{babel}
+\usepackage[sfdefault,lf]{FiraSans}
+\usepackage[notext]{stix2}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{tikz}
+\usepackage{multicol}
+\usepackage{lastpage}
+\usepackage{eurosym}
+\usepackage{array}
+\usepackage{tcolorbox}
+\tcbuselibrary{skins}
+\usepackage{needspace}
+
+\newcommand{\blocInici}{%
+  \par\nobreak\vspace{0pt}%
+  \begin{minipage}[t]{\linewidth}%
+}
+\newcommand{\blocFi}{%
+  \end{minipage}%
+  \par
+}
+
+% Fletxa amb l'operació elemental (estil teoria)
+\newcommand{\gaussFletxa}[1]{%
+  \mathrel{\xrightarrow{\;\scriptstyle #1\;}}%
+}
+
+\newcommand{\ActivitatCurs}{2n BAT Matemàtiques CCSS}
+\newcommand{\ActivitatTema}{Matrius}
+\newcommand{\ActivitatTitol}{Mètode de Gauss (rang)}
+
+\definecolor{margueVerdClar}{HTML}{83BD2A}
+\definecolor{margueVerdFosc}{HTML}{46A700}
+
+\geometry{top=1.8cm, bottom=2.2cm, left=2cm, right=2cm, headheight=14pt}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\color{margueVerdFosc}\bfseries\ActivitatCurs\ -- \ActivitatTema}
+\fancyhead[R]{\small\ActivitatTitol}
+\fancyfoot[C]{\small\color{gray}Pàgina \thepage\ de \pageref{LastPage}}
+\renewcommand{\headrulewidth}{0.3pt}
+\renewcommand{\footrulewidth}{0pt}
+\fancyheadoffset{0pt}
+
+\fancypagestyle{primera}{%
+  \fancyhf{}%
+  \fancyfoot[C]{\small\color{gray}Pàgina \thepage\ de \pageref{LastPage}}%
+  \renewcommand{\headrulewidth}{0pt}%
+}
+
+\newcommand{\capcaleraActivitat}{%
+  \noindent
+  \begin{minipage}[c]{0.26\textwidth}
+    \raggedright
+    \includegraphics[height=2.1cm,width=\linewidth,keepaspectratio]{LogoInstitut.png}%
+  \end{minipage}%
+  \hfill
+  \begin{minipage}[c]{0.70\textwidth}
+    {\small\color{margueVerdFosc}\bfseries\ActivitatCurs\ -- \ActivitatTema\par}
+    \vspace{0.35em}
+    {\Large\bfseries\ActivitatTitol\par}
+    \vspace{0.85em}
+    {\normalsize
+      \textbf{Nom:}\ \hrulefill\hspace{0.9em}\textbf{Data:}\ \underline{\hspace{2.4cm}}\par
+    }%
+  \end{minipage}%
+  \par\vspace{0.55em}%
+  \noindent{\color{margueVerdClar}\rule{\textwidth}{0.7pt}}\par
+  \vspace{0.9em}%
+}
+
+\begin{document}
+\thispagestyle{primera}
+
+\capcaleraActivitat
+
+\noindent
+Practicarem el \textbf{mètode de Gauss} per calcular el \textbf{rang} d'una matriu:
+transformacions elementals fins a obtenir zeros \textbf{sota la diagonal};
+el rang és el nombre de \textbf{files no nul·les} de la matriu resultant.
+En els darrers exercicis el rang dependrà d'un \textbf{paràmetre} $m$.
+Pots fer els càlculs en un full a part.
+
+\vspace{0.45em}
+
+\begin{enumerate}[leftmargin=*,itemsep=0.55em,parsep=0.2em]
+
+% ---------- 1. EXEMPLE RESOLT 3×3 ----------
+\item
+\Needspace{36\baselineskip}%
+\blocInici
+\textbf{Exemple resolt.}
+Calcula $\operatorname{Rang}(A)$ amb el mètode de Gauss:
+\[
+  A = \begin{pmatrix}
+    1 & 2 & 3 \\
+    2 & 1 & 0 \\
+    3 & 3 & 3
+  \end{pmatrix}.
+\]
+
+\begin{tcolorbox}[
+  colback=white,
+  colframe=margueVerdFosc,
+  boxrule=0.8pt,
+  arc=2pt,
+  left=5pt, right=5pt, top=3pt, bottom=3pt,
+  fontupper=\small
+]
+\textbf{Solució.}
+Objectiu general: aconseguir zeros \textbf{sota la diagonal}.
+
+\textbf{1r objectiu:} fer $a_{21}=0$.
+Com $a_{21}=2$ i $a_{11}=1$, restem $2$ vegades la primera fila a la segona:
+$F_2 \leftarrow F_2 - 2F_1$.
+{\setlength{\arraycolsep}{3pt}%
+\[
+  (2,\,1,\,0) - 2(1,\,2,\,3) = (0,\,-3,\,-6).
+\]
+\[
+  \begin{pmatrix}
+    1 & 2 & 3 \\
+    2 & 1 & 0 \\
+    3 & 3 & 3
+  \end{pmatrix}
+  \gaussFletxa{F_2 \leftarrow F_2 - 2F_1}
+  \begin{pmatrix}
+    1 & 2 & 3 \\
+    0 & -3 & -6 \\
+    3 & 3 & 3
+  \end{pmatrix}
+\]
+}
+
+\textbf{2n objectiu:} fer $a_{31}=0$.
+Com $a_{31}=3$, restem $3$ vegades la primera fila a la tercera:
+$F_3 \leftarrow F_3 - 3F_1$.
+{\setlength{\arraycolsep}{3pt}%
+\[
+  (3,\,3,\,3) - 3(1,\,2,\,3) = (0,\,-3,\,-6).
+\]
+\[
+  \begin{pmatrix}
+    1 & 2 & 3 \\
+    0 & -3 & -6 \\
+    3 & 3 & 3
+  \end{pmatrix}
+  \gaussFletxa{F_3 \leftarrow F_3 - 3F_1}
+  \begin{pmatrix}
+    1 & 2 & 3 \\
+    0 & -3 & -6 \\
+    0 & -3 & -6
+  \end{pmatrix}
+\]
+}
+
+\textbf{3r objectiu:} fer $a_{32}=0$ (zero sota el pivot de la columna $2$).
+Les dues files $F_2$ i $F_3$ són iguals, així que
+$F_3 \leftarrow F_3 - F_2$:
+{\setlength{\arraycolsep}{3pt}%
+\[
+  (0,\,-3,\,-6) - (0,\,-3,\,-6) = (0,\,0,\,0).
+\]
+\[
+  \begin{pmatrix}
+    1 & 2 & 3 \\
+    0 & -3 & -6 \\
+    0 & -3 & -6
+  \end{pmatrix}
+  \gaussFletxa{F_3 \leftarrow F_3 - F_2}
+  \begin{pmatrix}
+    1 & 2 & 3 \\
+    0 & -3 & -6 \\
+    0 & 0 & 0
+  \end{pmatrix}
+\]
+}
+
+Objectiu completat: zeros sota la diagonal.
+Dues files no nul·les $\Rightarrow$ $\operatorname{Rang}(A) = 2$.
+\end{tcolorbox}
+\blocFi
+
+% ---------- 2. 3×3 ----------
+\item
+\Needspace{6\baselineskip}%
+\blocInici
+Calcula $\operatorname{Rang}(A)$ amb el mètode de Gauss:
+\[
+  A = \begin{pmatrix}
+    1 & 0 & 2 \\
+    2 & 1 & 3 \\
+    1 & 1 & 1
+  \end{pmatrix}.
+\]
+\blocFi
+
+% ---------- 3. 3×3 (amb possible intercanvi) ----------
+\item
+\Needspace{6\baselineskip}%
+\blocInici
+Calcula $\operatorname{Rang}(B)$ amb el mètode de Gauss:
+\[
+  B = \begin{pmatrix}
+    0 & 1 & 2 \\
+    1 & 2 & 3 \\
+    2 & 3 & 4
+  \end{pmatrix}.
+\]
+\blocFi
+
+% ---------- 4. 4×4 ----------
+\item
+\Needspace{7\baselineskip}%
+\blocInici
+Calcula $\operatorname{Rang}(C)$ amb el mètode de Gauss:
+\[
+  C = \begin{pmatrix}
+    1 & 2 & 0 & 1 \\
+    2 & 4 & 1 & 0 \\
+    1 & 2 & 1 & 2 \\
+    3 & 6 & 1 & 1
+  \end{pmatrix}.
+\]
+\blocFi
+
+% ---------- 5. 4×4 ----------
+\item
+\Needspace{7\baselineskip}%
+\blocInici
+Calcula $\operatorname{Rang}(D)$ amb el mètode de Gauss:
+\[
+  D = \begin{pmatrix}
+    1 & 1 & 0 & 2 \\
+    2 & 3 & 1 & 3 \\
+    1 & 2 & 1 & 1 \\
+    3 & 4 & 1 & 5
+  \end{pmatrix}.
+\]
+\blocFi
+
+% ---------- 6. 2×2 amb paràmetre ----------
+\item
+\Needspace{7\baselineskip}%
+\blocInici
+Calcula $\operatorname{Rang}(E)$ en funció del paràmetre $m$ amb el mètode de Gauss:
+\[
+  E = \begin{pmatrix}
+    1 & m \\
+    m & 1
+  \end{pmatrix}.
+\]
+\blocFi
+
+% ---------- 7. 3×3 amb paràmetre ----------
+\item
+\Needspace{7\baselineskip}%
+\blocInici
+Calcula $\operatorname{Rang}(F)$ en funció del paràmetre $m$ amb el mètode de Gauss:
+\[
+  F = \begin{pmatrix}
+    1 & 2 & 3 \\
+    2 & 4 & m \\
+    1 & 1 & 1
+  \end{pmatrix}.
+\]
+\blocFi
+
+% ---------- 8. 3×3 amb paràmetre ----------
+\item
+\Needspace{7\baselineskip}%
+\blocInici
+Calcula $\operatorname{Rang}(G)$ en funció del paràmetre $m$ amb el mètode de Gauss:
+\[
+  G = \begin{pmatrix}
+    1 & 1 & 1 \\
+    1 & m & 1 \\
+    1 & 1 & m
+  \end{pmatrix}.
+\]
+\blocFi
+
+\end{enumerate}
+
+\vspace{0.4em}
+\begin{tcolorbox}[
+  colback=white,
+  colframe=margueVerdClar,
+  boxrule=0.7pt,
+  arc=2pt,
+  left=5pt, right=5pt, top=3pt, bottom=3pt,
+  fontupper=\small
+]
+\textbf{Recorda.}
+Transformacions permeses:
+intercanviar files;
+multiplicar una fila per $k \neq 0$;
+substituir $F_i$ per $a F_i + b F_j$ ($a,b \neq 0$).
+Si $a_{11}=0$, cal un intercanvi de files.
+\end{tcolorbox}
+
+% ============================================================
+\newpage
+\section*{Solucions (exercicis 2--8)}
+{\small\textit{Hi pot haver seqüències d'operacions equivalents.
+El rang final ha de coincidir.}}
+
+\vspace{0.35em}
+\footnotesize
+
+% --- Solució 2 ---
+\Needspace{28\baselineskip}%
+\blocInici
+\noindent\textbf{Exercici 2.}
+Objectiu general: zeros sota la diagonal.
+
+\textbf{1r objectiu:} fer $a_{21}=0$.
+Com $a_{21}=2$ i $a_{11}=1$, fem $F_2 \leftarrow F_2 - 2F_1$:
+{\setlength{\arraycolsep}{3pt}%
+\[
+  (2,\,1,\,3) - 2(1,\,0,\,2) = (0,\,1,\,-1).
+\]
+\[
+  \begin{pmatrix} 1 & 0 & 2 \\ 2 & 1 & 3 \\ 1 & 1 & 1 \end{pmatrix}
+  \gaussFletxa{F_2 \leftarrow F_2 - 2F_1}
+  \begin{pmatrix} 1 & 0 & 2 \\ 0 & 1 & -1 \\ 1 & 1 & 1 \end{pmatrix}
+\]
+}
+
+\textbf{2n objectiu:} fer $a_{31}=0$.
+Com $a_{31}=1$, fem $F_3 \leftarrow F_3 - F_1$:
+{\setlength{\arraycolsep}{3pt}%
+\[
+  (1,\,1,\,1) - (1,\,0,\,2) = (0,\,1,\,-1).
+\]
+\[
+  \begin{pmatrix} 1 & 0 & 2 \\ 0 & 1 & -1 \\ 1 & 1 & 1 \end{pmatrix}
+  \gaussFletxa{F_3 \leftarrow F_3 - F_1}
+  \begin{pmatrix} 1 & 0 & 2 \\ 0 & 1 & -1 \\ 0 & 1 & -1 \end{pmatrix}
+\]
+}
+
+\textbf{3r objectiu:} fer $a_{32}=0$.
+Com $a_{32}=1$ i $a_{22}=1$, fem $F_3 \leftarrow F_3 - F_2$:
+{\setlength{\arraycolsep}{3pt}%
+\[
+  (0,\,1,\,-1) - (0,\,1,\,-1) = (0,\,0,\,0).
+\]
+\[
+  \begin{pmatrix} 1 & 0 & 2 \\ 0 & 1 & -1 \\ 0 & 1 & -1 \end{pmatrix}
+  \gaussFletxa{F_3 \leftarrow F_3 - F_2}
+  \begin{pmatrix} 1 & 0 & 2 \\ 0 & 1 & -1 \\ 0 & 0 & 0 \end{pmatrix}
+\]
+}
+Dues files no nul·les $\Rightarrow$ $\operatorname{Rang}(A) = 2$.
+\blocFi
+
+\vspace{0.55em}
+
+% --- Solució 3 ---
+\Needspace{30\baselineskip}%
+\blocInici
+\noindent\textbf{Exercici 3.}
+Objectiu general: zeros sota la diagonal.
+
+\textbf{1r objectiu:} tenir $b_{11}\neq 0$ per poder pivotar.
+Com $b_{11}=0$, intercanviem $F_1 \leftrightarrow F_2$:
+{\setlength{\arraycolsep}{3pt}%
+\[
+  \begin{pmatrix} 0 & 1 & 2 \\ 1 & 2 & 3 \\ 2 & 3 & 4 \end{pmatrix}
+  \gaussFletxa{F_1 \leftrightarrow F_2}
+  \begin{pmatrix} 1 & 2 & 3 \\ 0 & 1 & 2 \\ 2 & 3 & 4 \end{pmatrix}
+\]
+}
+(La nova $F_2$ ja té $0$ a la primera columna.)
+
+\textbf{2n objectiu:} fer $b_{31}=0$.
+Com $b_{31}=2$, fem $F_3 \leftarrow F_3 - 2F_1$:
+{\setlength{\arraycolsep}{3pt}%
+\[
+  (2,\,3,\,4) - 2(1,\,2,\,3) = (0,\,-1,\,-2).
+\]
+\[
+  \begin{pmatrix} 1 & 2 & 3 \\ 0 & 1 & 2 \\ 2 & 3 & 4 \end{pmatrix}
+  \gaussFletxa{F_3 \leftarrow F_3 - 2F_1}
+  \begin{pmatrix} 1 & 2 & 3 \\ 0 & 1 & 2 \\ 0 & -1 & -2 \end{pmatrix}
+\]
+}
+
+\textbf{3r objectiu:} fer $b_{32}=0$.
+Com $b_{32}=-1$ i $b_{22}=1$, fem $F_3 \leftarrow F_3 + F_2$:
+{\setlength{\arraycolsep}{3pt}%
+\[
+  (0,\,-1,\,-2) + (0,\,1,\,2) = (0,\,0,\,0).
+\]
+\[
+  \begin{pmatrix} 1 & 2 & 3 \\ 0 & 1 & 2 \\ 0 & -1 & -2 \end{pmatrix}
+  \gaussFletxa{F_3 \leftarrow F_3 + F_2}
+  \begin{pmatrix} 1 & 2 & 3 \\ 0 & 1 & 2 \\ 0 & 0 & 0 \end{pmatrix}
+\]
+}
+Dues files no nul·les $\Rightarrow$ $\operatorname{Rang}(B) = 2$.
+\blocFi
+
+\vspace{0.55em}
+
+% --- Solució 4 ---
+\Needspace{36\baselineskip}%
+\blocInici
+\noindent\textbf{Exercici 4.}
+Objectiu general: zeros sota la diagonal.
+
+\textbf{1r objectiu:} fer $c_{21}=c_{31}=c_{41}=0$.
+{\setlength{\arraycolsep}{2.2pt}%
+\[
+  \begin{aligned}
+    F_2 &\leftarrow F_2 - 2F_1:
+    && (2,\,4,\,1,\,0) - 2(1,\,2,\,0,\,1) = (0,\,0,\,1,\,-2),\\
+    F_3 &\leftarrow F_3 - F_1:
+    && (1,\,2,\,1,\,2) - (1,\,2,\,0,\,1) = (0,\,0,\,1,\,1),\\
+    F_4 &\leftarrow F_4 - 3F_1:
+    && (3,\,6,\,1,\,1) - 3(1,\,2,\,0,\,1) = (0,\,0,\,1,\,-2).
+  \end{aligned}
+\]
+\[
+  \begin{pmatrix} 1 & 2 & 0 & 1 \\ 2 & 4 & 1 & 0 \\ 1 & 2 & 1 & 2 \\ 3 & 6 & 1 & 1 \end{pmatrix}
+  \gaussFletxa{F_2 \leftarrow F_2 - 2F_1}
+  \begin{pmatrix} 1 & 2 & 0 & 1 \\ 0 & 0 & 1 & -2 \\ 1 & 2 & 1 & 2 \\ 3 & 6 & 1 & 1 \end{pmatrix}
+\]
+\[
+  \gaussFletxa{F_3 \leftarrow F_3 - F_1}
+  \begin{pmatrix} 1 & 2 & 0 & 1 \\ 0 & 0 & 1 & -2 \\ 0 & 0 & 1 & 1 \\ 3 & 6 & 1 & 1 \end{pmatrix}
+  \gaussFletxa{F_4 \leftarrow F_4 - 3F_1}
+  \begin{pmatrix} 1 & 2 & 0 & 1 \\ 0 & 0 & 1 & -2 \\ 0 & 0 & 1 & 1 \\ 0 & 0 & 1 & -2 \end{pmatrix}
+\]
+}
+
+\textbf{2n objectiu:} la columna $2$ ja té zeros a $F_2$, $F_3$ i $F_4$.
+Prenem com a pivots de $F_2$ l'element $c_{23}=1$ i fem zeros a sota
+($c_{33}$ i $c_{43}$):
+{\setlength{\arraycolsep}{2.2pt}%
+\[
+  \begin{aligned}
+    F_3 &\leftarrow F_3 - F_2:
+    && (0,\,0,\,1,\,1) - (0,\,0,\,1,\,-2) = (0,\,0,\,0,\,3),\\
+    F_4 &\leftarrow F_4 - F_2:
+    && (0,\,0,\,1,\,-2) - (0,\,0,\,1,\,-2) = (0,\,0,\,0,\,0).
+  \end{aligned}
+\]
+\[
+  \begin{pmatrix} 1 & 2 & 0 & 1 \\ 0 & 0 & 1 & -2 \\ 0 & 0 & 1 & 1 \\ 0 & 0 & 1 & -2 \end{pmatrix}
+  \gaussFletxa{F_3 \leftarrow F_3 - F_2}
+  \begin{pmatrix} 1 & 2 & 0 & 1 \\ 0 & 0 & 1 & -2 \\ 0 & 0 & 0 & 3 \\ 0 & 0 & 1 & -2 \end{pmatrix}
+\]
+\[
+  \gaussFletxa{F_4 \leftarrow F_4 - F_2}
+  \begin{pmatrix} 1 & 2 & 0 & 1 \\ 0 & 0 & 1 & -2 \\ 0 & 0 & 0 & 3 \\ 0 & 0 & 0 & 0 \end{pmatrix}
+\]
+}
+(Opcional: $F_2 \leftrightarrow F_3$ per ordenar pivots; no canvia el rang.)
+Tres files no nul·les $\Rightarrow$ $\operatorname{Rang}(C) = 3$.
+\blocFi
+
+\vspace{0.55em}
+
+% --- Solució 5 ---
+\Needspace{34\baselineskip}%
+\blocInici
+\noindent\textbf{Exercici 5.}
+Objectiu general: zeros sota la diagonal.
+
+\textbf{1r objectiu:} fer $d_{21}=d_{31}=d_{41}=0$.
+{\setlength{\arraycolsep}{2.2pt}%
+\[
+  \begin{aligned}
+    F_2 &\leftarrow F_2 - 2F_1:
+    && (2,\,3,\,1,\,3) - 2(1,\,1,\,0,\,2) = (0,\,1,\,1,\,-1),\\
+    F_3 &\leftarrow F_3 - F_1:
+    && (1,\,2,\,1,\,1) - (1,\,1,\,0,\,2) = (0,\,1,\,1,\,-1),\\
+    F_4 &\leftarrow F_4 - 3F_1:
+    && (3,\,4,\,1,\,5) - 3(1,\,1,\,0,\,2) = (0,\,1,\,1,\,-1).
+  \end{aligned}
+\]
+\[
+  \begin{pmatrix} 1 & 1 & 0 & 2 \\ 2 & 3 & 1 & 3 \\ 1 & 2 & 1 & 1 \\ 3 & 4 & 1 & 5 \end{pmatrix}
+  \gaussFletxa{F_2 \leftarrow F_2 - 2F_1}
+  \begin{pmatrix} 1 & 1 & 0 & 2 \\ 0 & 1 & 1 & -1 \\ 1 & 2 & 1 & 1 \\ 3 & 4 & 1 & 5 \end{pmatrix}
+\]
+\[
+  \gaussFletxa{F_3 \leftarrow F_3 - F_1}
+  \begin{pmatrix} 1 & 1 & 0 & 2 \\ 0 & 1 & 1 & -1 \\ 0 & 1 & 1 & -1 \\ 3 & 4 & 1 & 5 \end{pmatrix}
+  \gaussFletxa{F_4 \leftarrow F_4 - 3F_1}
+  \begin{pmatrix} 1 & 1 & 0 & 2 \\ 0 & 1 & 1 & -1 \\ 0 & 1 & 1 & -1 \\ 0 & 1 & 1 & -1 \end{pmatrix}
+\]
+}
+
+\textbf{2n objectiu:} fer $d_{32}=d_{42}=0$ (zeros sota el pivot $d_{22}=1$).
+{\setlength{\arraycolsep}{2.2pt}%
+\[
+  \begin{aligned}
+    F_3 &\leftarrow F_3 - F_2:
+    && (0,\,1,\,1,\,-1) - (0,\,1,\,1,\,-1) = (0,\,0,\,0,\,0),\\
+    F_4 &\leftarrow F_4 - F_2:
+    && (0,\,1,\,1,\,-1) - (0,\,1,\,1,\,-1) = (0,\,0,\,0,\,0).
+  \end{aligned}
+\]
+\[
+  \begin{pmatrix} 1 & 1 & 0 & 2 \\ 0 & 1 & 1 & -1 \\ 0 & 1 & 1 & -1 \\ 0 & 1 & 1 & -1 \end{pmatrix}
+  \gaussFletxa{F_3 \leftarrow F_3 - F_2}
+  \begin{pmatrix} 1 & 1 & 0 & 2 \\ 0 & 1 & 1 & -1 \\ 0 & 0 & 0 & 0 \\ 0 & 1 & 1 & -1 \end{pmatrix}
+\]
+\[
+  \gaussFletxa{F_4 \leftarrow F_4 - F_2}
+  \begin{pmatrix} 1 & 1 & 0 & 2 \\ 0 & 1 & 1 & -1 \\ 0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 0 \end{pmatrix}
+\]
+}
+Dues files no nul·les $\Rightarrow$ $\operatorname{Rang}(D) = 2$.
+\blocFi
+
+\vspace{0.55em}
+
+% --- Solució 6 ---
+\Needspace{16\baselineskip}%
+\blocInici
+\noindent\textbf{Exercici 6.}
+Objectiu general: zero sota la diagonal (aquí, fer $e_{21}=0$).
+
+Com $e_{21}=m$ i $e_{11}=1$, fem $F_2 \leftarrow F_2 - m F_1$:
+{\setlength{\arraycolsep}{3pt}%
+\[
+  (m,\,1) - m(1,\,m) = (0,\,1-m^2).
+\]
+\[
+  \begin{pmatrix} 1 & m \\ m & 1 \end{pmatrix}
+  \gaussFletxa{F_2 \leftarrow F_2 - m F_1}
+  \begin{pmatrix} 1 & m \\ 0 & 1-m^2 \end{pmatrix}
+\]
+}
+Ara mirem el valor de $1-m^2$:
+\begin{itemize}[leftmargin=1.2em,itemsep=0.2em]
+  \item Si $m \neq \pm 1$ (és a dir, $1-m^2 \neq 0$): dues files no nul·les
+    $\Rightarrow$ $\operatorname{Rang}(E) = 2$.
+  \item Si $m = 1$ o $m = -1$: la segona fila és nul·la
+    $\Rightarrow$ $\operatorname{Rang}(E) = 1$.
+\end{itemize}
+\blocFi
+
+\vspace{0.55em}
+
+% --- Solució 7 ---
+\Needspace{28\baselineskip}%
+\blocInici
+\noindent\textbf{Exercici 7.}
+Objectiu general: zeros sota la diagonal.
+
+\textbf{1r objectiu:} fer $f_{21}=0$.
+Com $f_{21}=2$, fem $F_2 \leftarrow F_2 - 2F_1$:
+{\setlength{\arraycolsep}{3pt}%
+\[
+  (2,\,4,\,m) - 2(1,\,2,\,3) = (0,\,0,\,m-6).
+\]
+\[
+  \begin{pmatrix} 1 & 2 & 3 \\ 2 & 4 & m \\ 1 & 1 & 1 \end{pmatrix}
+  \gaussFletxa{F_2 \leftarrow F_2 - 2F_1}
+  \begin{pmatrix} 1 & 2 & 3 \\ 0 & 0 & m-6 \\ 1 & 1 & 1 \end{pmatrix}
+\]
+}
+
+\textbf{2n objectiu:} fer $f_{31}=0$.
+Com $f_{31}=1$, fem $F_3 \leftarrow F_3 - F_1$:
+{\setlength{\arraycolsep}{3pt}%
+\[
+  (1,\,1,\,1) - (1,\,2,\,3) = (0,\,-1,\,-2).
+\]
+\[
+  \begin{pmatrix} 1 & 2 & 3 \\ 0 & 0 & m-6 \\ 1 & 1 & 1 \end{pmatrix}
+  \gaussFletxa{F_3 \leftarrow F_3 - F_1}
+  \begin{pmatrix} 1 & 2 & 3 \\ 0 & 0 & m-6 \\ 0 & -1 & -2 \end{pmatrix}
+\]
+}
+
+\textbf{3r objectiu:} a la columna $2$, $f_{22}=0$ però $f_{32}=-1\neq 0$.
+Intercanviem $F_2 \leftrightarrow F_3$ per tenir un pivot no nul a $f_{22}$:
+{\setlength{\arraycolsep}{3pt}%
+\[
+  \begin{pmatrix} 1 & 2 & 3 \\ 0 & 0 & m-6 \\ 0 & -1 & -2 \end{pmatrix}
+  \gaussFletxa{F_2 \leftrightarrow F_3}
+  \begin{pmatrix} 1 & 2 & 3 \\ 0 & -1 & -2 \\ 0 & 0 & m-6 \end{pmatrix}
+\]
+}
+La matriu ja és triangular (zeros sota la diagonal).
+\begin{itemize}[leftmargin=1.2em,itemsep=0.2em]
+  \item Si $m \neq 6$: tres files no nul·les $\Rightarrow$ $\operatorname{Rang}(F) = 3$.
+  \item Si $m = 6$: la tercera fila és nul·la $\Rightarrow$ $\operatorname{Rang}(F) = 2$.
+\end{itemize}
+\blocFi
+
+\vspace{0.55em}
+
+% --- Solució 8 ---
+\Needspace{22\baselineskip}%
+\blocInici
+\noindent\textbf{Exercici 8.}
+Objectiu general: zeros sota la diagonal.
+
+\textbf{1r objectiu:} fer $g_{21}=0$.
+Com $g_{21}=1$, fem $F_2 \leftarrow F_2 - F_1$:
+{\setlength{\arraycolsep}{3pt}%
+\[
+  (1,\,m,\,1) - (1,\,1,\,1) = (0,\,m-1,\,0).
+\]
+\[
+  \begin{pmatrix} 1 & 1 & 1 \\ 1 & m & 1 \\ 1 & 1 & m \end{pmatrix}
+  \gaussFletxa{F_2 \leftarrow F_2 - F_1}
+  \begin{pmatrix} 1 & 1 & 1 \\ 0 & m-1 & 0 \\ 1 & 1 & m \end{pmatrix}
+\]
+}
+
+\textbf{2n objectiu:} fer $g_{31}=0$.
+Com $g_{31}=1$, fem $F_3 \leftarrow F_3 - F_1$:
+{\setlength{\arraycolsep}{3pt}%
+\[
+  (1,\,1,\,m) - (1,\,1,\,1) = (0,\,0,\,m-1).
+\]
+\[
+  \begin{pmatrix} 1 & 1 & 1 \\ 0 & m-1 & 0 \\ 1 & 1 & m \end{pmatrix}
+  \gaussFletxa{F_3 \leftarrow F_3 - F_1}
+  \begin{pmatrix} 1 & 1 & 1 \\ 0 & m-1 & 0 \\ 0 & 0 & m-1 \end{pmatrix}
+\]
+}
+(La posició $g_{32}$ ja és $0$; no cal cap pas més a la columna $2$.)
+\begin{itemize}[leftmargin=1.2em,itemsep=0.2em]
+  \item Si $m \neq 1$: tres files no nul·les $\Rightarrow$ $\operatorname{Rang}(G) = 3$.
+  \item Si $m = 1$: queden només la primera fila no nul·la
+    $\Rightarrow$ $\operatorname{Rang}(G) = 1$.
+\end{itemize}
+\blocFi
+
+\end{document}

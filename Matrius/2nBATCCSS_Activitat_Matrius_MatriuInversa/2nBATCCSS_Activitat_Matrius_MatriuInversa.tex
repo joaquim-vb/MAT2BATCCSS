@@ -1,0 +1,522 @@
+% Activitat imprimible — 2n BAT Matemàtiques CCSS — Matrius (matriu inversa)
+% --------------------------------------------------------------------------
+% Basat en: Plantilles/PlantillaActivitatImprimir
+% Compilar → 2nBATCCSS_Activitat_Matrius_MatriuInversa.pdf
+
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[catalan]{babel}
+\usepackage[sfdefault,lf]{FiraSans}
+\usepackage[notext]{stix2}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{tikz}
+\usepackage{multicol}
+\usepackage{lastpage}
+\usepackage{eurosym}
+\usepackage{array}
+\usepackage{tcolorbox}
+\tcbuselibrary{skins}
+\usepackage{needspace}
+
+\newcommand{\blocInici}{%
+  \par\nobreak\vspace{0pt}%
+  \begin{minipage}[t]{\linewidth}%
+}
+\newcommand{\blocFi}{%
+  \end{minipage}%
+  \par
+}
+
+\newcommand{\gaussFletxa}[1]{%
+  \mathrel{\xrightarrow{\;\scriptstyle #1\;}}%
+}
+
+\newcommand{\ActivitatCurs}{2n BAT Matemàtiques CCSS}
+\newcommand{\ActivitatTema}{Matrius}
+\newcommand{\ActivitatTitol}{Matriu inversa}
+
+\definecolor{margueVerdClar}{HTML}{83BD2A}
+\definecolor{margueVerdFosc}{HTML}{46A700}
+
+\geometry{top=1.8cm, bottom=2.2cm, left=2cm, right=2cm, headheight=14pt}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\color{margueVerdFosc}\bfseries\ActivitatCurs\ -- \ActivitatTema}
+\fancyhead[R]{\small\ActivitatTitol}
+\fancyfoot[C]{\small\color{gray}Pàgina \thepage\ de \pageref{LastPage}}
+\renewcommand{\headrulewidth}{0.3pt}
+\renewcommand{\footrulewidth}{0pt}
+\fancyheadoffset{0pt}
+
+\fancypagestyle{primera}{%
+  \fancyhf{}%
+  \fancyfoot[C]{\small\color{gray}Pàgina \thepage\ de \pageref{LastPage}}%
+  \renewcommand{\headrulewidth}{0pt}%
+}
+
+\newcommand{\capcaleraActivitat}{%
+  \noindent
+  \begin{minipage}[c]{0.26\textwidth}
+    \raggedright
+    \includegraphics[height=2.1cm,width=\linewidth,keepaspectratio]{LogoInstitut.png}%
+  \end{minipage}%
+  \hfill
+  \begin{minipage}[c]{0.70\textwidth}
+    {\small\color{margueVerdFosc}\bfseries\ActivitatCurs\ -- \ActivitatTema\par}
+    \vspace{0.35em}
+    {\Large\bfseries\ActivitatTitol\par}
+    \vspace{0.85em}
+    {\normalsize
+      \textbf{Nom:}\ \hrulefill\hspace{0.9em}\textbf{Data:}\ \underline{\hspace{2.4cm}}\par
+    }%
+  \end{minipage}%
+  \par\vspace{0.55em}%
+  \noindent{\color{margueVerdClar}\rule{\textwidth}{0.7pt}}\par
+  \vspace{0.9em}%
+}
+
+\begin{document}
+\thispagestyle{primera}
+
+\capcaleraActivitat
+
+\noindent
+Practicarem el càlcul de la \textbf{matriu inversa}:
+primer per \textbf{definició} (sistema d'equacions, ordre $2$)
+i després amb el mètode de \textbf{Gauss--Jordan}.
+Pots fer els càlculs en un full a part.
+
+\vspace{0.35em}
+{\small
+Recorda: $A$ és invertible si existeix $A^{-1}$ tal que $A A^{-1} = A^{-1} A = I$.
+Amb Gauss--Jordan es parteix de $\bigl(A \mid I\bigr)$ i es busca $\bigl(I \mid A^{-1}\bigr)$.
+}
+
+\vspace{0.45em}
+
+\begin{enumerate}[leftmargin=*,itemsep=0.5em,parsep=0.15em]
+
+% ========== DEFINICIÓ ==========
+\item
+\Needspace{28\baselineskip}%
+\blocInici
+\textbf{Exemple resolt (definició).}
+Calcula, si és possible, la matriu inversa de
+\[
+  A = \begin{pmatrix} 3 & 1 \\ 4 & 1 \end{pmatrix}.
+\]
+
+\begin{tcolorbox}[
+  colback=white,
+  colframe=margueVerdFosc,
+  boxrule=0.8pt,
+  arc=2pt,
+  left=5pt, right=5pt, top=3pt, bottom=3pt,
+  fontupper=\small
+]
+\textbf{Solució.}
+Utilitzem la definició $A A^{-1} = I_2$.
+Si $A^{-1} = \begin{pmatrix} a_{11} & a_{12} \\ a_{21} & a_{22} \end{pmatrix}$, aleshores
+{\setlength{\arraycolsep}{3pt}%
+\[
+  \begin{pmatrix} 3 & 1 \\ 4 & 1 \end{pmatrix}
+  \begin{pmatrix} a_{11} & a_{12} \\ a_{21} & a_{22} \end{pmatrix}
+  =
+  \begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix},
+\]
+\[
+  \begin{pmatrix}
+    3a_{11}+a_{21} & 3a_{12}+a_{22} \\
+    4a_{11}+a_{21} & 4a_{12}+a_{22}
+  \end{pmatrix}
+  =
+  \begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix}.
+\]
+}
+Igualant element a element obtenim el sistema
+\[
+  \begin{cases}
+    3a_{11}+a_{21} = 1 \\
+    4a_{11}+a_{21} = 0 \\
+    3a_{12}+a_{22} = 0 \\
+    4a_{12}+a_{22} = 1
+  \end{cases}
+\]
+(dues equacions per a la primera columna de $A^{-1}$ i dues per a la segona).
+
+De les dues primeres: restant, $a_{11}=-1$ i després $a_{21}=4$.
+De les dues últimes: restant, $a_{12}=1$ i després $a_{22}=-3$.
+
+Per tant
+\[
+  A^{-1} = \begin{pmatrix} -1 & 1 \\ 4 & -3 \end{pmatrix}.
+\]
+\end{tcolorbox}
+\blocFi
+
+\item
+\Needspace{5\baselineskip}%
+\blocInici
+Calcula, si és possible, la matriu inversa de
+$B = \begin{pmatrix} 1 & 2 \\ 3 & 5 \end{pmatrix}$
+\textbf{per definició} (resolent el sistema d'equacions).
+\blocFi
+
+\item
+\Needspace{5\baselineskip}%
+\blocInici
+Calcula, si és possible, la matriu inversa de
+$C = \begin{pmatrix} 2 & 1 \\ 1 & 1 \end{pmatrix}$
+\textbf{per definició} (resolent el sistema d'equacions).
+\blocFi
+
+% ========== GAUSS-JORDAN ==========
+\item
+\Needspace{32\baselineskip}%
+\blocInici
+\textbf{Exemple resolt (Gauss--Jordan).}
+Calcula la matriu inversa de
+\[
+  A = \begin{pmatrix} 1 & 1 \\ 2 & 3 \end{pmatrix}
+\]
+amb el mètode de Gauss--Jordan.
+
+\begin{tcolorbox}[
+  colback=white,
+  colframe=margueVerdFosc,
+  boxrule=0.8pt,
+  arc=2pt,
+  left=5pt, right=5pt, top=3pt, bottom=3pt,
+  fontupper=\small
+]
+\textbf{Solució.}
+Construïm $\bigl(A \mid I_2\bigr)$:
+{\setlength{\arraycolsep}{3pt}%
+\[
+  \left(\begin{array}{cc|cc}
+    1 & 1 & 1 & 0 \\
+    2 & 3 & 0 & 1
+  \end{array}\right).
+\]
+}
+
+\textbf{1r objectiu (Gauss):} zero sota la diagonal ($a_{21}=0$).
+Fem $F_2 \leftarrow F_2 - 2F_1$:
+{\setlength{\arraycolsep}{3pt}%
+\[
+  (2,\,3 \mid 0,\,1) - 2(1,\,1 \mid 1,\,0) = (0,\,1 \mid -2,\,1).
+\]
+\[
+  \left(\begin{array}{cc|cc} 1 & 1 & 1 & 0 \\ 2 & 3 & 0 & 1 \end{array}\right)
+  \gaussFletxa{F_2 \leftarrow F_2 - 2F_1}
+  \left(\begin{array}{cc|cc} 1 & 1 & 1 & 0 \\ 0 & 1 & -2 & 1 \end{array}\right)
+\]
+}
+Cap fila nul·la a l'esquerra $\Rightarrow$ $A$ és invertible.
+
+\textbf{2n objectiu (Jordan):} zero sobre la diagonal ($a_{12}=0$).
+Fem $F_1 \leftarrow F_1 - F_2$:
+{\setlength{\arraycolsep}{3pt}%
+\[
+  (1,\,1 \mid 1,\,0) - (0,\,1 \mid -2,\,1) = (1,\,0 \mid 3,\,-1).
+\]
+\[
+  \left(\begin{array}{cc|cc} 1 & 1 & 1 & 0 \\ 0 & 1 & -2 & 1 \end{array}\right)
+  \gaussFletxa{F_1 \leftarrow F_1 - F_2}
+  \left(\begin{array}{cc|cc} 1 & 0 & 3 & -1 \\ 0 & 1 & -2 & 1 \end{array}\right)
+\]
+}
+La diagonal ja té $1$s. Per tant
+\[
+  A^{-1} = \begin{pmatrix} 3 & -1 \\ -2 & 1 \end{pmatrix}.
+\]
+\end{tcolorbox}
+\blocFi
+
+\item
+\Needspace{5\baselineskip}%
+\blocInici
+Calcula la matriu inversa de
+$D = \begin{pmatrix} 3 & 1 \\ 5 & 2 \end{pmatrix}$
+amb el mètode de \textbf{Gauss--Jordan}.
+\blocFi
+
+\item
+\Needspace{5\baselineskip}%
+\blocInici
+Calcula la matriu inversa de
+$E = \begin{pmatrix} 1 & 2 \\ 2 & 5 \end{pmatrix}$
+amb el mètode de \textbf{Gauss--Jordan}.
+\blocFi
+
+\item
+\Needspace{6\baselineskip}%
+\blocInici
+Calcula la matriu inversa de
+\[
+  F = \begin{pmatrix} 1 & 0 & 1 \\ 2 & 1 & 0 \\ 1 & 1 & 1 \end{pmatrix}
+\]
+amb el mètode de \textbf{Gauss--Jordan}.
+\blocFi
+
+\item
+\Needspace{6\baselineskip}%
+\blocInici
+Calcula la matriu inversa de
+\[
+  G = \begin{pmatrix} 2 & -1 & 2 \\ 4 & -3 & -1 \\ -6 & 4 & -2 \end{pmatrix}
+\]
+amb el mètode de \textbf{Gauss--Jordan}.
+\blocFi
+
+\end{enumerate}
+
+\vspace{0.35em}
+\begin{tcolorbox}[
+  colback=white,
+  colframe=margueVerdClar,
+  boxrule=0.7pt,
+  arc=2pt,
+  left=5pt, right=5pt, top=3pt, bottom=3pt,
+  fontupper=\small
+]
+\textbf{Recorda (Gauss--Jordan).}
+Escriure $\bigl(A \mid I_n\bigr)$; fer zeros \textbf{sota} la diagonal (Gauss);
+fer zeros \textbf{sobre} la diagonal (Jordan); convertir la diagonal en $1$s.
+El bloc de la dreta serà $A^{-1}$.
+\end{tcolorbox}
+
+% ============================================================
+\newpage
+\section*{Solucions (exercicis 2, 3 i 5--8)}
+{\small\textit{Hi pot haver seqüències d'operacions equivalents.}}
+
+\vspace{0.35em}
+\footnotesize
+
+% --- Solució 2 ---
+\Needspace{22\baselineskip}%
+\blocInici
+\noindent\textbf{Exercici 2.}
+Si $B^{-1}=\begin{pmatrix} a_{11}&a_{12}\\ a_{21}&a_{22}\end{pmatrix}$, de $B B^{-1}=I_2$ s'obté
+\[
+  \begin{cases}
+    a_{11}+2a_{21}=1 \\
+    3a_{11}+5a_{21}=0 \\
+    a_{12}+2a_{22}=0 \\
+    3a_{12}+5a_{22}=1
+  \end{cases}
+\]
+De les dues primeres: $a_{11}=-5$, $a_{21}=3$.
+De les dues últimes: $a_{12}=2$, $a_{22}=-1$.
+\[
+  B^{-1} = \begin{pmatrix} -5 & 2 \\ 3 & -1 \end{pmatrix}.
+\]
+\blocFi
+
+\vspace{0.5em}
+
+% --- Solució 3 ---
+\Needspace{18\baselineskip}%
+\blocInici
+\noindent\textbf{Exercici 3.}
+De $C C^{-1}=I_2$:
+\[
+  \begin{cases}
+    2a_{11}+a_{21}=1 \\
+    a_{11}+a_{21}=0 \\
+    2a_{12}+a_{22}=0 \\
+    a_{12}+a_{22}=1
+  \end{cases}
+\]
+Obtenim $a_{11}=1$, $a_{21}=-1$, $a_{12}=-1$, $a_{22}=2$.
+\[
+  C^{-1} = \begin{pmatrix} 1 & -1 \\ -1 & 2 \end{pmatrix}.
+\]
+\blocFi
+
+\vspace{0.5em}
+
+% --- Solució 5 ---
+\Needspace{26\baselineskip}%
+\blocInici
+\noindent\textbf{Exercici 5.}
+{\setlength{\arraycolsep}{2.5pt}%
+\[
+  \left(\begin{array}{cc|cc} 3 & 1 & 1 & 0 \\ 5 & 2 & 0 & 1 \end{array}\right)
+  \gaussFletxa{F_2 \leftarrow F_2 - \tfrac{5}{3}F_1}
+  \left(\begin{array}{cc|cc} 3 & 1 & 1 & 0 \\ 0 & \tfrac{1}{3} & -\tfrac{5}{3} & 1 \end{array}\right)
+\]
+Per evitar fraccions aviat, una seqüència equivalent amb enters:
+\[
+  \left(\begin{array}{cc|cc} 3 & 1 & 1 & 0 \\ 5 & 2 & 0 & 1 \end{array}\right)
+  \gaussFletxa{F_2 \leftarrow 3F_2 - 5F_1}
+  \left(\begin{array}{cc|cc} 3 & 1 & 1 & 0 \\ 0 & 1 & -5 & 3 \end{array}\right)
+\]
+\[
+  \gaussFletxa{F_1 \leftarrow F_1 - F_2}
+  \left(\begin{array}{cc|cc} 3 & 0 & 6 & -3 \\ 0 & 1 & -5 & 3 \end{array}\right)
+  \gaussFletxa{F_1 \leftarrow \tfrac{1}{3}F_1}
+  \left(\begin{array}{cc|cc} 1 & 0 & 2 & -1 \\ 0 & 1 & -5 & 3 \end{array}\right)
+\]
+}
+\[
+  D^{-1} = \begin{pmatrix} 2 & -1 \\ -5 & 3 \end{pmatrix}.
+\]
+\blocFi
+
+\vspace{0.5em}
+
+% --- Solució 6 ---
+\Needspace{24\baselineskip}%
+\blocInici
+\noindent\textbf{Exercici 6.}
+{\setlength{\arraycolsep}{2.5pt}%
+\[
+  \left(\begin{array}{cc|cc} 1 & 2 & 1 & 0 \\ 2 & 5 & 0 & 1 \end{array}\right)
+  \gaussFletxa{F_2 \leftarrow F_2 - 2F_1}
+  \left(\begin{array}{cc|cc} 1 & 2 & 1 & 0 \\ 0 & 1 & -2 & 1 \end{array}\right)
+\]
+\[
+  \gaussFletxa{F_1 \leftarrow F_1 - 2F_2}
+  \left(\begin{array}{cc|cc} 1 & 0 & 5 & -2 \\ 0 & 1 & -2 & 1 \end{array}\right)
+\]
+}
+\[
+  E^{-1} = \begin{pmatrix} 5 & -2 \\ -2 & 1 \end{pmatrix}.
+\]
+\blocFi
+
+\vspace{0.5em}
+
+% --- Solució 7 ---
+\Needspace{34\baselineskip}%
+\blocInici
+\noindent\textbf{Exercici 7.}
+{\setlength{\arraycolsep}{2pt}%
+\[
+  \left(\begin{array}{ccc|ccc}
+    1 & 0 & 1 & 1 & 0 & 0 \\
+    2 & 1 & 0 & 0 & 1 & 0 \\
+    1 & 1 & 1 & 0 & 0 & 1
+  \end{array}\right)
+  \gaussFletxa{F_2 \leftarrow F_2 - 2F_1}
+  \left(\begin{array}{ccc|ccc}
+    1 & 0 & 1 & 1 & 0 & 0 \\
+    0 & 1 & -2 & -2 & 1 & 0 \\
+    1 & 1 & 1 & 0 & 0 & 1
+  \end{array}\right)
+\]
+\[
+  \gaussFletxa{F_3 \leftarrow F_3 - F_1}
+  \left(\begin{array}{ccc|ccc}
+    1 & 0 & 1 & 1 & 0 & 0 \\
+    0 & 1 & -2 & -2 & 1 & 0 \\
+    0 & 1 & 0 & -1 & 0 & 1
+  \end{array}\right)
+  \gaussFletxa{F_3 \leftarrow F_3 - F_2}
+  \left(\begin{array}{ccc|ccc}
+    1 & 0 & 1 & 1 & 0 & 0 \\
+    0 & 1 & -2 & -2 & 1 & 0 \\
+    0 & 0 & 2 & 1 & -1 & 1
+  \end{array}\right)
+\]
+\[
+  \gaussFletxa{F_3 \leftarrow \tfrac{1}{2}F_3}
+  \left(\begin{array}{ccc|ccc}
+    1 & 0 & 1 & 1 & 0 & 0 \\
+    0 & 1 & -2 & -2 & 1 & 0 \\
+    0 & 0 & 1 & \tfrac{1}{2} & -\tfrac{1}{2} & \tfrac{1}{2}
+  \end{array}\right)
+\]
+\[
+  \gaussFletxa{F_1 \leftarrow F_1 - F_3}
+  \left(\begin{array}{ccc|ccc}
+    1 & 0 & 0 & \tfrac{1}{2} & \tfrac{1}{2} & -\tfrac{1}{2} \\
+    0 & 1 & -2 & -2 & 1 & 0 \\
+    0 & 0 & 1 & \tfrac{1}{2} & -\tfrac{1}{2} & \tfrac{1}{2}
+  \end{array}\right)
+\]
+\[
+  \gaussFletxa{F_2 \leftarrow F_2 + 2F_3}
+  \left(\begin{array}{ccc|ccc}
+    1 & 0 & 0 & \tfrac{1}{2} & \tfrac{1}{2} & -\tfrac{1}{2} \\
+    0 & 1 & 0 & -1 & 0 & 1 \\
+    0 & 0 & 1 & \tfrac{1}{2} & -\tfrac{1}{2} & \tfrac{1}{2}
+  \end{array}\right)
+\]
+}
+\[
+  F^{-1} =
+  \begin{pmatrix}
+    \tfrac{1}{2} & \tfrac{1}{2} & -\tfrac{1}{2} \\
+    -1 & 0 & 1 \\
+    \tfrac{1}{2} & -\tfrac{1}{2} & \tfrac{1}{2}
+  \end{pmatrix}.
+\]
+\blocFi
+
+\vspace{0.5em}
+
+% --- Solució 8 ---
+\Needspace{40\baselineskip}%
+\blocInici
+\noindent\textbf{Exercici 8.}
+{\setlength{\arraycolsep}{1.8pt}%
+\[
+  \left(\begin{array}{ccc|ccc}
+    2 & -1 & 2 & 1 & 0 & 0 \\
+    4 & -3 & -1 & 0 & 1 & 0 \\
+    -6 & 4 & -2 & 0 & 0 & 1
+  \end{array}\right)
+  \gaussFletxa{\substack{F_2 \leftarrow F_2-2F_1\\ F_3 \leftarrow F_3+3F_1}}
+  \left(\begin{array}{ccc|ccc}
+    2 & -1 & 2 & 1 & 0 & 0 \\
+    0 & -1 & -5 & -2 & 1 & 0 \\
+    0 & 1 & 4 & 3 & 0 & 1
+  \end{array}\right)
+\]
+\[
+  \gaussFletxa{\substack{F_1 \leftarrow F_1-F_2\\ F_3 \leftarrow F_3+F_2}}
+  \left(\begin{array}{ccc|ccc}
+    2 & 0 & 7 & 3 & -1 & 0 \\
+    0 & -1 & -5 & -2 & 1 & 0 \\
+    0 & 0 & -1 & 1 & 1 & 1
+  \end{array}\right)
+\]
+\[
+  \gaussFletxa{\substack{F_1 \leftarrow F_1+7F_3\\ F_2 \leftarrow F_2-5F_3}}
+  \left(\begin{array}{ccc|ccc}
+    2 & 0 & 0 & 10 & 6 & 7 \\
+    0 & -1 & 0 & -7 & -4 & -5 \\
+    0 & 0 & -1 & 1 & 1 & 1
+  \end{array}\right)
+\]
+\[
+  \gaussFletxa{\substack{F_1 \leftarrow \tfrac{1}{2}F_1\\ F_2 \leftarrow -F_2\\ F_3 \leftarrow -F_3}}
+  \left(\begin{array}{ccc|ccc}
+    1 & 0 & 0 & 5 & 3 & \tfrac{7}{2} \\
+    0 & 1 & 0 & 7 & 4 & 5 \\
+    0 & 0 & 1 & -1 & -1 & -1
+  \end{array}\right)
+\]
+}
+\[
+  G^{-1} =
+  \begin{pmatrix}
+    5 & 3 & \tfrac{7}{2} \\
+    7 & 4 & 5 \\
+    -1 & -1 & -1
+  \end{pmatrix}.
+\]
+\blocFi
+
+\end{document}

@@ -1,0 +1,340 @@
+% Activitat imprimible — 2n BAT CCSS — Matrius (Modelar problemes)
+% ---------------------------------------------------------------
+% Basat en: Plantilles/PlantillaActivitatImprimir
+% Compilar → 2nBATCCSS_Activitat_Matrius_ModelarProblemes.pdf
+
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[catalan]{babel}
+\usepackage[sfdefault,lf]{FiraSans}
+\usepackage[notext]{stix2}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{tikz}
+\usepackage{multicol}
+\usepackage{lastpage}
+\usepackage{eurosym}
+\usepackage{array}
+\usepackage{tcolorbox}
+\tcbuselibrary{skins}
+\usepackage{needspace}
+
+% Evita partir un enunciat / solució entre dues pàgines
+\newcommand{\blocInici}{%
+  \par\nobreak\vspace{0pt}%
+  \begin{minipage}[t]{\linewidth}%
+}
+\newcommand{\blocFi}{%
+  \end{minipage}%
+  \par
+}
+
+% ---------- CANVIAR PER CADA ACTIVITAT ----------
+\newcommand{\ActivitatCurs}{2n BAT Matemàtiques CCSS}
+\newcommand{\ActivitatTema}{Matrius}
+\newcommand{\ActivitatTitol}{Modelar problemes}
+
+% ---------- COLORS (Les Margues) ----------
+\definecolor{margueVerdClar}{HTML}{83BD2A}
+\definecolor{margueVerdFosc}{HTML}{46A700}
+\definecolor{margueVerdCaixa}{HTML}{F2F9EA}
+
+% ---------- MARGES ----------
+\geometry{top=1.8cm, bottom=2.2cm, left=2cm, right=2cm, headheight=14pt}
+
+% ---------- PEU / CAPÇALERA (pàgines 2+) ----------
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\color{margueVerdFosc}\bfseries\ActivitatCurs\ -- \ActivitatTema}
+\fancyhead[R]{\small\ActivitatTitol}
+\fancyfoot[C]{\small\color{gray}Pàgina \thepage\ de \pageref{LastPage}}
+\renewcommand{\headrulewidth}{0.3pt}
+\renewcommand{\footrulewidth}{0pt}
+\fancyheadoffset{0pt}
+
+\fancypagestyle{primera}{%
+  \fancyhf{}%
+  \fancyfoot[C]{\small\color{gray}Pàgina \thepage\ de \pageref{LastPage}}%
+  \renewcommand{\headrulewidth}{0pt}%
+}
+
+\newcommand{\capcaleraActivitat}{%
+  \noindent
+  \begin{minipage}[c]{0.26\textwidth}
+    \raggedright
+    \includegraphics[height=2.1cm,width=\linewidth,keepaspectratio]{LogoInstitut.png}%
+  \end{minipage}%
+  \hfill
+  \begin{minipage}[c]{0.70\textwidth}
+    {\small\color{margueVerdFosc}\bfseries\ActivitatCurs\ -- \ActivitatTema\par}
+    \vspace{0.35em}
+    {\Large\bfseries\ActivitatTitol\par}
+    \vspace{0.85em}
+    {\normalsize
+      \textbf{Nom:}\ \hrulefill\hspace{0.9em}\textbf{Data:}\ \underline{\hspace{2.4cm}}\par
+    }%
+  \end{minipage}%
+  \par\vspace{0.55em}%
+  \noindent{\color{margueVerdClar}\rule{\textwidth}{0.7pt}}\par
+  \vspace{0.9em}%
+}
+
+\begin{document}
+\thispagestyle{primera}
+
+\capcaleraActivitat
+
+\noindent
+En aquesta activitat practicarem \textbf{escriure dades contextualitzades en forma de matriu}
+(organitzant la informació a partir del text)
+i \textbf{interpretar-ne} files, columnes i elements.
+Això és el primer pas per enfrontar-se a problemes tipus PAU.
+Pots fer els càlculs en un full a part.
+
+\vspace{0.5em}
+
+\begin{enumerate}[leftmargin=*,itemsep=0.55em,parsep=0.2em]
+
+% ---------- 1. EXEMPLE RESOLT (2×2, enters) ----------
+\item
+\Needspace{14\baselineskip}%
+\blocInici
+\textbf{Exemple resolt.}
+En una cafeteria es venen sucs de taronja i de poma, en vas gran i en vas petit.
+Un vas gran de taronja costa $3$\,\euro{} i un de poma $2$\,\euro{};
+un vas petit de taronja costa $2$\,\euro{} i un de poma $1$\,\euro{}.
+Anota aquestes dades en forma de matriu.
+
+\begin{tcolorbox}[
+  colback=white,
+  colframe=margueVerdFosc,
+  boxrule=0.8pt,
+  arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  fontupper=\small
+]
+\textbf{Solució.}
+Organitzem les dades així: les \textbf{files} són la grandària (gran / petit)
+i les \textbf{columnes} el tipus de suc (taronja / poma).
+\[
+  A =
+  \begin{pmatrix}
+    3 & 2 \\
+    2 & 1
+  \end{pmatrix}
+  \qquad
+  \begin{array}{c@{\hspace{0.6em}}c@{\hspace{0.6em}}c}
+      & \text{Taronja} & \text{Poma} \\
+    \text{Gran}  & 3 & 2 \\
+    \text{Petit} & 2 & 1
+  \end{array}
+\]
+Per exemple, $a_{12}=2$ vol dir que un vas \textbf{gran} de \textbf{poma} costa $2$\,\euro{}.
+
+\textit{Nota:} també seria correcte intercanviar el paper de files i columnes,
+sempre que ho indiquis clarament.
+\end{tcolorbox}
+\blocFi
+
+% ---------- 2. PANS (2×2, decimals) ----------
+\item
+\Needspace{6\baselineskip}%
+\blocInici
+Es venen pans de dues farines i dues grandàries diferents.
+Els pans grans i de farina de sègol costen $0{,}75$\,\euro{}, i $1$\,\euro{} els d'espelta,
+mentre que els pans petits de farina de sègol costen $0{,}45$\,\euro{},
+i $0{,}60$\,\euro{} els d'espelta.
+Anota aquestes dades en forma de matriu i indica què representen les files i les columnes.
+\blocFi
+
+% ---------- 3. 3×3 només text (organitzar) ----------
+\item
+\Needspace{9\baselineskip}%
+\blocInici
+Una botiga d'esports ven samarretes, pantalons i sabatilles.
+Durant el mes de març es van vendre $40$ samarretes, $25$ pantalons i $18$ sabatilles de la marca $X$;
+$30$ samarretes, $20$ pantalons i $22$ sabatilles de la marca $Y$;
+i $15$ samarretes, $12$ pantalons i $28$ sabatilles de la marca $Z$.
+\begin{enumerate}[label=\alph*),leftmargin=1.4em,itemsep=0.25em]
+  \item Organitza la informació en una matriu $A$ i indica clarament
+    què representen les files i les columnes.
+  \item Interpreta els elements $a_{23}$ i $a_{31}$ segons l'organització que hagis triat.
+\end{enumerate}
+\blocFi
+
+% ---------- 4. Matriu de preus + matriu fila/columna de quantitats ----------
+\item
+\Needspace{11\baselineskip}%
+\blocInici
+Un institut vol comprar material per a tres tallers ($T_1$, $T_2$ i $T_3$)
+i ha demanat pressupost a tres empreses ($E_1$, $E_2$ i $E_3$).
+Els preus unitaris (en euros) són:
+l'empresa $E_1$ cobra $12$, $8$ i $15$ pels tallers $T_1$, $T_2$ i $T_3$, respectivament;
+l'empresa $E_2$ cobra $10$, $9$ i $14$;
+i l'empresa $E_3$ cobra $11$, $7$ i $16$.
+A més, cal comprar $20$ unitats del taller $T_1$, $35$ del $T_2$ i $15$ del $T_3$.
+\begin{enumerate}[label=\alph*),leftmargin=1.4em,itemsep=0.25em]
+  \item Escriu una matriu $P$ amb els preus unitaris
+    i indica què representen les files i les columnes.
+  \item Escriu una matriu fila o una matriu columna $Q$ amb les quantitats necessàries
+    i indica què representa cada element.
+\end{enumerate}
+\blocFi
+
+% ---------- 5. Estil PAU: text dens + preus + quantitats ----------
+\item
+\Needspace{14\baselineskip}%
+\blocInici
+Una pastisseria elabora tres productes ($A$, $B$ i $C$) i compra farina, sucre i mantega
+a tres proveïdors diferents.
+El proveïdor $1$ ven la farina a $0{,}80$\,\euro{}/kg, el sucre a $1{,}20$\,\euro{}/kg
+i la mantega a $4$\,\euro{}/kg;
+el proveïdor $2$ les ven a $0{,}90$\,\euro{}/kg, $1$\,\euro{}/kg i $3{,}50$\,\euro{}/kg, respectivament;
+i el proveïdor $3$ a $0{,}70$\,\euro{}/kg, $1{,}10$\,\euro{}/kg i $3{,}80$\,\euro{}/kg.
+Per a la producció setmanal es necessiten $50$\,kg de farina, $20$\,kg de sucre i $10$\,kg de mantega.
+A més, se sap que un $5\,\%$ de la farina del proveïdor $2$ sol arribar humida
+i s'ha de descartar (no cal que ho incorporis a les matrius;
+només t'ho donem com a context).
+\begin{enumerate}[label=\alph*),leftmargin=1.4em,itemsep=0.25em]
+  \item Escriu una matriu $R$ amb els preus unitaris dels tres proveïdors
+    i indica què representen les files i les columnes.
+  \item Escriu una matriu fila o columna $S$ amb les quantitats setmanals necessàries.
+\end{enumerate}
+\blocFi
+
+\end{enumerate}
+
+\vspace{0.5em}
+\begin{tcolorbox}[
+  colback=white,
+  colframe=margueVerdClar,
+  boxrule=0.7pt,
+  arc=2pt,
+  left=5pt, right=5pt, top=3pt, bottom=3pt,
+  fontupper=\small
+]
+\textbf{Per pensar.}
+Als problemes de les PAU sovint cal, a partir d'un text,
+construir una matriu de dades i una matriu fila o columna de quantitats,
+deixant clar què és cada fila i cada columna.
+\end{tcolorbox}
+
+% ============================================================
+\newpage
+\section*{Solucions (exercicis 2--5)}
+{\small\textit{Hi pot haver organitzacions alternatives vàlides si indiques clarament
+què són les files i les columnes. Aquí en mostrem una possible.}}
+
+\vspace{0.4em}
+\begin{enumerate}[leftmargin=*,itemsep=0.85em,parsep=0.25em]
+
+\item
+\Needspace{10\baselineskip}%
+\blocInici
+\textbf{(Exercici 2)}
+Identifiquem dues categories: \textbf{grandària} (gran / petit)
+i \textbf{tipus de farina} (sègol / espelta).
+Prenem les files com a grandària i les columnes com a farina:
+\[
+  A =
+  \begin{pmatrix}
+    0{,}75 & 1 \\
+    0{,}45 & 0{,}60
+  \end{pmatrix}
+  \qquad
+  \begin{array}{c@{\hspace{0.7em}}c@{\hspace{0.7em}}c}
+      & \text{Sègol} & \text{Espelta} \\
+    \text{Gran}  & 0{,}75 & 1 \\
+    \text{Petit} & 0{,}45 & 0{,}60
+  \end{array}
+\]
+Així, per exemple, $a_{12}=1$ és el preu d'un pa \textbf{gran} d'\textbf{espelta}.
+\blocFi
+
+\item
+\Needspace{12\baselineskip}%
+\blocInici
+\textbf{(Exercici 3)}
+\begin{enumerate}[label=\alph*),leftmargin=1.2em,itemsep=0.35em]
+  \item Prenem les \textbf{files} com a marques ($X$, $Y$, $Z$)
+    i les \textbf{columnes} com a productes (samarretes, pantalons, sabatilles):
+    \[
+      A =
+      \begin{pmatrix}
+        40 & 25 & 18 \\
+        30 & 20 & 22 \\
+        15 & 12 & 28
+      \end{pmatrix}
+    \]
+  \item Amb aquesta organització:
+    $a_{23}=22$ són les sabatilles de la marca $Y$;
+    $a_{31}=15$ són les samarretes de la marca $Z$.
+\end{enumerate}
+\blocFi
+
+\item
+\Needspace{14\baselineskip}%
+\blocInici
+\textbf{(Exercici 4)}
+\begin{enumerate}[label=\alph*),leftmargin=1.2em,itemsep=0.35em]
+  \item Prenem les \textbf{files} com a empreses ($E_1$, $E_2$, $E_3$)
+    i les \textbf{columnes} com a tallers ($T_1$, $T_2$, $T_3$):
+    \[
+      P =
+      \begin{pmatrix}
+        12 & 8 & 15 \\
+        10 & 9 & 14 \\
+        11 & 7 & 16
+      \end{pmatrix}
+    \]
+    Per exemple, $p_{23}=14$ és el preu unitari que cobra $E_2$ pel taller $T_3$.
+  \item Les quantitats es poden escriure com a matriu fila o com a matriu columna
+    (cal mantenir l'ordre $T_1$, $T_2$, $T_3$):
+    \[
+      Q =
+      \begin{pmatrix} 20 & 35 & 15 \end{pmatrix}
+      \qquad\text{o}\qquad
+      Q =
+      \begin{pmatrix} 20 \\ 35 \\ 15 \end{pmatrix}
+    \]
+    On $20$, $35$ i $15$ són les unitats necessàries de $T_1$, $T_2$ i $T_3$, respectivament.
+\end{enumerate}
+\blocFi
+
+\item
+\Needspace{14\baselineskip}%
+\blocInici
+\textbf{(Exercici 5)}
+\begin{enumerate}[label=\alph*),leftmargin=1.2em,itemsep=0.35em]
+  \item Prenem les \textbf{files} com a proveïdors ($1$, $2$, $3$)
+    i les \textbf{columnes} com a ingredients (farina, sucre, mantega):
+    \[
+      R =
+      \begin{pmatrix}
+        0{,}80 & 1{,}20 & 4 \\
+        0{,}90 & 1 & 3{,}50 \\
+        0{,}70 & 1{,}10 & 3{,}80
+      \end{pmatrix}
+    \]
+    El $5\,\%$ de farina humida del proveïdor $2$ és informació de context
+    i \textbf{no} s'incorpora a $R$.
+  \item Les quantitats setmanals (farina, sucre, mantega), en el mateix ordre que les columnes de $R$:
+    \[
+      S =
+      \begin{pmatrix} 50 & 20 & 10 \end{pmatrix}
+      \qquad\text{o}\qquad
+      S =
+      \begin{pmatrix} 50 \\ 20 \\ 10 \end{pmatrix}
+    \]
+\end{enumerate}
+\blocFi
+
+\end{enumerate}
+
+\end{document}
