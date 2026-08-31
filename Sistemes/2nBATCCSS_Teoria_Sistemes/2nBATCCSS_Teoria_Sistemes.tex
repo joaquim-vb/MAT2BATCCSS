@@ -1,0 +1,1840 @@
+% Teoria Beamer — 2n BAT — Sistemes d'equacions
+% ----------------------------------------------
+% Regles i patrons: .cursor/rules/teoria-beamer.mdc
+% Documentació: brief.md
+
+\PassOptionsToPackage{table}{xcolor}
+\documentclass[aspectratio=169]{beamer}
+\usefonttheme{professionalfonts}
+
+\usepackage[catalan]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[sfdefault,lf]{FiraSans}
+\usepackage[notext]{stix2}
+\usepackage{amsmath}
+
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usetikzlibrary{arrows.meta,positioning,calc}
+\usepackage{tcolorbox}
+\tcbuselibrary{skins,breakable}
+
+% ---------- CANVIAR PER CADA PRESENTACIÓ ----------
+\newcommand{\TeoriaTema}{Sistemes d'equacions}
+\newcommand{\TeoriaTemaCurt}{Sistemes} % peu de pàgina (evita overflow)
+
+% ---------- COLORS ----------
+\definecolor{margueVerdClar}{HTML}{83BD2A}
+\definecolor{margueVerdFosc}{HTML}{46A700}
+\definecolor{margueVerdCaixa}{HTML}{F2F9EA}
+
+% ---------- TEMA BASE ----------
+\setbeamertemplate{navigation symbols}{}
+\setbeamercolor{background canvas}{bg=white}
+\setbeamercolor{normal text}{fg=black}
+\setbeamercolor{structure}{fg=margueVerdFosc}
+\setbeamercolor{title}{fg=black}
+\setbeamercolor{frametitle}{fg=black,bg=white}
+\setbeamerfont{frametitle}{series=\bfseries,size=\Large}
+\setbeamertemplate{itemize item}{\textcolor{margueVerdFosc}{$\bullet$}}
+\setbeamertemplate{itemize subitem}{\textcolor{margueVerdFosc}{--}}
+
+\setbeamertemplate{headline}{}
+
+\setbeamertemplate{footline}{%
+  \begin{beamercolorbox}[wd=\paperwidth,ht=0.55cm,dp=0.25cm,leftskip=0.4cm,rightskip=0.4cm]{}
+    \color{margueVerdClar}\rule{\paperwidth}{0.04cm}\\[0.08cm]
+    \color{margueVerdFosc}\small\bfseries 2n BAT -- \TeoriaTemaCurt
+    \hfill
+    \color{gray}\small\insertframenumber/\inserttotalframenumber
+  \end{beamercolorbox}%
+}
+
+% ---------- CAIXES ----------
+\tcbset{
+  caixadefbase/.style={
+    colback=margueVerdCaixa, colframe=margueVerdFosc,
+    boxrule=1pt, arc=2pt,
+    left=6pt, right=6pt, top=4pt, bottom=4pt,
+    fontupper=\normalsize
+  },
+  compact/.style={
+    left=3pt, right=3pt, top=2pt, bottom=2pt,
+    fontupper=\small
+  },
+  ultracompact/.style={
+    left=3pt, right=3pt, top=0pt, bottom=0pt,
+    boxsep=0pt, arc=2pt,
+    fontupper=\small
+  },
+  titular/.style={
+    compact, hbox, boxsep=0pt
+  },
+  centrat/.style={
+    compact, halign=center
+  }
+}
+
+\newtcolorbox{caixadef}[1][]{caixadefbase, #1}
+
+\newcommand{\caixatitol}[1]{%
+  \begin{center}%
+    \begin{caixadef}[titular]#1\end{caixadef}%
+  \end{center}%
+}
+
+\newcommand{\caixacentrada}[1]{%
+  \begin{center}%
+    \begin{caixadef}[titular]#1\end{caixadef}%
+  \end{center}%
+}
+
+\newcommand{\solucio}[1]{{\color{margueVerdFosc}\ensuremath{\mathbf{#1}}}}
+\newcommand{\fc}[1]{{\color{margueVerdFosc}#1}}
+\newcommand{\textverd}[1]{{\color{margueVerdFosc}#1}}
+
+% Classificació de sistemes (reutilitzable)
+\newcommand{\teoriaClassificacioSistemes}{%
+  \begin{itemize}
+    \item \textbf{Incompatible (SI):} no té solució.
+    \item \textbf{Compatible:} té solució.
+      \begin{itemize}
+        \item \textbf{Determinat (SCD):} una única solució.
+        \item \textbf{Indeterminat (SCI):} infinites solucions.
+      \end{itemize}
+  \end{itemize}%
+}
+
+% Operacions de Gauss (mateix patró que a Matrius)
+\newcommand{\gaussop}[1]{{\small\ensuremath{#1}}}
+\newcommand{\gaussopFila}[2]{%
+  \vspace*{0.54cm}%
+  \ifnum#1>1 \vspace*{0.56cm}\fi
+  \ifnum#1>2 \vspace*{0.56cm}\fi
+  \begin{center}%
+    \parbox{0.98\linewidth}{\centering\gaussop{#2}}%
+  \end{center}%
+}
+% Operació alineada amb la fila #1 d'una matriu 3×n (mateixa baseline)
+\newcommand{\gjopfila}[2]{%
+  \hspace{1.1em}%
+  \begin{array}{@{}c@{}}
+    \ifnum#1=1 \gaussop{#2}\else\vphantom{0}\fi\\
+    \ifnum#1=2 \gaussop{#2}\else\vphantom{0}\fi\\
+    \ifnum#1=3 \gaussop{#2}\else\vphantom{0}\fi
+  \end{array}%
+  \hspace{1.1em}%
+}
+
+\tcbset{
+  caixadembase/.style={
+    enhanced,
+    colback=margueVerdCaixa, colframe=margueVerdFosc,
+    boxrule=1pt, arc=2pt,
+    left=6pt, right=6pt, top=4pt, bottom=4pt,
+    fontupper=\small,
+    colbacktitle=margueVerdFosc, coltitle=white,
+    fonttitle=\bfseries\small,
+    titlerule=0pt, toptitle=2pt, bottomtitle=2pt,
+    title=Demostració,
+  }
+}
+\newtcolorbox{caixadem}[1][]{caixadembase, #1}
+
+\title{\TeoriaTema}
+\subtitle{2n BAT}
+\author{}
+\institute{}
+\date{}
+
+\begin{document}
+
+% ---------- DIAPO 1: PORTADA ----------
+\begin{frame}[plain]
+  \begin{tikzpicture}[remember picture,overlay]
+    \node[anchor=north east] at ([xshift=-0.6cm,yshift=-0.6cm]current page.north east)
+      {\includegraphics[width=2.2cm]{LogoInstitut.png}};
+  \end{tikzpicture}
+  \vspace{1.5cm}
+  {\Huge\bfseries \TeoriaTema}\\[0.6cm]
+  \rule{0.5\textwidth}{0.5pt}\\[0.4cm]
+  {\large 2n BAT}
+\end{frame}
+
+% ---------- DIAPO 2: ÍNDEX ----------
+\begin{frame}[t]
+  \frametitle{Índex}
+  \vspace{-0.2cm}
+  \setbeamertemplate{section in toc}{%
+    \leavevmode\leftskip=0em\relax
+    {\bfseries\inserttocsectionnumber.~\inserttocsection}\par
+  }%
+  \setbeamertemplate{subsection in toc}{%
+    \leavevmode\leftskip=1.2em\relax
+    \inserttocsectionnumber.\inserttocsubsectionnumber~\inserttocsubsection\par
+  }%
+  \setbeamerfont{section in toc}{size=\small}
+  \setbeamerfont{subsection in toc}{size=\footnotesize}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.48\textwidth}
+      \tableofcontents[sections={1-3}]
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \tableofcontents[sections={4-6}]
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ============================================================
+% CONTINGUT
+% ============================================================
+
+% ---------- SECCIÓ 1 ----------
+\section{Concepte i classificació}
+\subsection{Equacions lineals}
+
+% ---------- DIAPO 1.1: Equacions lineals ----------
+\begin{frame}[t]
+  \frametitle{1.1 Equacions lineals}
+
+  \vspace{-0.25cm}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.52\textwidth}
+      \begin{itemize}
+        \item<1-> Una \textbf{equació lineal} amb $n$ incògnites és
+          \[
+            a_1x_1 + a_2x_2 + \cdots + a_nx_n = b.
+          \]
+        \item<2-> Els nombres $a_1,\ldots,a_n$ són els \textbf{coeficients}; $b$ és el \textbf{terme independent}.
+        \item<3-> Les incògnites només poden aparèixer amb exponent $1$ i no es multipliquen entre elles.
+      \end{itemize}
+    \end{column}
+
+    \begin{column}{0.46\textwidth}
+      \only<4->{
+        \small\textbf{Exemple}\\[0.15cm]
+        \[
+          2x_1 - x_2 + x_3 - 3x_4 = 6
+        \]
+      }
+      \begin{itemize}
+        \item<5-> Coeficients: \solucio{2,\;-1,\;1,\;-3}.
+        \item<6-> Terme independent: \solucio{6}.
+        \item<7-> És solució $(x_1,x_2,x_3,x_4)=(3,0,0,0)$?
+        \item<8-> $2\cdot 3 - 0 + 0 - 0 = 6$ \;$\Rightarrow$\; \textverd{sí}.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+
+  \vspace{0.1cm}
+  \only<9->{
+    \caixacentrada{Una sola equació amb més d'una incògnita té \textbf{infinites} solucions.}
+  }
+\end{frame}
+
+\subsection{Sistemes d'equacions lineals}
+
+% ---------- DIAPO 1.2a: Definició de sistema ----------
+\begin{frame}[t]
+  \frametitle{1.2 Sistemes d'equacions lineals}
+
+  \vspace{-0.2cm}
+  \begin{itemize}
+    \item<1-> Un \textbf{sistema} de $m$ equacions lineals amb $n$ incògnites és
+  \end{itemize}
+
+  \vspace{0.08cm}
+  \only<1->{
+    \[
+      \left\{\begin{aligned}
+        a_{11}x_1 + a_{12}x_2 + \cdots + a_{1n}x_n &= b_1 \\
+        a_{21}x_1 + a_{22}x_2 + \cdots + a_{2n}x_n &= b_2 \\
+        &\vdots \\
+        a_{m1}x_1 + a_{m2}x_2 + \cdots + a_{mn}x_n &= b_m
+      \end{aligned}\right.
+    \]
+  }
+
+  \vspace{0.05cm}
+  \begin{itemize}
+    \item<2-> Una \textbf{solució} és una $n$-tupla $(x_1,\ldots,x_n)$ que satisfà \textbf{totes} les equacions.
+    \item<3-> Notació habitual: $x,y$ (dues); $x,y,z$ (tres); $x_1,x_2,\ldots$ si n'hi ha més.
+  \end{itemize}
+\end{frame}
+
+% ---------- DIAPO 1.2b: Recordatori 2×2 ----------
+\begin{frame}[t]
+  \frametitle{1.2 Recordatori: sistemes $2\times 2$}
+
+  \vspace{-0.25cm}
+  \begin{itemize}
+    \item<1-> Es pressuposa el coneixement dels diferents mètodes de resolució
+      de sistemes de \textbf{2 equacions i 2 incògnites}
+      (substitució, igualació o reducció).
+  \end{itemize}
+
+  \vspace{0.08cm}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.38\textwidth}
+      \only<2->{
+        \centering
+        \[
+          \left\{\begin{aligned}
+            2x + y &= 5 \\
+            x - y &= 1
+          \end{aligned}\right.
+        \]
+      }
+    \end{column}
+
+    \begin{column}{0.60\textwidth}
+      \begin{itemize}
+        \item<3-> Sumant les dues equacions (reducció):
+          \[
+            \onslide<3->{3x = 6 \;\Rightarrow\; \solucio{x=2}}
+          \]
+        \item<4-> Substituint a la segona:
+          \[
+            2 - y = 1 \;\Rightarrow\; \solucio{y=1}
+          \]
+        \item<5-> Solució: \solucio{(x,y)=(2,1)}.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+
+  \vspace{0.12cm}
+  \only<6->{
+    \caixacentrada{Ara generalitzarem a sistemes amb \textbf{3} (o més) incògnites.}
+  }
+\end{frame}
+
+% ---------- DIAPO 1.2c: Sistema 3×3 — comprovar solució ----------
+\begin{frame}[t]
+  \frametitle{1.2 Sistemes amb tres incògnites}
+
+  \vspace{-0.25cm}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.42\textwidth}
+      \only<1->{
+        \textbf{Exemple.} És solució $(1,0,-1)$?
+        \[
+          \left\{\begin{aligned}
+            x + y + z &= 0 \\
+            2x - y + z &= 1 \\
+            x - y + 2z &= -1
+          \end{aligned}\right.
+        \]
+      }
+    \end{column}
+
+    \begin{column}{0.56\textwidth}
+      \begin{itemize}
+        \item<2-> Per comprovar si una $n$-tupla és solució, cal
+          \textbf{substituir-la a totes} les equacions.
+        \item<3-> $1^{\text{a}}$: $1+0+(-1)=0$ \;\textverd{\checkmark}
+        \item<4-> $2^{\text{a}}$: $2\cdot 1 - 0 + (-1)=1$ \;\textverd{\checkmark}
+        \item<5-> $3^{\text{a}}$: $1 - 0 + 2\cdot(-1)=-1$ \;\textverd{\checkmark}
+        \item<6-> \textverd{Sí}: $(1,0,-1)$ és solució del sistema.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\subsection{Classificació de sistemes}
+
+% ---------- DIAPO 1.3a: Definicions ----------
+\begin{frame}[t]
+  \frametitle{1.3 Classificació de sistemes}
+
+  \vspace{-0.2cm}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.48\textwidth}
+      \only<1->{\teoriaClassificacioSistemes}
+    \end{column}
+
+    \begin{column}{0.50\textwidth}
+      \only<2->{
+        \small
+        Ho veurem primer amb sistemes $2\times 2$ (els de sempre)
+        i després amb Gauss en $3\times 3$.
+      }
+      \vspace{0.2cm}
+      \only<3->{
+        \caixacentrada{Compatible $\Leftrightarrow$ té solució}
+      }
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ---------- DIAPO 1.3b: Exemple SCD (2×2) ----------
+\begin{frame}[t]
+  \frametitle{1.3 Classificació: exemple SCD}
+
+  \vspace{-0.25cm}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.36\textwidth}
+      \[
+        \left\{\begin{aligned}
+          x + y &= 2 \\
+          2x - y &= -2
+        \end{aligned}\right.
+      \]
+    \end{column}
+
+    \begin{column}{0.62\textwidth}
+      \begin{itemize}
+        \item<1-> Sumant: $3x = 0$ \;$\Rightarrow$\; \solucio{x=0}.
+        \item<2-> Llavors $y=2$ \;$\Rightarrow$\; \solucio{(x,y)=(0,2)}.
+        \item<3-> Una sola solució \;$\Rightarrow$\; \textverd{\textbf{SCD}}.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ---------- DIAPO 1.3c: Exemple SCI (2×2) ----------
+\begin{frame}[t]
+  \frametitle{1.3 Classificació: exemple SCI}
+
+  \vspace{-0.25cm}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.36\textwidth}
+      \[
+        \left\{\begin{aligned}
+          x + y &= 2 \\
+          -x - y &= -2
+        \end{aligned}\right.
+      \]
+    \end{column}
+
+    \begin{column}{0.62\textwidth}
+      \begin{itemize}
+        \item<1-> Sumant: $0=0$ (identitat; la 2a no afegeix informació).
+        \item<2-> Queda $x+y=2$. Si $y=\lambda$, llavors $x=2-\lambda$.
+        \item<3-> Infinites solucions: \solucio{(x,y)=(2-\lambda,\,\lambda)}, $\lambda\in\mathbb{R}$.
+        \item<4-> \;$\Rightarrow$\; \textverd{\textbf{SCI}}.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+
+  \vspace{0.1cm}
+  \only<5->{
+    \caixacentrada{En un SCI expressem la solució amb un \textbf{paràmetre} $\lambda$.}
+  }
+\end{frame}
+
+% ---------- DIAPO 1.3d: Exemple SI (2×2) ----------
+\begin{frame}[t]
+  \frametitle{1.3 Classificació: exemple SI}
+
+  \vspace{-0.25cm}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.36\textwidth}
+      \[
+        \left\{\begin{aligned}
+          x + y &= 2 \\
+          -x - y &= 1
+        \end{aligned}\right.
+      \]
+    \end{column}
+
+    \begin{column}{0.62\textwidth}
+      \begin{itemize}
+        \item<1-> Sumant: $0=3$, absurde.
+        \item<2-> No hi ha cap parell $(x,y)$ que compleixi les dues.
+        \item<3-> \;$\Rightarrow$\; \textverd{\textbf{SI}} (incompatible).
+      \end{itemize}
+    \end{column}
+  \end{columns}
+
+  \vspace{0.15cm}
+  \only<4->{
+    \begin{caixadef}[compact,halign=center]
+      \textbf{SCD}: 1 solució \quad
+      \textbf{SCI}: infinites \quad
+      \textbf{SI}: cap
+    \end{caixadef}
+  }
+\end{frame}
+
+\subsection{Sistemes escalonats}
+
+% ---------- DIAPO 1.4a: Definició ----------
+\begin{frame}[t]
+  \frametitle{1.4 Sistemes escalonats}
+
+  \vspace{-0.2cm}
+  \begin{itemize}
+    \item<1-> Un sistema està en \textbf{forma escalonada} si cada equació té
+      \textbf{almenys una incògnita menys} que l'anterior.
+  \end{itemize}
+
+  \vspace{0.12cm}
+  \only<2->{
+    \centering
+    \begin{minipage}[t]{0.46\textwidth}
+      \centering
+      \small\textbf{Escalonat}\\[0.15cm]
+      \[
+        \left\{\begin{aligned}
+          3x - y + 2z &= 0 \\
+          y - z &= 1 \\
+          -3z &= -3
+        \end{aligned}\right.
+      \]
+    \end{minipage}%
+    \hfill
+    \begin{minipage}[t]{0.46\textwidth}
+      \centering
+      \small\textbf{No escalonat}\\[0.15cm]
+      \[
+        \left\{\begin{aligned}
+          x - 3y + 2z &= -1 \\
+          -2x + 4z &= -6 \\
+          x - 2y + z &= 0
+        \end{aligned}\right.
+      \]
+    \end{minipage}
+  }
+
+  \vspace{0.12cm}
+  \begin{itemize}
+    \item<3-> Es resol per \textbf{substitució enrere}: comencem per l'última equació
+      i anem amunt.
+  \end{itemize}
+
+  \vspace{0.08cm}
+  \only<4->{
+    \caixacentrada{El mètode de Gauss transforma un sistema qualsevol en un d'escalonat.}
+  }
+\end{frame}
+
+% ---------- DIAPO 1.4b: Exemple 3×3 ----------
+\begin{frame}[t]
+  \frametitle{1.4 Sistemes escalonats}
+
+  \vspace{-0.3cm}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.40\textwidth}
+      \[
+        \left\{\begin{aligned}
+          3x - y + 2z &= 0 \\
+          y - z &= 1 \\
+          -3z &= -3
+        \end{aligned}\right.
+      \]
+    \end{column}
+
+    \begin{column}{0.58\textwidth}
+      \begin{itemize}
+        \item<1-> De la 3a: $-3z=-3$ \;$\Rightarrow$\; \solucio{z=1}.
+        \item<2-> A la 2a: $y-1=1$ \;$\Rightarrow$\; \solucio{y=2}.
+        \item<3-> A la 1a: $3x-2+2\cdot 1=0$ \;$\Rightarrow$\; \solucio{x=0}.
+        \item<4-> Solució: \solucio{(x,y,z)=(0,2,1)}.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ---------- SECCIÓ 2 ----------
+\section{Expressió matricial}
+\subsection{Matrius associades}
+
+% ---------- DIAPO 2.1a: AX = B ----------
+\begin{frame}[t]
+  \frametitle{2.1 Expressió matricial d'un sistema}
+
+  \vspace{-0.22cm}
+  \begin{itemize}
+    \item<1-> Tot sistema lineal es pot escriure com
+      \[
+        A \cdot X = B,
+      \]
+      on:
+  \end{itemize}
+
+  \vspace{0.06cm}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.32\textwidth}
+      \only<2->{
+        \centering\small
+        \textbf{Matriu de coeficients}\\[0.1cm]
+        $A = \begin{pmatrix}
+          a_{11} & \cdots & a_{1n} \\
+          \vdots & \ddots & \vdots \\
+          a_{m1} & \cdots & a_{mn}
+        \end{pmatrix}_{m\times n}$
+      }
+    \end{column}
+    \begin{column}{0.32\textwidth}
+      \only<3->{
+        \centering\small
+        \textbf{Incògnites}\\[0.1cm]
+        $X = \begin{pmatrix} x_1 \\ \vdots \\ x_n \end{pmatrix}_{n\times 1}$
+      }
+    \end{column}
+    \begin{column}{0.32\textwidth}
+      \only<4->{
+        \centering\small
+        \textbf{Termes independents}\\[0.1cm]
+        $B = \begin{pmatrix} b_1 \\ \vdots \\ b_m \end{pmatrix}_{m\times 1}$
+      }
+    \end{column}
+  \end{columns}
+
+  \vspace{0.15cm}
+  \only<5->{
+    \caixacentrada{$A$ és $m\times n$,\; $X$ és $n\times 1$,\; $B$ és $m\times 1$}
+  }
+\end{frame}
+
+% ---------- DIAPO 2.1b: Matriu ampliada ----------
+\begin{frame}[t]
+  \frametitle{2.1 Matriu ampliada}
+
+  \vspace{-0.2cm}
+  \begin{itemize}
+    \item<1-> La \textbf{matriu ampliada} $A^*$ s'obté afegint a $A$ la columna $B$:
+  \end{itemize}
+
+  \vspace{0.1cm}
+  \only<2->{
+    \[
+      A^* = (A\,|\,B) =
+      \left(\begin{array}{ccc|c}
+        a_{11} & \cdots & a_{1n} & b_1 \\
+        \vdots & \ddots & \vdots & \vdots \\
+        a_{m1} & \cdots & a_{mn} & b_m
+      \end{array}\right)
+    \]
+  }
+
+  \vspace{0.1cm}
+  \only<3->{
+    \caixacentrada{La matriu ampliada és la base del \textbf{mètode de Gauss}.}
+  }
+\end{frame}
+
+\subsection{Resolució amb la inversa}
+
+% ---------- DIAPO 2.2a: Idea ----------
+\begin{frame}[t]
+  \frametitle{2.2 Resolució amb la matriu inversa}
+
+  \vspace{-0.2cm}
+  \begin{itemize}
+    \item<1-> Si $A$ és \textbf{quadrada} i té inversa ($|A|\neq 0$), llavors
+      \[
+        A\cdot X = B
+        \;\Longrightarrow\;
+        X = A^{-1}\cdot B.
+      \]
+    \item<2-> Es resol trobant la matriu inversa, aplicant Gauss--Jordan
+      o per altres mètodes (adjunts, determinants,\ldots).
+  \end{itemize}
+
+  \vspace{0.12cm}
+  \only<3->{
+    \begin{caixadef}[compact]
+      \textbf{Fixa't-hi:} cal $A$ quadrada i $|A|\neq 0$.
+      Si no, aquest mètode \textbf{no} s'aplica: cal resoldre amb el
+      \textbf{mètode de Gauss} (o un altre).
+    \end{caixadef}
+  }
+\end{frame}
+
+% ---------- DIAPO 2.2b: Exemple — enunciat + estratègia ----------
+\begin{frame}[t]
+  \frametitle{2.2 Resolució amb la matriu inversa}
+
+  \vspace{-0.28cm}
+  \only<1->{\small\textbf{Exemple.} Resoldre el sistema.}
+
+  \vspace{0.06cm}
+  \only<1->{
+    \centering
+    \begin{minipage}[t]{0.46\textwidth}
+      \centering
+      \[
+        \left\{\begin{aligned}
+          x + y - z &= 0 \\
+          -2x - y + z &= -1 \\
+          x - y + 2z &= 0
+        \end{aligned}\right.
+      \]
+    \end{minipage}%
+    \hfill
+    \begin{minipage}[t]{0.50\textwidth}
+      \centering
+      \[
+        A=\begin{pmatrix}1&1&-1\\-2&-1&1\\1&-1&2\end{pmatrix},\;
+        B=\begin{pmatrix}0\\-1\\0\end{pmatrix}
+      \]
+    \end{minipage}
+  }
+
+  \vspace{0.1cm}
+  \begin{itemize}
+    \item<2-> $|A|=\solucio{1}\neq 0$ \;$\Rightarrow$\; $A$ és \textbf{invertible}.
+    \item<3-> Busquem $X=\begin{pmatrix}x\\y\\z\end{pmatrix}$, i com $AX=B$:
+      \[
+        X = A^{-1}\cdot B.
+      \]
+    \item<4-> Cal trobar $A^{-1}$ (amb \textbf{Gauss--Jordan}).
+  \end{itemize}
+\end{frame}
+
+% ---------- DIAPO 2.2c: Gauss-Jordan — zeros sota (graella) ----------
+\begin{frame}[t]
+  \frametitle{2.2 Resolució amb la matriu inversa}
+
+  \vspace{-0.34cm}
+  {\small\textbf{Gauss--Jordan.} Construïm $\bigl(A\;\big|\;I_3\bigr)$ i fem zeros \textbf{sota} la diagonal.}
+
+  \vspace{0.08cm}
+  \begingroup
+  \setlength{\arraycolsep}{4pt}
+  \renewcommand{\arraystretch}{1.2}
+  % --- Fila superior: M0 --F2--> M1 ---
+  \begin{center}
+    \onslide<1->{%
+      $\displaystyle\left(\begin{array}{ccc|ccc}
+        1 & 1 & -1 & 1 & 0 & 0 \\
+        \alt<1-2>{\fc{-2}}{-2} & -1 & 1 & 0 & 1 & 0 \\
+        1 & -1 & 2 & 0 & 0 & 1
+      \end{array}\right)$}%
+    \onslide<2->{$\displaystyle\gjopfila{2}{F_2 \leftarrow F_2 + 2F_1}$}%
+    \onslide<3->{%
+      $\displaystyle\left(\begin{array}{ccc|ccc}
+        1 & 1 & -1 & 1 & 0 & 0 \\
+        \fc{0} & \fc{1} & \fc{-1} & \fc{2} & \fc{1} & \fc{0} \\
+        1 & -1 & 2 & 0 & 0 & 1
+      \end{array}\right)$}%
+  \end{center}
+
+  \vspace{0.28cm}
+  % --- Fila inferior: M1 --F3--> M2 ---
+  \only<4->{
+    \begin{center}
+      $\displaystyle\left(\begin{array}{ccc|ccc}
+        1 & 1 & -1 & 1 & 0 & 0 \\
+        0 & 1 & -1 & 2 & 1 & 0 \\
+        \alt<4-5>{\fc{1}}{1} & -1 & 2 & 0 & 0 & 1
+      \end{array}\right)$%
+      \onslide<5->{$\displaystyle\gjopfila{3}{F_3 \leftarrow F_3 - F_1}$}%
+      \onslide<6->{%
+        $\displaystyle\left(\begin{array}{ccc|ccc}
+          1 & 1 & -1 & 1 & 0 & 0 \\
+          0 & 1 & -1 & 2 & 1 & 0 \\
+          \fc{0} & \fc{-2} & \fc{3} & \fc{-1} & \fc{0} & \fc{1}
+        \end{array}\right)$}%
+    \end{center}
+  }
+  \endgroup
+\end{frame}
+
+% ---------- DIAPO 2.2d: Gauss-Jordan — acabar sota + zeros sobre ----------
+\begin{frame}[t]
+  \frametitle{2.2 Resolució amb la matriu inversa}
+
+  \vspace{-0.34cm}
+  {\small\textbf{Gauss--Jordan} (continuació).}
+
+  \vspace{0.08cm}
+  \begingroup
+  \setlength{\arraycolsep}{4pt}
+  \renewcommand{\arraystretch}{1.2}
+  % --- Acabar zeros sota: M2 --F3+2F2--> M3 ---
+  \begin{center}
+    \onslide<1->{%
+      $\displaystyle\left(\begin{array}{ccc|ccc}
+        1 & 1 & -1 & 1 & 0 & 0 \\
+        0 & 1 & -1 & 2 & 1 & 0 \\
+        \alt<1-2>{\fc{0}}{0} & \alt<1-2>{\fc{-2}}{-2} & 3 & -1 & 0 & 1
+      \end{array}\right)$}%
+    \onslide<2->{$\displaystyle\gjopfila{3}{F_3 \leftarrow F_3 + 2F_2}$}%
+    \onslide<3->{%
+      $\displaystyle\left(\begin{array}{ccc|ccc}
+        1 & 1 & -1 & 1 & 0 & 0 \\
+        0 & 1 & -1 & 2 & 1 & 0 \\
+        \fc{0} & \fc{0} & \fc{1} & \fc{3} & \fc{2} & \fc{1}
+      \end{array}\right)$}%
+  \end{center}
+
+  \vspace{0.2cm}
+  % --- Zeros sobre: M3 --F2+F3--> M4 ---
+  \only<4->{
+    {\footnotesize Zeros \textbf{sobre} la diagonal.}\\[0.12cm]
+    \begin{center}
+      $\displaystyle\left(\begin{array}{ccc|ccc}
+        1 & 1 & -1 & 1 & 0 & 0 \\
+        0 & 1 & \alt<4-5>{\fc{-1}}{-1} & 2 & 1 & 0 \\
+        0 & 0 & 1 & 3 & 2 & 1
+      \end{array}\right)$%
+      \onslide<5->{$\displaystyle\gjopfila{2}{F_2 \leftarrow F_2 + F_3}$}%
+      \onslide<6->{%
+        $\displaystyle\left(\begin{array}{ccc|ccc}
+          1 & 1 & -1 & 1 & 0 & 0 \\
+          0 & 1 & \fc{0} & \fc{5} & \fc{3} & \fc{1} \\
+          0 & 0 & 1 & 3 & 2 & 1
+        \end{array}\right)$}%
+    \end{center}
+  }
+  \endgroup
+\end{frame}
+
+% ---------- DIAPO 2.2e: Gauss-Jordan — acabar sobre + A^{-1} ----------
+\begin{frame}[t]
+  \frametitle{2.2 Resolució amb la matriu inversa}
+
+  \vspace{-0.34cm}
+  {\small\textbf{Gauss--Jordan} (continuació): zeros \textbf{sobre} la diagonal.}
+
+  \vspace{0.08cm}
+  \begingroup
+  \setlength{\arraycolsep}{4pt}
+  \renewcommand{\arraystretch}{1.2}
+  % --- F1+F3 ---
+  \begin{center}
+    \onslide<1->{%
+      $\displaystyle\left(\begin{array}{ccc|ccc}
+        1 & 1 & \alt<1-2>{\fc{-1}}{-1} & 1 & 0 & 0 \\
+        0 & 1 & 0 & 5 & 3 & 1 \\
+        0 & 0 & 1 & 3 & 2 & 1
+      \end{array}\right)$}%
+    \onslide<2->{$\displaystyle\gjopfila{1}{F_1 \leftarrow F_1 + F_3}$}%
+    \onslide<3->{%
+      $\displaystyle\left(\begin{array}{ccc|ccc}
+        1 & 1 & \fc{0} & \fc{4} & \fc{2} & \fc{1} \\
+        0 & 1 & 0 & 5 & 3 & 1 \\
+        0 & 0 & 1 & 3 & 2 & 1
+      \end{array}\right)$}%
+  \end{center}
+
+  \vspace{0.28cm}
+  % --- F1-F2 ---
+  \only<4->{
+    \begin{center}
+      $\displaystyle\left(\begin{array}{ccc|ccc}
+        1 & \alt<4-5>{\fc{1}}{1} & 0 & 4 & 2 & 1 \\
+        0 & 1 & 0 & 5 & 3 & 1 \\
+        0 & 0 & 1 & 3 & 2 & 1
+      \end{array}\right)$%
+      \onslide<5->{$\displaystyle\gjopfila{1}{F_1 \leftarrow F_1 - F_2}$}%
+      \onslide<6->{%
+        $\displaystyle\left(\begin{array}{ccc|ccc}
+          1 & \fc{0} & 0 & \fc{-1} & \fc{-1} & \fc{0} \\
+          0 & 1 & 0 & 5 & 3 & 1 \\
+          0 & 0 & 1 & 3 & 2 & 1
+        \end{array}\right)$}%
+    \end{center}
+  }
+  \endgroup
+
+  \vspace{0.15cm}
+  \only<7->{
+    Esquerra $=I_3$ \;$\Rightarrow$\;
+    \solucio{A^{-1}=\begin{pmatrix}-1&-1&0\\5&3&1\\3&2&1\end{pmatrix}}.
+  }
+\end{frame}
+
+% ---------- DIAPO 2.2f: Calcular X = A^{-1} B ----------
+\begin{frame}[t]
+  \frametitle{2.2 Resolució amb la matriu inversa}
+
+  \vspace{-0.28cm}
+  \begin{itemize}
+    \item<1-> Ja tenim $A^{-1}$. Ara calculem $X=A^{-1}\cdot B$:
+  \end{itemize}
+
+  \vspace{0.08cm}
+  \only<2->{
+    \[
+      X =
+      \begin{pmatrix}-1&-1&0\\5&3&1\\3&2&1\end{pmatrix}
+      \begin{pmatrix}0\\-1\\0\end{pmatrix}
+    \]
+  }
+
+  \vspace{0.06cm}
+  \begin{itemize}
+    \item<3-> $1^{\text{a}}$ fila: $(-1)(0)+(-1)(-1)+(0)(0)=\solucio{1}$
+    \item<4-> $2^{\text{a}}$ fila: $5\cdot 0+3\cdot(-1)+1\cdot 0=\solucio{-3}$
+    \item<5-> $3^{\text{a}}$ fila: $3\cdot 0+2\cdot(-1)+1\cdot 0=\solucio{-2}$
+    \item<6-> \solucio{X=\begin{pmatrix}1\\-3\\-2\end{pmatrix}}
+      \;$\Rightarrow$\; \solucio{(x,y,z)=(1,-3,-2)}.
+  \end{itemize}
+\end{frame}
+
+% ---------- SECCIÓ 3 (PRIORITÀRIA) ----------
+\section{Mètode de Gauss}
+\subsection{Transformacions elementals}
+
+% ---------- DIAPO 3.1 ----------
+\begin{frame}[t]
+  \frametitle{3.1 Transformacions elementals}
+
+  \vspace{-0.22cm}
+  \begin{itemize}
+    \item<1-> El mètode de Gauss transforma un sistema en un d'\textbf{equivalent}
+      en forma \textbf{escalonada}, mitjançant transformacions elementals
+      sobre les files de $A^*$.
+    \item<2-> \textbf{Transformacions permeses:}
+      \begin{itemize}
+        \item $F_i \leftrightarrow F_j$ \;(intercanviar dues equacions).
+        \item $F_i \leftarrow a F_i$ \;($a\neq 0$).
+        \item $F_i \leftarrow a F_i + b F_j$ \;($a,b\neq 0$).
+      \end{itemize}
+  \end{itemize}
+
+  \vspace{0.1cm}
+  \only<3->{
+    \begin{caixadef}[compact]
+      \textbf{No te n'oblidis:} abans de començar, escriu les equacions
+      amb les incògnites en el \textbf{mateix ordre} ($x$, $y$, $z$,\ldots).
+    \end{caixadef}
+  }
+\end{frame}
+
+\subsection{Resolució d'un sistema}
+
+% ---------- DIAPO 3.2a: Sistema + matriu ampliada ----------
+\begin{frame}[t]
+  \frametitle{3.2 Resolució amb el mètode de Gauss}
+
+  \vspace{-0.28cm}
+  \textbf{Exemple.} Resoldre
+  \[
+    \left\{\begin{aligned}
+      x - 3y + 2z &= -1 \\
+      -2x + 4z &= -6 \\
+      x - 2y + z &= 0
+    \end{aligned}\right.
+  \]
+
+  \vspace{0.05cm}
+  \begin{itemize}
+    \item<2-> \textbf{1r:} escrivim la matriu ampliada $A^*=(A\,|\,B)$:
+  \end{itemize}
+  \only<2->{
+    \[
+      A^* =
+      \left(\begin{array}{ccc|c}
+        1 & -3 & 2 & -1 \\
+        -2 & 0 & 4 & -6 \\
+        1 & -2 & 1 & 0
+      \end{array}\right)
+    \]
+  }
+\end{frame}
+
+% ---------- DIAPO 3.2b: Eliminar x (F2 i F3 alineades) ----------
+\begin{frame}[t]
+  \frametitle{3.2 Resolució amb el mètode de Gauss}
+
+  \vspace{-0.34cm}
+  \textbf{2n:} zeros a la 1a columna (sota el pivot).
+
+  \vspace{0.1cm}
+  \begingroup
+  \setlength{\arraycolsep}{4pt}
+  \renewcommand{\arraystretch}{1.2}
+  % --- Pas F2 (alineat amb la 2a fila) ---
+  \begin{center}
+    \onslide<1->{%
+      $\displaystyle\left(\begin{array}{ccc|c}
+        1 & -3 & 2 & -1 \\
+        \alt<1-2>{\fc{-2}}{-2} & 0 & 4 & -6 \\
+        1 & -2 & 1 & 0
+      \end{array}\right)$}%
+    \onslide<2->{$\displaystyle\gjopfila{2}{F_2 \leftarrow F_2 + 2F_1}$}%
+    \onslide<3->{%
+      $\displaystyle\left(\begin{array}{ccc|c}
+        1 & -3 & 2 & -1 \\
+        \fc{0} & \fc{-6} & \fc{8} & \fc{-8} \\
+        1 & -2 & 1 & 0
+      \end{array}\right)$}%
+  \end{center}
+
+  \vspace{0.35cm}
+  % --- Pas F3 a sota (alineat amb la 3a fila) ---
+  \only<4->{
+    \begin{center}
+      $\displaystyle\left(\begin{array}{ccc|c}
+        1 & -3 & 2 & -1 \\
+        0 & -6 & 8 & -8 \\
+        \alt<4-5>{\fc{1}}{1} & -2 & 1 & 0
+      \end{array}\right)$%
+      \onslide<5->{$\displaystyle\gjopfila{3}{F_3 \leftarrow F_3 - F_1}$}%
+      \onslide<6->{%
+        $\displaystyle\left(\begin{array}{ccc|c}
+          1 & -3 & 2 & -1 \\
+          0 & -6 & 8 & -8 \\
+          \fc{0} & \fc{1} & \fc{-1} & \fc{1}
+        \end{array}\right)$}%
+    \end{center}
+  }
+  \endgroup
+\end{frame}
+
+% ---------- DIAPO 3.2c: Escalonar y + resultat ----------
+\begin{frame}[t]
+  \frametitle{3.2 Resolució amb el mètode de Gauss}
+
+  \vspace{-0.32cm}
+  \textbf{3r:} escalonar la 2a columna (intercanvi + combinació).
+
+  \vspace{0.1cm}
+  \begingroup
+  \setlength{\arraycolsep}{4pt}
+  \renewcommand{\arraystretch}{1.2}
+  \begin{center}
+    \onslide<1->{%
+      $\displaystyle\left(\begin{array}{ccc|c}
+        1 & -3 & 2 & -1 \\
+        0 & -6 & 8 & -8 \\
+        0 & 1 & -1 & 1
+      \end{array}\right)$}%
+    \onslide<2->{$\displaystyle\quad F_2\leftrightarrow F_3\quad$}%
+    \onslide<2->{%
+      $\displaystyle\left(\begin{array}{ccc|c}
+        1 & -3 & 2 & -1 \\
+        0 & 1 & -1 & 1 \\
+        0 & -6 & 8 & -8
+      \end{array}\right)$}%
+  \end{center}
+
+  \vspace{0.3cm}
+  \only<3->{
+    \begin{center}
+      $\displaystyle\left(\begin{array}{ccc|c}
+        1 & -3 & 2 & -1 \\
+        0 & 1 & -1 & 1 \\
+        \alt<3-4>{\fc{0}}{0} & \alt<3-4>{\fc{-6}}{-6} & 8 & -8
+      \end{array}\right)$%
+      \onslide<4->{$\displaystyle\gjopfila{3}{F_3 \leftarrow F_3 + 6F_2}$}%
+      \onslide<5->{%
+        $\displaystyle\left(\begin{array}{ccc|c}
+          1 & -3 & 2 & -1 \\
+          0 & 1 & -1 & 1 \\
+          \fc{0} & \fc{0} & \fc{2} & \fc{-2}
+        \end{array}\right)$}%
+    \end{center}
+  }
+  \endgroup
+
+  \vspace{0.15cm}
+  \begin{itemize}
+    \item<6-> \textbf{4t:} substitució enrere:
+      $2z=-2\Rightarrow\solucio{z=-1}$;\;
+      $y-(-1)=1\Rightarrow\solucio{y=0}$;\;
+      $x+2(-1)=-1\Rightarrow\solucio{x=1}$.
+    \item<7-> Solució: \solucio{(x,y,z)=(1,0,-1)}.
+  \end{itemize}
+\end{frame}
+
+\subsection{Discussió d'un sistema}
+
+% ---------- DIAPO 3.3a: Criteris ----------
+\begin{frame}[t]
+  \frametitle{3.3 Discussió amb el mètode de Gauss}
+
+  \vspace{-0.22cm}
+  \begin{itemize}
+    \item<1-> \textbf{Discutir} un sistema = classificar-lo (\textbf{SCD}, \textbf{SCI} o \textbf{SI})
+      mirant la matriu escalonada.
+    \item<2-> Ens fixem especialment en l'\textbf{última fila} no trivial:
+  \end{itemize}
+
+  \vspace{0.08cm}
+  \only<3->{
+    \begin{itemize}
+      \item \textbf{SCD:} fila tipus $(0\;\cdots\;0\;a\,|\,b)$ amb $a\neq 0$
+        (tantes equacions útils com incògnites).
+      \item \textbf{SCI:} queden \textbf{més} incògnites que equacions útils
+        (p.ex. fila $(0\;\cdots\;0\,|\,0)$ i $n>r$).
+      \item \textbf{SI:} fila tipus $(0\;\cdots\;0\,|\,b)$ amb $b\neq 0$
+        \;$\Rightarrow$\; $0=b$ impossible.
+    \end{itemize}
+  }
+
+  \vspace{0.08cm}
+  \only<4->{
+    \caixacentrada{Una fila $(0\;\cdots\;0\,|\,0)$ és $0=0$: es pot ignorar.}
+  }
+\end{frame}
+
+% ---------- DIAPO 3.3b: Exemple SCI (classificació) ----------
+\begin{frame}[t]
+  \frametitle{3.3 Discussió: exemple SCI}
+
+  \vspace{-0.3cm}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.40\textwidth}
+      \[
+        \left\{\begin{aligned}
+          x + y - z &= 2 \\
+          2x - y + 2z &= -2 \\
+          3x + z &= 0
+        \end{aligned}\right.
+      \]
+    \end{column}
+    \begin{column}{0.58\textwidth}
+      \begin{itemize}
+        \item<1-> Després de Gauss:
+          \[
+            \left(\begin{array}{ccc|c}
+              1 & 1 & -1 & 2 \\
+              0 & -3 & 4 & -6 \\
+              0 & 0 & 0 & 0
+            \end{array}\right)
+          \]
+        \item<2-> Última fila $0=0$ (s'ignora).
+        \item<3-> 2 equacions útils, 3 incògnites \;$\Rightarrow$\; \textverd{\textbf{SCI}}.
+        \item<4-> En un \textbf{SCI} cal expressar la solució en funció
+          d'\textbf{una o més variables lliures} (a triar).
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ---------- DIAPO 3.3b2: SCI — solució en funció de z ----------
+\begin{frame}[t]
+  \frametitle{3.3 Resolució SCI: en funció de $z$}
+
+  \vspace{-0.32cm}
+  Equacions útils:
+  \[
+    \left\{\begin{aligned}
+      x + y - z &= 2 \\
+      -3y + 4z &= -6
+    \end{aligned}\right.
+  \]
+  \only<1->{Triem la variable lliure $z$ (podríem haver triat una altra).}
+
+  \vspace{0.06cm}
+  \begin{itemize}
+    \item<2-> De la 2a: $-3y + 4z = -6$ \;$\Rightarrow$\; $3y = 4z + 6$
+      \;$\Rightarrow$\; $\displaystyle y = \frac{4z+6}{3}$.
+    \item<3-> De la 1a: $x + y - z = 2$ \;$\Rightarrow$\; $x = 2 - y + z$.
+    \item<4-> Substituïm $y$:
+      \[
+        x = 2 - \frac{4z+6}{3} + z
+          = \frac{6 - (4z+6) + 3z}{3}
+          = \frac{-z}{3}.
+      \]
+    \item<5-> Solució (amb $z=\lambda\in\mathbb{R}$):
+      \[
+        \solucio{
+          x = -\dfrac{\lambda}{3},\quad
+          y = \dfrac{4\lambda+6}{3},\quad
+          z = \lambda
+        }
+      \]
+  \end{itemize}
+\end{frame}
+
+% ---------- DIAPO 3.3c: Exemple SI ----------
+\begin{frame}[t]
+  \frametitle{3.3 Discussió: exemple SI}
+
+  \vspace{-0.3cm}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.40\textwidth}
+      \[
+        \left\{\begin{aligned}
+          x + y - z &= 2 \\
+          2x - y + 2z &= -2 \\
+          3x + z &= 1
+        \end{aligned}\right.
+      \]
+    \end{column}
+    \begin{column}{0.58\textwidth}
+      \begin{itemize}
+        \item<1-> Després de Gauss:
+          \[
+            \left(\begin{array}{ccc|c}
+              1 & 1 & -1 & 2 \\
+              0 & -3 & 4 & -6 \\
+              0 & 0 & 0 & 1
+            \end{array}\right)
+          \]
+        \item<2-> Última fila: $0=1$ \;$\Rightarrow$\; absurde.
+        \item<3-> \;$\Rightarrow$\; \textverd{\textbf{SI}}.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\subsection{Discussió amb paràmetres}
+
+% ---------- DIAPO 3.4a: Idea + enunciat ----------
+\begin{frame}[t]
+  \frametitle{3.4 Discussió amb paràmetres}
+
+  \vspace{-0.28cm}
+  \begin{itemize}
+    \item<1-> Un sistema amb \textbf{paràmetre} ($\lambda$, $a$, $m$,\ldots) depèn d'un valor
+      desconegut: cal \textbf{discutir} els casos i després \textbf{resoldre}.
+    \item<2-> Procediment: aplicar \textbf{Gauss} (amb el paràmetre) fins a forma escalonada
+      i analitzar l'última fila.
+  \end{itemize}
+
+  \vspace{0.08cm}
+  \only<3->{
+    \small\textbf{Exemple.} Discutir i resoldre segons $\lambda$:
+    \[
+      \left\{\begin{aligned}
+        2x - y + 2z &= 2 \\
+        2x - 4z &= -4 \\
+        -y + \lambda z &= 1
+      \end{aligned}\right.
+      \qquad
+      A^*=\left(\begin{array}{ccc|c}
+        2 & -1 & 2 & 2 \\
+        2 & 0 & -4 & -4 \\
+        0 & -1 & \fc{\lambda} & 1
+      \end{array}\right)
+    \]
+  }
+\end{frame}
+
+% ---------- DIAPO 3.4b: Gauss pas a pas amb λ ----------
+\begin{frame}[t]
+  \frametitle{3.4 Discussió amb paràmetres}
+
+  \vspace{-0.34cm}
+  {\small\textbf{Gauss} (mantenim $\lambda$ a les operacions).}
+
+  \vspace{0.08cm}
+  \begingroup
+  \setlength{\arraycolsep}{4pt}
+  \renewcommand{\arraystretch}{1.2}
+  \begin{center}
+    \onslide<1->{%
+      $\displaystyle\left(\begin{array}{ccc|c}
+        2 & -1 & 2 & 2 \\
+        \alt<1-2>{\fc{2}}{2} & 0 & -4 & -4 \\
+        0 & -1 & \lambda & 1
+      \end{array}\right)$}%
+    \onslide<2->{$\displaystyle\gjopfila{2}{F_2 \leftarrow F_2 - F_1}$}%
+    \onslide<3->{%
+      $\displaystyle\left(\begin{array}{ccc|c}
+        2 & -1 & 2 & 2 \\
+        \fc{0} & \fc{1} & \fc{-6} & \fc{-6} \\
+        0 & -1 & \lambda & 1
+      \end{array}\right)$}%
+  \end{center}
+
+  \vspace{0.3cm}
+  \only<4->{
+    \begin{center}
+      $\displaystyle\left(\begin{array}{ccc|c}
+        2 & -1 & 2 & 2 \\
+        0 & 1 & -6 & -6 \\
+        0 & \alt<4-5>{\fc{-1}}{-1} & \lambda & 1
+      \end{array}\right)$%
+      \onslide<5->{$\displaystyle\gjopfila{3}{F_3 \leftarrow F_3 + F_2}$}%
+      \onslide<6->{%
+        $\displaystyle\left(\begin{array}{ccc|c}
+          2 & -1 & 2 & 2 \\
+          0 & 1 & -6 & -6 \\
+          \fc{0} & \fc{0} & \fc{\lambda-6} & \fc{-5}
+        \end{array}\right)$}%
+    \end{center}
+  }
+  \endgroup
+\end{frame}
+
+% ---------- DIAPO 3.4c: Casos (classificació) ----------
+\begin{frame}[t]
+  \frametitle{3.4 Discussió amb paràmetres}
+
+  \vspace{-0.22cm}
+  Després de Gauss:
+  \[
+    \left\{\begin{aligned}
+      2x - y + 2z &= 2 \\
+      y - 6z &= -6 \\
+      (\lambda-6)z &= -5
+    \end{aligned}\right.
+  \]
+
+  \vspace{0.05cm}
+  \begin{itemize}
+    \item<2-> Si $\lambda-6=0$ \;($\lambda=\solucio{6}$): \;$0=-5$ \;$\Rightarrow$\; \textverd{\textbf{SI}}.
+    \item<3-> Si $\lambda\neq 6$: 3 equacions útils \;$\Rightarrow$\; \textverd{\textbf{SCD}}
+      (resolució per substitució enrere).
+  \end{itemize}
+
+  \vspace{0.1cm}
+  \only<4->{
+    \begin{caixadef}[compact,halign=center]
+      $\lambda=6$: \textbf{SI} \qquad
+      $\lambda\neq 6$: \textbf{SCD}
+    \end{caixadef}
+  }
+\end{frame}
+
+% ---------- DIAPO 3.4d: SCD — trobar z ----------
+\begin{frame}[t]
+  \frametitle{3.4 Resolució SCD ($\lambda\neq 6$): trobar $z$}
+
+  \vspace{-0.25cm}
+  Partim de l'última equació:
+  \[
+    (\lambda-6)z = -5
+  \]
+
+  \vspace{0.08cm}
+  \begin{itemize}
+    \item<2-> Com $\lambda\neq 6$, podem dividir per $\lambda-6$:
+      \[
+        z = \frac{-5}{\lambda-6}.
+      \]
+    \item<3-> \solucio{z = \dfrac{-5}{\lambda-6}}
+  \end{itemize}
+\end{frame}
+
+% ---------- DIAPO 3.4e: SCD — trobar y ----------
+\begin{frame}[t]
+  \frametitle{3.4 Resolució SCD ($\lambda\neq 6$): trobar $y$}
+
+  \vspace{-0.28cm}
+  Equació del mig: \;$y - 6z = -6$.
+  Ja tenim \;$\displaystyle z=\frac{-5}{\lambda-6}$.
+
+  \vspace{0.08cm}
+  \begin{itemize}
+    \item<2-> Aïllem $y$:
+      \[
+        y = -6 + 6z.
+      \]
+    \item<3-> Substituïm $z$:
+      \[
+        y = -6 + 6\cdot\frac{-5}{\lambda-6}
+        \onslide<4->{= -6 - \frac{30}{\lambda-6}}
+      \]
+    \item<5-> Denominador comú:
+      \[
+        y = \frac{-6(\lambda-6) - 30}{\lambda-6}
+        \onslide<6->{= \frac{-6\lambda + 36 - 30}{\lambda-6}}
+        \onslide<7->{= \frac{-6\lambda + 6}{\lambda-6}}
+      \]
+    \item<8-> \solucio{y = \dfrac{6-6\lambda}{\lambda-6}}
+  \end{itemize}
+\end{frame}
+
+% ---------- DIAPO 3.4f: SCD — trobar x ----------
+\begin{frame}[t]
+  \frametitle{3.4 Resolució SCD ($\lambda\neq 6$): trobar $x$}
+
+  \vspace{-0.32cm}
+  Primera equació: \;$2x - y + 2z = 2$.
+  {\small Ja tenim
+  $\displaystyle z=\frac{-5}{\lambda-6}$,\;
+  $\displaystyle y=\frac{6-6\lambda}{\lambda-6}$.}
+
+  \vspace{0.06cm}
+  \begin{itemize}
+    \item<2-> Aïllem $x$:
+      \[
+        2x = 2 + y - 2z
+        \onslide<3->{\quad\Rightarrow\quad x = \frac{2 + y - 2z}{2}}
+      \]
+    \item<4-> Substituïm $y$ i $z$:
+      \[
+        2 + y - 2z
+        \onslide<5->{= 2 + \frac{6-6\lambda}{\lambda-6} - 2\cdot\frac{-5}{\lambda-6}}
+        \onslide<6->{= 2 + \frac{6-6\lambda + 10}{\lambda-6}}
+      \]
+    \item<7-> Denominador comú:
+      \[
+        2 + y - 2z
+        \onslide<8->{= \frac{2(\lambda-6) + 16 - 6\lambda}{\lambda-6}}
+        \onslide<9->{= \frac{2\lambda - 12 + 16 - 6\lambda}{\lambda-6}}
+        \onslide<10->{= \frac{-4\lambda + 4}{\lambda-6}}
+      \]
+    \item<11-> Per tant
+      \[
+        x = \frac{1}{2}\cdot\frac{-4\lambda + 4}{\lambda-6}
+        \onslide<12->{= \frac{-2\lambda + 2}{\lambda-6}}
+        \onslide<13->{= \frac{2-2\lambda}{\lambda-6}}
+      \]
+    \item<14-> \solucio{x = \dfrac{2-2\lambda}{\lambda-6}}
+  \end{itemize}
+\end{frame}
+
+% ---------- DIAPO 3.4g: Resum solució SCD ----------
+\begin{frame}[t]
+  \frametitle{3.4 Resolució SCD ($\lambda\neq 6$): resum}
+
+  \vspace{-0.25cm}
+  \only<1->{
+    {\small Enunciat:}
+    \[
+      \left\{\begin{aligned}
+        2x - y + 2z &= 2 \\
+        2x - 4z &= -4 \\
+        -y + \lambda z &= 1
+      \end{aligned}\right.
+      \qquad (\lambda\neq 6)
+    \]
+  }
+
+  \vspace{0.05cm}
+  \only<2->{
+    \caixacentrada{%
+      $\displaystyle
+        x=\frac{2-2\lambda}{\lambda-6},\quad
+        y=\frac{6-6\lambda}{\lambda-6},\quad
+        z=\frac{-5}{\lambda-6}
+      $%
+    }
+  }
+
+  \vspace{0.15cm}
+  \begin{itemize}
+    \item<3-> Recordatori:
+      $\lambda=6$ era \textverd{\textbf{SI}};
+      $\lambda\neq 6$ és \textverd{\textbf{SCD}} amb aquesta solució.
+  \end{itemize}
+\end{frame}
+
+% ---------- DIAPO 3.4h: Paràmetre a altres columnes ----------
+\begin{frame}[t]
+  \frametitle{3.4 Paràmetre a altres columnes}
+
+  \vspace{-0.28cm}
+  \begin{itemize}
+    \item<1-> Si $\lambda$ surt a \textbf{una sola columna} (però no la darrera),
+      es poden \textbf{intercanviar columnes} (i les incògnites corresponents)
+      per deixar $\lambda$ a l'última: Gauss es simplifica com a l'exemple.
+    \item<2-> Si $\lambda$ surt a \textbf{més d'una columna}, les combinacions es
+      compliquen (pivots amb $\lambda$, casos abans d'hora). Aleshores es fan
+      servir altres mètodes, p.ex.\ el \textbf{teorema de Rouché--Frobenius}
+      (rangs).
+  \end{itemize}
+
+  \vspace{0.1cm}
+  \only<3->{
+    \centering
+    \begin{minipage}[t]{0.48\textwidth}
+      \centering\small
+      \textbf{Una columna} (es pot reordenar)\\[0.1cm]
+      $\left(\begin{array}{ccc|c}
+        2 & \fc{\lambda} & 1 & 3 \\
+        1 & 0 & 2 & 0 \\
+        0 & 1 & -1 & 1
+      \end{array}\right)$
+      {\footnotesize\\[0.05cm] $\xrightarrow{\text{col. }2\leftrightarrow 3}$
+      $\lambda$ a la darrera}
+    \end{minipage}%
+    \hfill
+    \begin{minipage}[t]{0.48\textwidth}
+      \centering\small
+      \textbf{Més d'una columna} (Rouché)\\[0.1cm]
+      $\left(\begin{array}{ccc|c}
+        \fc{\lambda} & 1 & \fc{\lambda} & 2 \\
+        1 & \fc{\lambda} & 0 & 1 \\
+        2 & 0 & 1 & 3
+      \end{array}\right)$
+      {\footnotesize\\[0.05cm] $\lambda$ a dues columnes:
+      no basta reordenar}
+    \end{minipage}
+  }
+\end{frame}
+
+% ---------- SECCIÓ 4 ----------
+\section{Teorema de Rouché-Frobenius}
+\subsection{Enunciat}
+
+% ---------- DIAPO 4.1a: Enunciat ----------
+\begin{frame}[t]
+  \frametitle{4.1 Teorema de Rouché-Frobenius}
+
+  \vspace{-0.2cm}
+  \begin{itemize}
+    \item<1-> Recordem: $\operatorname{Rang}(A)$ = nombre de files (o columnes)
+      \textbf{linealment independents} de $A$.
+    \item<2-> Per a un sistema $A\cdot X = B$, comparem
+      $\operatorname{Rang}(A)$ i $\operatorname{Rang}(A^*)$, amb $A^*=(A\,|\,B)$.
+  \end{itemize}
+
+  \vspace{0.15cm}
+  \only<3->{
+    \begin{caixadef}[compact,halign=center]
+      El sistema és \textbf{compatible} si, i només si,
+      $\operatorname{Rang}(A)=\operatorname{Rang}(A^*)$.
+    \end{caixadef}
+  }
+
+  \vspace{0.12cm}
+  \only<4->{
+    {\small Idea:} $B$ és combinació lineal de les columnes de $A$
+    $\Leftrightarrow$ afegir $B$ no augmenta el rang.
+  }
+\end{frame}
+
+\subsection{Classificació amb rangs}
+
+% ---------- DIAPO 4.2a: Criteris ----------
+\begin{frame}[t]
+  \frametitle{4.2 Classificació amb rangs}
+
+  \vspace{-0.2cm}
+  Sigui $n$ el nombre d'incògnites i $r=\operatorname{Rang}(A)$.
+
+  \vspace{0.1cm}
+  \begin{itemize}
+    \item<2-> Si $\operatorname{Rang}(A)\neq\operatorname{Rang}(A^*)$ \;$\Rightarrow$\; \textverd{\textbf{SI}}.
+    \item<3-> Si $\operatorname{Rang}(A)=\operatorname{Rang}(A^*)=r$:
+      \begin{itemize}
+        \item Si $r=n$ \;$\Rightarrow$\; \textverd{\textbf{SCD}} (una solució).
+        \item Si $r<n$ \;$\Rightarrow$\; \textverd{\textbf{SCI}} (infinites solucions).
+      \end{itemize}
+  \end{itemize}
+
+  \vspace{0.12cm}
+  \only<4->{
+    \begin{caixadef}[compact]
+      \textbf{Fixa't-hi:} $\operatorname{Rang}(A^*)$ només pot ser
+      $\operatorname{Rang}(A)$ o $\operatorname{Rang}(A)+1$.
+      A més, $\operatorname{Rang}(A)\leq n$.
+    \end{caixadef}
+  }
+\end{frame}
+
+% ---------- DIAPO 4.2b: Exemple SCD ----------
+\begin{frame}[t]
+  \frametitle{4.2 Exemple SCD (Rouché--Frobenius)}
+
+  \vspace{-0.3cm}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.42\textwidth}
+      \[
+        \left\{\begin{aligned}
+          x + 2y - z &= 1 \\
+          2x - y + z &= 2 \\
+          x + y + z &= 3
+        \end{aligned}\right.
+      \]
+      \only<2->{
+        {\footnotesize
+        \[
+          A=\begin{pmatrix}1&2&-1\\2&-1&1\\1&1&1\end{pmatrix}
+        \]
+        }
+      }
+    \end{column}
+    \begin{column}{0.56\textwidth}
+      \begin{itemize}
+        \item<3-> $|A|=\solucio{-7}\neq 0$
+          \;$\Rightarrow$\; $\operatorname{Rang}(A)=\solucio{3}$.
+        \item<4-> Llavors també $\operatorname{Rang}(A^*)=\solucio{3}$
+          (no pot ser més que $3$ en $A$ $3\times3$ invertible).
+        \item<5-> $\operatorname{Rang}(A)=\operatorname{Rang}(A^*)=3=n$
+          \;$\Rightarrow$\; \textverd{\textbf{SCD}}.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ---------- DIAPO 4.2c: Exemple SCI (enllaç amb Gauss) ----------
+\begin{frame}[t]
+  \frametitle{4.2 Exemple SCI (Rouché--Frobenius)}
+
+  \vspace{-0.3cm}
+  El mateix sistema SCI de la secció 3:
+  \[
+    \left\{\begin{aligned}
+      x + y - z &= 2 \\
+      2x - y + 2z &= -2 \\
+      3x + z &= 0
+    \end{aligned}\right.
+  \]
+
+  \vspace{0.05cm}
+  \begin{itemize}
+    \item<2-> $|A|=0$, però
+      $\left|\begin{smallmatrix}1&1\\2&-1\end{smallmatrix}\right|=-3\neq 0$
+      \;$\Rightarrow$\; $\operatorname{Rang}(A)=\solucio{2}$.
+    \item<3-> Amb Gauss vam veure que $A^*$ acaba amb una fila $(0\;0\;0\,|\,0)$:
+      $\operatorname{Rang}(A^*)=\solucio{2}$.
+    \item<4-> $\operatorname{Rang}(A)=\operatorname{Rang}(A^*)=2<3=n$
+      \;$\Rightarrow$\; \textverd{\textbf{SCI}}.
+  \end{itemize}
+\end{frame}
+
+% ---------- DIAPO 4.2d: Exemple SI ----------
+\begin{frame}[t]
+  \frametitle{4.2 Exemple SI (Rouché--Frobenius)}
+
+  \vspace{-0.3cm}
+  El mateix sistema SI de la secció 3:
+  \[
+    \left\{\begin{aligned}
+      x + y - z &= 2 \\
+      2x - y + 2z &= -2 \\
+      3x + z &= 1
+    \end{aligned}\right.
+  \]
+
+  \vspace{0.05cm}
+  \begin{itemize}
+    \item<2-> Igual que abans: $|A|=0$ i un menor $2\times2\neq 0$
+      \;$\Rightarrow$\; $\operatorname{Rang}(A)=\solucio{2}$.
+    \item<3-> Gauss: última fila $(0\;0\;0\,|\,1)$ \;$\Rightarrow$\;
+      $\operatorname{Rang}(A^*)=\solucio{3}$.
+    \item<4-> $\operatorname{Rang}(A)=2\neq 3=\operatorname{Rang}(A^*)$
+      \;$\Rightarrow$\; \textverd{\textbf{SI}}.
+  \end{itemize}
+\end{frame}
+
+% ---------- DIAPO 4.2e: Resum ----------
+\begin{frame}[t]
+  \frametitle{4.2 Resum Rouché--Frobenius}
+
+  \vspace{-0.15cm}
+  \begin{caixadef}[compact]
+    \begin{itemize}
+      \item $\operatorname{Rang}(A)\neq\operatorname{Rang}(A^*)$ \;$\rightarrow$\; \textbf{SI}
+      \item $\operatorname{Rang}(A)=\operatorname{Rang}(A^*)=n$ \;$\rightarrow$\; \textbf{SCD}
+      \item $\operatorname{Rang}(A)=\operatorname{Rang}(A^*)<n$ \;$\rightarrow$\; \textbf{SCI}
+    \end{itemize}
+  \end{caixadef}
+
+  \vspace{0.2cm}
+  \begin{itemize}
+    \item<2-> Gauss i Rouché--Frobenius classifiquen el mateix;
+      Gauss a més \textbf{resol}; Rouché compara \textbf{rangs}
+      (útil sobretot amb paràmetres a diverses columnes).
+  \end{itemize}
+\end{frame}
+
+% ---------- SECCIÓ 5 ----------
+\section{Regla de Cramer}
+\subsection{Enunciat i aplicació}
+
+% ---------- DIAPO 5.1a: Enunciat ----------
+\begin{frame}[t]
+  \frametitle{5.1 Regla de Cramer}
+
+  \vspace{-0.22cm}
+  \begin{itemize}
+    \item<1-> Sistema de $n$ equacions i $n$ incògnites ($A$ quadrada).
+    \item<2-> Si $|A|\neq 0$, el sistema és \textverd{\textbf{SCD}} i
+      \[
+        x_i = \frac{|A_{x_i}|}{|A|},
+        \qquad i=1,\ldots,n,
+      \]
+      on $A_{x_i}$ és $A$ amb la columna $i$ substituïda per $B$.
+  \end{itemize}
+
+  \vspace{0.12cm}
+  \only<3->{
+    \begin{caixadef}[compact]
+      \textbf{Fixa't-hi:} $|A|\neq 0$ $\Rightarrow$
+      $\operatorname{Rang}(A)=\operatorname{Rang}(A^*)=n$
+      (Rouché--Frobenius $\Rightarrow$ SCD).
+    \end{caixadef}
+  }
+\end{frame}
+
+% ---------- DIAPO 5.1b: Exemple — |A| ----------
+\begin{frame}[t]
+  \frametitle{5.1 Cramer: exemple}
+
+  \vspace{-0.3cm}
+  \textbf{Exemple.}
+  \[
+    \left\{\begin{aligned}
+      2x - 3y + z &= -2 \\
+      -2x - 2z &= 0 \\
+      3x - 2y - 3z &= 4
+    \end{aligned}\right.
+  \]
+
+  \vspace{0.05cm}
+  \begin{itemize}
+    \item<2-> $n=3$ equacions i incògnites.
+      \[
+        A=\begin{pmatrix}2&-3&1\\-2&0&-2\\3&-2&-3\end{pmatrix},\;
+        B=\begin{pmatrix}-2\\0\\4\end{pmatrix}
+      \]
+    \item<3-> $|A|=\solucio{32}\neq 0$ \;$\Rightarrow$\; es pot aplicar Cramer.
+  \end{itemize}
+\end{frame}
+
+% ---------- DIAPO 5.1c: Exemple — determinants per variables ----------
+\begin{frame}[t]
+  \frametitle{5.1 Cramer: determinants $|A_x|$, $|A_y|$, $|A_z|$}
+
+  \vspace{-0.32cm}
+  \begin{itemize}
+    \item<1-> $|A_x|$ (1a columna $\leftarrow B$):
+      \[
+        |A_x|=\begin{vmatrix}-2&-3&1\\0&0&-2\\4&-2&-3\end{vmatrix}
+        \onslide<2->{=\solucio{32}}
+      \]
+    \item<3-> $|A_y|$ (2a columna $\leftarrow B$):
+      \[
+        |A_y|=\begin{vmatrix}2&-2&1\\-2&0&-2\\3&4&-3\end{vmatrix}
+        \onslide<4->{=\solucio{32}}
+      \]
+    \item<5-> $|A_z|$ (3a columna $\leftarrow B$):
+      \[
+        |A_z|=\begin{vmatrix}2&-3&-2\\-2&0&0\\3&-2&4\end{vmatrix}
+        \onslide<6->{=\solucio{-32}}
+      \]
+  \end{itemize}
+\end{frame}
+
+% ---------- DIAPO 5.1d: Exemple — solució ----------
+\begin{frame}[t]
+  \frametitle{5.1 Cramer: solució}
+
+  \vspace{-0.2cm}
+  \[
+    |A|=32,\quad |A_x|=32,\quad |A_y|=32,\quad |A_z|=-32
+  \]
+
+  \vspace{0.1cm}
+  \begin{itemize}
+    \item<2-> $\displaystyle x=\frac{|A_x|}{|A|}=\frac{32}{32}=\solucio{1}$
+    \item<3-> $\displaystyle y=\frac{|A_y|}{|A|}=\frac{32}{32}=\solucio{1}$
+    \item<4-> $\displaystyle z=\frac{|A_z|}{|A|}=\frac{-32}{32}=\solucio{-1}$
+    \item<5-> Solució: \solucio{(x,y,z)=(1,1,-1)}.
+  \end{itemize}
+\end{frame}
+
+\subsection{Generalització}
+
+% ---------- DIAPO 5.2a: Idea ----------
+\begin{frame}[t]
+  \frametitle{5.2 Generalització de la regla de Cramer}
+
+  \vspace{-0.2cm}
+  \begin{itemize}
+    \item<1-> Si el sistema és \textbf{compatible} però $|A|=0$ (o no és quadrat),
+      Cramer ``clàssic'' no s'aplica directament.
+    \item<2-> Procediment:
+      \begin{enumerate}
+        \item Discutir amb Rouché--Frobenius (rangs).
+        \item Triar un menor no nul d'ordre $r=\operatorname{Rang}(A)$.
+        \item Passar les variables sobrants a paràmetres i aplicar Cramer
+          al sistema $r\times r$ reduït.
+      \end{enumerate}
+  \end{itemize}
+\end{frame}
+
+% ---------- DIAPO 5.2b: Exemple discussió ----------
+\begin{frame}[t]
+  \frametitle{5.2 Generalització: exemple}
+
+  \vspace{-0.3cm}
+  \[
+    \left\{\begin{aligned}
+      3x + y - z &= 2 \\
+      -2x + y - z &= 1 \\
+      x + 2y - 2z &= 3
+    \end{aligned}\right.
+  \]
+
+  \vspace{0.05cm}
+  \begin{itemize}
+    \item<2-> $|A|=0$, però
+      $\left|\begin{smallmatrix}3&1\\-2&1\end{smallmatrix}\right|=5\neq 0$
+      \;$\Rightarrow$\; $\operatorname{Rang}(A)=\solucio{2}$.
+    \item<3-> Es comprova $\operatorname{Rang}(A^*)=\solucio{2}<3$
+      \;$\Rightarrow$\; \textverd{\textbf{SCI}}.
+    \item<4-> Triem les 2 primeres equacions i les incògnites $x,y$;
+      $z=\lambda$ passa a la dreta.
+  \end{itemize}
+\end{frame}
+
+% ---------- DIAPO 5.2c: Exemple Cramer 2×2 ----------
+\begin{frame}[t]
+  \frametitle{5.2 Generalització: Cramer $2\times 2$}
+
+  \vspace{-0.28cm}
+  Amb $z=\lambda$:
+  \[
+    \left\{\begin{aligned}
+      3x + y &= 2+\lambda \\
+      -2x + y &= 1+\lambda
+    \end{aligned}\right.
+  \]
+
+  \vspace{0.05cm}
+  \begin{itemize}
+    \item<2-> $|A'|=\solucio{5}$,\;
+      $|A'_x|=\begin{vmatrix}2+\lambda&1\\1+\lambda&1\end{vmatrix}
+        \onslide<3->{=\solucio{1}}$
+    \item<4-> $|A'_y|=\begin{vmatrix}3&2+\lambda\\-2&1+\lambda\end{vmatrix}
+        \onslide<5->{=\solucio{5\lambda+7}}$
+    \item<6-> \solucio{
+        x=\dfrac{1}{5},\;
+        y=\dfrac{5\lambda+7}{5},\;
+        z=\lambda
+      }
+  \end{itemize}
+\end{frame}
+
+% ---------- SECCIÓ 6 ----------
+\section{Sistemes homogenis}
+\subsection{Definició i propietats}
+
+% ---------- DIAPO 6.1a: Definició ----------
+\begin{frame}[t]
+  \frametitle{6.1 Sistemes homogenis}
+
+  \vspace{-0.2cm}
+  \begin{itemize}
+    \item<1-> Un sistema és \textbf{homogeni} si $B=\mathbf{0}$
+      (tots els termes independents són zero): $A\cdot X=\mathbf{0}$.
+    \item<2-> Sempre té la \textbf{solució trivial}
+      $(x_1,\ldots,x_n)=(0,\ldots,0)$.
+    \item<3-> Sempre és \textbf{compatible}:
+      $\operatorname{Rang}(A)=\operatorname{Rang}(A^*)$
+      (perquè $A^*$ només afegeix una columna de zeros).
+  \end{itemize}
+
+  \vspace{0.1cm}
+  \only<4->{
+    \begin{caixadef}[compact]
+      Si $\operatorname{Rang}(A)=n$ \;$\rightarrow$\; \textbf{SCD} (només la trivial).\\
+      Si $\operatorname{Rang}(A)<n$ \;$\rightarrow$\; \textbf{SCI} (infinites solucions).
+    \end{caixadef}
+  }
+\end{frame}
+
+% ---------- DIAPO 6.1b: Exemple ----------
+\begin{frame}[t]
+  \frametitle{6.1 Sistemes homogenis: exemple}
+
+  \vspace{-0.3cm}
+  \[
+    \left\{\begin{aligned}
+      2x - 3y + z &= 0 \\
+      -2x - 2z &= 0 \\
+      -3y - z &= 0
+    \end{aligned}\right.
+  \]
+
+  \vspace{0.05cm}
+  \begin{itemize}
+    \item<2-> $|A|=0$, menor
+      $\left|\begin{smallmatrix}2&-3\\-2&0\end{smallmatrix}\right|=-6\neq 0$
+      \;$\Rightarrow$\; $\operatorname{Rang}(A)=\solucio{2}<3$
+      \;$\Rightarrow$\; \textverd{\textbf{SCI}}.
+    \item<3-> De la 2a: $-2x=-2z$ \;$\Rightarrow$\; $\solucio{x=-z}$.
+    \item<4-> A la 1a: $2(-z)-3y+z=0$ \;$\Rightarrow$\; $-z-3y=0$
+      \;$\Rightarrow$\; $\solucio{y=-\dfrac{z}{3}}$.
+    \item<5-> Amb $z=\lambda$:
+      \solucio{(x,y,z)=\bigl(-\lambda,\,-\tfrac{\lambda}{3},\,\lambda\bigr)}.
+  \end{itemize}
+\end{frame}
+
+\end{document}
